@@ -135,9 +135,9 @@ export default {
         text: "管理与维护",
         model: false,
         children: [
-          { text: "词典维护" },
-          { text: "数据分析" },
-          { text: "收据管理" }
+          { text: "词典维护", id: "mg_dict" },
+          { text: "数据分析", id: "mg_analyse" },
+          { text: "收据管理", id: "mg_invoice" }
         ]
       },
       { icon: "help", text: "退出登录", id: "logout" }
@@ -145,10 +145,64 @@ export default {
   }),
   methods: {
     clickMenu(tstr) {
-      window.alert("点击=" + tstr);
+      console.log("点击=" + tstr);
       if (tstr === "logout") {
         localStorage.removeItem("user");
         this.$router.push({ path: "/login" });
+      }
+      switch (tstr)
+      {
+        case "out_reg":
+          this.$router.push({ path: "/outreg" });
+          break;
+
+        case "out_cash":
+          this.$router.push({ path: "/outcash" });
+          break;
+        
+        case "out_chk":
+          this.$router.push({ path: "/outchk" });
+          break;
+
+        case "out_receipt":
+          this.$router.push({ path: "/outreceipt" });
+          break;
+
+        case "detail_reg":
+          this.$router.push({ path: "/detailreg" });
+          break;
+
+        case "detail_cash":
+          this.$router.push({ path: "/detailcash" });
+          break;
+
+        case "detail_chk":
+          this.$router.push({ path: "/detailchk" });
+          break;
+        
+        case "detail_undo":
+          this.$router.push({ path: "/detailundo" });
+          break;
+          
+        case "detail_op":
+          this.$router.push({ path: "/detailop" });
+          break; 
+          
+        case "mg_dict":
+          this.$router.push({ path: "/mgdict" });
+          break; 
+        
+        case "mg_analyse":
+          this.$router.push({ path: "/mganalyse" });
+          break; 
+        
+        case "mg_invoice":
+          this.$router.push({ path: "/mginvoice" });
+          break; 
+
+        default:
+          localStorage.removeItem("user");
+          this.$router.push({ path: "/login" });
       }
     },
 
