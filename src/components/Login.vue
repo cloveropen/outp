@@ -2,12 +2,7 @@
   <v-container>
     <v-layout row wrap align-center>
       <v-flex xs12>
-        <v-img
-          :src="require('../assets/logo.svg')" 
-          class="my-3" 
-          contain 
-          height="200">
-        </v-img>
+        <v-img :src="require('../assets/logo.svg')" class="my-3" contain height="200"></v-img>
       </v-flex>
 
       <v-flex xs12>
@@ -28,7 +23,7 @@
                   <v-text-field
                     v-model="username"
                     :rules="nameRules"
-                    :counter="3"
+                    :counter="4"
                     label="用户编码"
                     required
                   ></v-text-field>
@@ -45,9 +40,7 @@
                 </v-flex>
 
                 <v-flex xs12 md4>
-                  <v-btn color="success" :disabled="!valid" @click="loginSubmit">
-                    登录
-                  </v-btn>
+                  <v-btn color="success" :disabled="!valid" @click="loginSubmit">登录</v-btn>
                 </v-flex>
               </v-layout>
             </v-container>

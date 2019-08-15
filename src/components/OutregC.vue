@@ -1,302 +1,282 @@
 <template>
-  <v-form ref="form" v-model="valid" lazy-validation>
-    <v-layout row wrap>
-      <v-flex d-flex>
-        <v-text-field
-          v-model="out_reg.exPid"
-          label="条码号"
-          required
-          :counter="13"
-          :rules="barcodeRules"
-          @input="getpatient($event)"
-        ></v-text-field>
-      </v-flex>
-      <v-flex d-flex>
-        <v-select
-          v-model="out_reg.patientType"
-          label="患者类别"
-          required
-          :items="patient_types"
-          item-text="item-text"
-          item-value="item-value"
-          :rules="[v => !!v || '患者类别不能为空']"
-          hide-details
-          prepend-icon="map"
-          single-line
-        ></v-select>
-      </v-flex>
-      <v-flex d-flex>
-        <v-text-field
-          v-model="out_reg.patientName"
-          label="患者姓名"
-          required
-          :counter="6"
-          :rules="nameRules"
-        ></v-text-field>
-      </v-flex>
-      <v-flex d-flex>
-        <v-text-field
-          v-model="out_reg.idcard"
-          label="身份证号"
-          disabled
-        ></v-text-field>
-      </v-flex>
-    </v-layout>
-    <v-layout row wrap>
-      <v-flex d-flex>
-        <v-text-field
-          v-model="out_reg.pid"
-          label="门诊号"
-          disabled
-        ></v-text-field>
-      </v-flex>
-      <v-flex d-flex>
-        <v-select
-          v-model="out_reg.gender"
-          :items="genders"
-          item-text="item-text"
-          item-value="item-value"
-          :rules="[v => !!v || '患者性别不能为空']"
-          label="性别"
-          hide-details
-          prepend-icon="map"
-          single-line
-          required
-        ></v-select>
-      </v-flex>
-      <v-flex>
+  <v-card class="mx-auto" max-width="99%" min-width="100%">
+    <v-img class="white--text" height="100px" :src="require('../assets/outreg.jpg')">
+      <v-card-title class="align-end fill-height">门诊挂号</v-card-title>
+    </v-img>
+
+    <v-card-text>
+      <v-form ref="form" v-model="valid" lazy-validation>
         <v-layout row wrap>
           <v-flex d-flex>
             <v-text-field
-              v-model="out_reg.ageY"
-              label="年龄(岁)"
+              v-model="out_reg.exPid"
+              label="条码号"
+              required
+              :counter="13"
+              :rules="barcodeRules"
+              @input="getpatient($event)"
             ></v-text-field>
           </v-flex>
           <v-flex d-flex>
-            <v-text-field
-              v-model="out_reg.ageM"
-              label="年龄(月)"
-            ></v-text-field>
+            <v-select
+              v-model="out_reg.patientType"
+              label="患者类别"
+              required
+              :items="patient_types"
+              item-text="item-text"
+              item-value="item-value"
+              :rules="[v => !!v || '患者类别不能为空']"
+              hide-details
+              prepend-icon="map"
+              single-line
+            ></v-select>
           </v-flex>
           <v-flex d-flex>
             <v-text-field
-              v-model="out_reg.ageD"
-              label="年龄(天)"
+              v-model="out_reg.patientName"
+              label="患者姓名"
+              required
+              :counter="6"
+              :rules="nameRules"
             ></v-text-field>
+          </v-flex>
+          <v-flex d-flex>
+            <v-text-field v-model="out_reg.idcard" label="身份证号" disabled></v-text-field>
           </v-flex>
         </v-layout>
-      </v-flex>
-      <v-flex d-flex>
-        <v-select
-          v-model="out_reg.idcardType"
-          :items="idcard_types"
-          item-text="item-text"
-          item-value="item-value"
-          label="证件类型"
-          hide-details
-          prepend-icon="map"
-          single-line
-        ></v-select>
-      </v-flex>
-    </v-layout>
+        <v-layout row wrap>
+          <v-flex d-flex>
+            <v-text-field v-model="out_reg.pid" label="门诊号" disabled></v-text-field>
+          </v-flex>
+          <v-flex d-flex>
+            <v-select
+              v-model="out_reg.gender"
+              :items="genders"
+              item-text="item-text"
+              item-value="item-value"
+              :rules="[v => !!v || '患者性别不能为空']"
+              label="性别"
+              hide-details
+              prepend-icon="map"
+              single-line
+              required
+            ></v-select>
+          </v-flex>
+          <v-flex>
+            <v-layout row wrap>
+              <v-flex d-flex>
+                <v-text-field v-model="out_reg.ageY" label="年龄(岁)"></v-text-field>
+              </v-flex>
+              <v-flex d-flex>
+                <v-text-field v-model="out_reg.ageM" label="年龄(月)"></v-text-field>
+              </v-flex>
+              <v-flex d-flex>
+                <v-text-field v-model="out_reg.ageD" label="年龄(天)"></v-text-field>
+              </v-flex>
+            </v-layout>
+          </v-flex>
+          <v-flex d-flex>
+            <v-select
+              v-model="out_reg.idcardType"
+              :items="idcard_types"
+              item-text="item-text"
+              item-value="item-value"
+              label="证件类型"
+              hide-details
+              prepend-icon="map"
+              single-line
+            ></v-select>
+          </v-flex>
+        </v-layout>
 
-    <v-layout row wrap>
-      <v-flex d-flex>
-        <v-select
-          v-model="out_reg.regType"
-          label="挂号类别"
-          required
-          :items="reg_types"
-          item-text="item-text"
-          item-value="item-value"
-          :rules="[v => !!v || '挂号类别不能为空']"
-          hide-details
-          prepend-icon="map"
-          single-line
-        ></v-select>
-      </v-flex>
-      <v-flex d-flex>
-        <v-select
-          v-model="out_reg.deptCode"
-          :items="dept_codes"
-          item-text="item-text"
-          item-value="item-value"
-          :rules="[v => !!v || '就诊科室不能为空']"
-          label="就诊科室"
-          hide-details
-          prepend-icon="group_work"
-          single-line
-          required
-          @input="dept_codeChanged"
-        ></v-select>
-      </v-flex>
-      <v-flex d-flex>
-        <v-select
-          v-model="out_reg.doctorCode"
-          :items="doctor_codes"
-          item-text="item-text"
-          item-value="item-value"
-          label="专家医师"
-          hide-details
-          prepend-icon="map"
-          single-line
-        ></v-select>
-      </v-flex>
-      <v-flex d-flex>
-        <v-switch v-model="out_reg.visitPriority" label="就诊优先"></v-switch>
-      </v-flex>
-    </v-layout>
-    <v-layout row wrap>
-      <v-flex d-flex>
-        <v-select
-          v-model="out_reg.addrProv"
-          :items="addr_provs"
-          item-text="item-text"
-          item-value="item-value"
-          :rules="[v => !!v || '单位或住址省份不能为空']"
-          label="单位或住址(省份)"
-          hide-details
-          prepend-icon="group_work"
-          single-line
-          required
-          @input="prov_Changed"
-        ></v-select>
-      </v-flex>
-      <v-flex d-flex>
-        <v-select
-          v-model="out_reg.addrCity"
-          :items="addr_citys"
-          item-text="item-text"
-          item-value="item-value"
-          :rules="[v => !!v || '单位或住址-市不能为空']"
-          label="单位或住址(市)"
-          hide-details
-          prepend-icon="group_work"
-          single-line
-          required
-          @input="city_Changed"
-        ></v-select>
-      </v-flex>
-      <v-flex d-flex>
-        <v-select
-          v-model="out_reg.addrCounty"
-          :items="addr_countys"
-          item-text="item-text"
-          item-value="item-value"
-          :rules="[v => !!v || '单位或住址-区县不能为空']"
-          label="单位或住址(区县)"
-          hide-details
-          prepend-icon="group_work"
-          single-line
-          required
-          @input="county_Changed"
-        ></v-select>
-      </v-flex>
-      <v-flex d-flex>
-        <v-select
-          v-model="out_reg.addrTownship"
-          :items="addr_townships"
-          item-text="item-text"
-          item-value="item-value"
-          :rules="[v => !!v || '单位或住址-街道社区不能为空']"
-          label="单位或住址(街道社区)"
-          hide-details
-          prepend-icon="group_work"
-          single-line
-          required
-        ></v-select>
-      </v-flex>
-      <v-flex d-flex>
-        <v-text-field
-          v-model="out_reg.addrHouseNmb"
-          label="单位或住址(详细地址)"
-        ></v-text-field>
-      </v-flex>
-    </v-layout>
-    <v-spacer>----</v-spacer>
-    <v-layout row wrap>
-      <v-flex xs12>
-        <v-card color="cyan darken-2" class="white--text">
-          <v-card-title primary-title>
-            <div>
-              <div class="headline">
-                挂号费合计:&nbsp;&nbsp;{{
-                  out_reg.regPrice + out_reg.CheckupPrice
-                }}
-              </div>
-              <v-layout row align-center wrap>
-                <v-flex d-flex grow>其中</v-flex>
-                <v-flex d-flex
-                  >挂号费:&nbsp;&nbsp;{{ out_reg.regPrice }}</v-flex
-                >
-                <v-flex d-flex
-                  >诊察费:&nbsp;&nbsp;{{ out_reg.CheckupPrice }}</v-flex
-                >
-              </v-layout>
-            </div>
-          </v-card-title>
-        </v-card>
-      </v-flex>
-    </v-layout>
-
-    <v-card>
-      <v-container fluid grid-list-lg>
+        <v-layout row wrap>
+          <v-flex d-flex>
+            <v-select
+              v-model="out_reg.regType"
+              label="挂号类别"
+              required
+              :items="reg_types"
+              item-text="item-text"
+              item-value="item-value"
+              :rules="[v => !!v || '挂号类别不能为空']"
+              hide-details
+              prepend-icon="map"
+              single-line
+            ></v-select>
+          </v-flex>
+          <v-flex d-flex>
+            <v-select
+              v-model="out_reg.deptCode"
+              :items="dept_codes"
+              item-text="item-text"
+              item-value="item-value"
+              :rules="[v => !!v || '就诊科室不能为空']"
+              label="就诊科室"
+              hide-details
+              prepend-icon="group_work"
+              single-line
+              required
+              @input="dept_codeChanged"
+            ></v-select>
+          </v-flex>
+          <v-flex d-flex>
+            <v-select
+              v-model="out_reg.doctorCode"
+              :items="doctor_codes"
+              item-text="item-text"
+              item-value="item-value"
+              label="专家医师"
+              hide-details
+              prepend-icon="map"
+              single-line
+            ></v-select>
+          </v-flex>
+          <v-flex d-flex>
+            <v-switch v-model="out_reg.visitPriority" label="就诊优先"></v-switch>
+          </v-flex>
+        </v-layout>
+        <v-layout row wrap>
+          <v-flex d-flex>
+            <v-select
+              v-model="out_reg.addrProv"
+              :items="addr_provs"
+              item-text="item-text"
+              item-value="item-value"
+              :rules="[v => !!v || '单位或住址省份不能为空']"
+              label="单位或住址(省份)"
+              hide-details
+              prepend-icon="group_work"
+              single-line
+              required
+              @input="prov_Changed"
+            ></v-select>
+          </v-flex>
+          <v-flex d-flex>
+            <v-select
+              v-model="out_reg.addrCity"
+              :items="addr_citys"
+              item-text="item-text"
+              item-value="item-value"
+              :rules="[v => !!v || '单位或住址-市不能为空']"
+              label="单位或住址(市)"
+              hide-details
+              prepend-icon="group_work"
+              single-line
+              required
+              @input="city_Changed"
+            ></v-select>
+          </v-flex>
+          <v-flex d-flex>
+            <v-select
+              v-model="out_reg.addrCounty"
+              :items="addr_countys"
+              item-text="item-text"
+              item-value="item-value"
+              :rules="[v => !!v || '单位或住址-区县不能为空']"
+              label="单位或住址(区县)"
+              hide-details
+              prepend-icon="group_work"
+              single-line
+              required
+              @input="county_Changed"
+            ></v-select>
+          </v-flex>
+          <v-flex d-flex>
+            <v-select
+              v-model="out_reg.addrTownship"
+              :items="addr_townships"
+              item-text="item-text"
+              item-value="item-value"
+              :rules="[v => !!v || '单位或住址-街道社区不能为空']"
+              label="单位或住址(街道社区)"
+              hide-details
+              prepend-icon="group_work"
+              single-line
+              required
+            ></v-select>
+          </v-flex>
+          <v-flex d-flex>
+            <v-text-field v-model="out_reg.addrHouseNmb" label="单位或住址(详细地址)"></v-text-field>
+          </v-flex>
+        </v-layout>
+        <v-spacer>----</v-spacer>
         <v-layout row wrap>
           <v-flex xs12>
             <v-card color="cyan darken-2" class="white--text">
               <v-card-title primary-title>
                 <div>
-                  <div class="headline">医保患者信息</div>
-                  <v-layout row wrap>
-                    <v-flex d-flex>医保个人编号:{{ out_reg.micard }}</v-flex>
-                    <v-flex d-flex>医保卡余额:{{ out_reg.miPaccLeft }}</v-flex>
-                    <v-flex d-flex>医保类别:{{ out_reg.miType }}</v-flex>
-                    <v-flex d-flex>参保单位:{{ out_reg.miCompany }}</v-flex>
-                    <v-flex d-flex grow>读卡信息:{{ out_reg.miStr }}</v-flex>
+                  <div class="headline">
+                    挂号费合计:&nbsp;&nbsp;{{
+                    out_reg.regPrice + out_reg.CheckupPrice
+                    }}
+                  </div>
+                  <v-layout row align-center wrap>
+                    <v-flex d-flex grow>其中</v-flex>
+                    <v-flex d-flex>挂号费:&nbsp;&nbsp;{{ out_reg.regPrice }}</v-flex>
+                    <v-flex d-flex>诊察费:&nbsp;&nbsp;{{ out_reg.CheckupPrice }}</v-flex>
                   </v-layout>
                 </div>
               </v-card-title>
             </v-card>
           </v-flex>
         </v-layout>
-      </v-container>
-    </v-card>
 
-    <v-layout row wrap>
-      <v-flex d-flex>
-        <v-btn :disabled="!valid" color="success" @click="validate"
-          >健康卡</v-btn
-        >
-      </v-flex>
-      <v-flex d-flex>
-        <v-btn :disabled="!valid" color="success" @click="readcard_mi"
-          >医保读卡</v-btn
-        >
-      </v-flex>
-      <v-flex d-flex>
-        <v-btn :disabled="!valid" color="success" @click="outreg_cash"
-          >现金挂号</v-btn
-        >
-      </v-flex>
-      <v-flex d-flex>
-        <v-btn :disabled="!valid" color="success" @click="outreg_weixin"
-          >微信挂号</v-btn
-        >
-      </v-flex>
-      <v-flex d-flex>
-        <v-btn :disabled="!valid" color="success" @click="sch_weixin"
-          >查询微信订单</v-btn
-        >
-      </v-flex>
-      <v-flex d-flex>
-        <v-btn color="error" @click="reset">下一位</v-btn>
-      </v-flex>
-      <v-flex d-flex>
-        <v-btn color="warning" @click="resetValidation">返回主页</v-btn>
-      </v-flex>
-    </v-layout>
-  </v-form>
+        <v-card>
+          <v-container fluid grid-list-lg>
+            <v-layout row wrap>
+              <v-flex xs12>
+                <v-card color="cyan darken-2" class="white--text">
+                  <v-card-title primary-title>
+                    <div>
+                      <div class="headline">医保患者信息</div>
+                      <v-layout row wrap>
+                        <v-flex d-flex>医保个人编号:{{ out_reg.micard }}</v-flex>
+                        <v-flex d-flex>医保卡余额:{{ out_reg.miPaccLeft }}</v-flex>
+                        <v-flex d-flex>医保类别:{{ out_reg.miType }}</v-flex>
+                        <v-flex d-flex>参保单位:{{ out_reg.miCompany }}</v-flex>
+                        <v-flex d-flex grow>读卡信息:{{ out_reg.miStr }}</v-flex>
+                      </v-layout>
+                    </div>
+                  </v-card-title>
+                </v-card>
+              </v-flex>
+            </v-layout>
+          </v-container>
+        </v-card>
+
+        <v-layout row wrap>
+          <v-flex d-flex>
+            <v-btn :disabled="!valid" color="success" @click="validate">健康卡</v-btn>
+          </v-flex>
+          <v-flex d-flex>
+            <v-btn :disabled="!valid" color="success" @click="readcard_mi">医保读卡</v-btn>
+          </v-flex>
+          <v-flex d-flex>
+            <v-btn :disabled="!valid" color="success" @click="outreg_cash">现金挂号</v-btn>
+          </v-flex>
+          <v-flex d-flex>
+            <v-btn :disabled="!valid" color="success" @click="outreg_weixin">微信挂号</v-btn>
+          </v-flex>
+          <v-flex d-flex>
+            <v-btn :disabled="!valid" color="success" @click="sch_weixin">查询微信订单</v-btn>
+          </v-flex>
+          <v-flex d-flex>
+            <v-btn color="error" @click="reset">下一位</v-btn>
+          </v-flex>
+          <v-flex d-flex>
+            <v-btn color="warning" @click="resetValidation">返回主页</v-btn>
+          </v-flex>
+        </v-layout>
+      </v-form>
+    </v-card-text>
+
+    <v-card-actions>
+      <v-btn text color="orange">Share</v-btn>
+      <v-btn text color="orange">Explore</v-btn>
+    </v-card-actions>
+  </v-card>
 </template>
+
 
 <script>
 export default {
