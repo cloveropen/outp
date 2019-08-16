@@ -19,6 +19,7 @@
             ></v-text-field>
           </v-flex>
           <v-flex d-flex>
+            &emsp;&emsp;
             <v-select
               v-model="out_reg.patientType"
               label="患者类别"
@@ -33,6 +34,7 @@
             ></v-select>
           </v-flex>
           <v-flex d-flex>
+            &emsp;&emsp;
             <v-text-field
               v-model="out_reg.patientName"
               label="患者姓名"
@@ -42,14 +44,17 @@
             ></v-text-field>
           </v-flex>
           <v-flex d-flex>
+            &emsp;&emsp;
             <v-text-field v-model="out_reg.idcard" label="身份证号" disabled></v-text-field>
           </v-flex>
         </v-layout>
         <v-layout row wrap>
+          &emsp;&emsp;
           <v-flex d-flex>
             <v-text-field v-model="out_reg.pid" label="门诊号" disabled></v-text-field>
           </v-flex>
           <v-flex d-flex>
+            &emsp;&emsp;
             <v-select
               v-model="out_reg.gender"
               :items="genders"
@@ -64,19 +69,23 @@
             ></v-select>
           </v-flex>
           <v-flex>
-            <v-layout row wrap>
+            <v-layout row wrap>              
               <v-flex d-flex>
+                &emsp;&emsp;
                 <v-text-field v-model="out_reg.ageY" label="年龄(岁)"></v-text-field>
-              </v-flex>
+              </v-flex>              
               <v-flex d-flex>
+                &emsp;&emsp;
                 <v-text-field v-model="out_reg.ageM" label="年龄(月)"></v-text-field>
-              </v-flex>
+              </v-flex>              
               <v-flex d-flex>
+                &emsp;&emsp;
                 <v-text-field v-model="out_reg.ageD" label="年龄(天)"></v-text-field>
               </v-flex>
             </v-layout>
-          </v-flex>
+          </v-flex>          
           <v-flex d-flex>
+            &emsp;&emsp;
             <v-select
               v-model="out_reg.idcardType"
               :items="idcard_types"
@@ -89,9 +98,9 @@
             ></v-select>
           </v-flex>
         </v-layout>
-
-        <v-layout row wrap>
+        <v-layout row wrap>          
           <v-flex d-flex>
+            &emsp;&emsp;
             <v-select
               v-model="out_reg.regType"
               label="挂号类别"
@@ -104,8 +113,9 @@
               prepend-icon="map"
               single-line
             ></v-select>
-          </v-flex>
+          </v-flex>          
           <v-flex d-flex>
+            &emsp;&emsp;
             <v-select
               v-model="out_reg.deptCode"
               :items="dept_codes"
@@ -119,8 +129,9 @@
               required
               @input="dept_codeChanged"
             ></v-select>
-          </v-flex>
+          </v-flex>          
           <v-flex d-flex>
+            &emsp;&emsp;
             <v-select
               v-model="out_reg.doctorCode"
               :items="doctor_codes"
@@ -133,11 +144,13 @@
             ></v-select>
           </v-flex>
           <v-flex d-flex>
+            &emsp;&emsp;
             <v-switch v-model="out_reg.visitPriority" label="就诊优先"></v-switch>
           </v-flex>
         </v-layout>
-        <v-layout row wrap>
+        <v-layout row wrap>          
           <v-flex d-flex>
+            &emsp;&emsp;
             <v-select
               v-model="out_reg.addrProv"
               :items="addr_provs"
@@ -151,8 +164,9 @@
               required
               @input="prov_Changed"
             ></v-select>
-          </v-flex>
+          </v-flex>          
           <v-flex d-flex>
+            &emsp;&emsp;
             <v-select
               v-model="out_reg.addrCity"
               :items="addr_citys"
@@ -166,8 +180,9 @@
               required
               @input="city_Changed"
             ></v-select>
-          </v-flex>
+          </v-flex>          
           <v-flex d-flex>
+            &emsp;&emsp;
             <v-select
               v-model="out_reg.addrCounty"
               :items="addr_countys"
@@ -181,8 +196,9 @@
               required
               @input="county_Changed"
             ></v-select>
-          </v-flex>
+          </v-flex>          
           <v-flex d-flex>
+            &emsp;&emsp;
             <v-select
               v-model="out_reg.addrTownship"
               :items="addr_townships"
@@ -197,6 +213,7 @@
             ></v-select>
           </v-flex>
           <v-flex d-flex>
+            &emsp;&emsp;
             <v-text-field v-model="out_reg.addrHouseNmb" label="单位或住址(详细地址)"></v-text-field>
           </v-flex>
         </v-layout>
@@ -204,7 +221,8 @@
         <v-spacer>----</v-spacer>
         <v-layout row wrap>
           <v-flex xs12>
-            <v-card color="cyan darken-2" class="white--text">
+            <v-card elevation="25">
+              
               <v-card-title primary-title>
                 <div>
                   <div class="headline">
@@ -227,7 +245,7 @@
           <v-container fluid grid-list-lg>
             <v-layout row wrap>
               <v-flex xs12>
-                <v-card color="cyan darken-2" class="white--text">
+                <v-card elevation="20" >
                   <v-card-title primary-title>
                     <div>
                       <div class="headline">医保患者信息</div>
@@ -280,6 +298,9 @@
 </template>
 
 <script>
+import { getpatient_type,
+         get_regopcode } from "../scripts/outreg.js"
+
 export default {
   data: () => ({
     valid: true,
@@ -337,8 +358,9 @@ export default {
     }
   }),
   created() {
-    this.get_regopcode();
-    this.getpatient_type();
+    this.out_reg.regOpcode = get_regopcode();
+    this.patient_types = getpatient_type()
+    console.log("this.out_reg.regOpcode ="+this.out_reg.regOpcode )
     // this.getgender();
     // this.getid_type();
     // this.getreg_type();
@@ -362,6 +384,12 @@ export default {
     readcard_mi() {
       this.$refs.form.resetValidation();
       window.alert("医保读卡");
+    },
+    test() {
+      console.log("1")
+      this.patient_types = getpatient_type()
+      console.log("2")
+      console.log( this.patient_types.length)
     },
     //------------------------确认现金挂号------------------------------------------------------------
     outreg_cash() {
@@ -413,14 +441,14 @@ export default {
       console.log(this.$refs.form.data);
     },
     //--------------------------查询操作员编号--------------------------------------------------------
-    get_regopcode() {
+    /*get_regopcode() {
       let user = JSON.parse(localStorage.getItem("user"));
       if (!user) {
         return this.$parent.$router.push({ path: "/login" });
       }
       this.out_reg.regOpcode = user.opid;
       console.log("regopid=" + user.opid);
-    },
+    },*/
     //--------------------------根据条码号获取患者信息------------------------------------------------
     getpatient(e) {
       let texpid = e;
@@ -461,7 +489,7 @@ export default {
         });
     },
     //-------------------------获取患者类别-----------------------------------------------------------
-    getpatient_type() {
+    /*getpatient_type() {
       let _this = this;
       window.alert(
         "获取患者类别=" +
@@ -511,7 +539,7 @@ export default {
         .catch(function(err) {
           window.alert("获取患者类别查询error=" + err);
         });
-    },
+    },*/
     //-------------------------获取挂号类别-----------------------------------------------------------
     getreg_type() {
       let _this = this;
@@ -923,6 +951,7 @@ export default {
         });
     }
     // ---------------------end methods----------------
+   
   }
 };
 </script>
