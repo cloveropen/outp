@@ -7,6 +7,7 @@
     <v-card-text>
       <v-form ref="form" v-model="valid" lazy-validation>
         <v-layout row wrap>
+          &emsp;&emsp;
           <v-flex d-flex>
             <v-text-field
               v-model="out_reg.exPid"
@@ -199,6 +200,7 @@
             <v-text-field v-model="out_reg.addrHouseNmb" label="单位或住址(详细地址)"></v-text-field>
           </v-flex>
         </v-layout>
+
         <v-spacer>----</v-spacer>
         <v-layout row wrap>
           <v-flex xs12>
@@ -277,7 +279,6 @@
   </v-card>
 </template>
 
-
 <script>
 export default {
   data: () => ({
@@ -338,11 +339,11 @@ export default {
   created() {
     this.get_regopcode();
     this.getpatient_type();
-    this.getgender();
-    this.getid_type();
-    this.getreg_type();
-    this.getdept_codes();
-    this.getprovs();
+    // this.getgender();
+    // this.getid_type();
+    // this.getreg_type();
+    // this.getdept_codes();
+    // this.getprovs();
     //console.log("this.patient_type[0]=" + this.patient_types[0]);
   },
   methods: {
@@ -364,11 +365,11 @@ export default {
     },
     //------------------------确认现金挂号------------------------------------------------------------
     outreg_cash() {
-      let _this = this;
+      // let _this = this;
       console.log(
         "JSON.stringify(this.out_reg)=" + JSON.stringify(this.out_reg)
       );
-      fetch("http://192.168.100.253:9002/api/v1/saveoutreg", {
+      fetch(process.env.VUE_APP_REG_URL + "/saveoutreg", {
         method: "post",
         // credentials: "include", // send cookies
         // mode: 'cors',
@@ -382,7 +383,7 @@ export default {
           if (response.ok) {
             //window.alert('ok');
           } else {
-            window.alert("查询失败error");
+            window.alert("确认现金挂号查询失败error");
           }
           return response.json();
         })
@@ -396,11 +397,11 @@ export default {
             //打印挂号单
           } else {
             //登录失败
-            window.alert("查询失败1");
+            window.alert("确认现金挂号失败1");
           }
         })
         .catch(function(err) {
-          window.alert("查询error=" + err);
+          window.alert("确认现金挂号error=" + err);
         });
     },
     //------------------------确认微信挂号------------------------------------------------------------
@@ -427,7 +428,7 @@ export default {
         return;
       }
       let _this = this;
-      fetch("http://192.168.100.253:9002/api/v1/searchoutregexpid/" + texpid, {
+      fetch(process.env.VUE_APP_REG_URL + "/searchoutregexpid/" + texpid, {
         method: "get",
         headers: {
           Accept: "text/html",
@@ -438,7 +439,7 @@ export default {
           if (response.ok) {
             //window.alert('ok');
           } else {
-            window.alert("查询失败error");
+            window.alert("根据条码号获取患者信息查询失败error");
           }
           return response.json();
         })
@@ -452,31 +453,38 @@ export default {
             return _this.out_reg;
           } else {
             //登录失败
-            window.alert("查询失败1");
+            window.alert("根据条码号获取患者信息查询失败1");
           }
         })
         .catch(function(err) {
-          window.alert("查询error=" + err);
+          window.alert("根据条码号获取患者信息查询error=" + err);
         });
     },
     //-------------------------获取患者类别-----------------------------------------------------------
     getpatient_type() {
       let _this = this;
-      fetch(
-        "http://192.168.100.253:9002/api/v1/searchdicthealthterm/per_cate",
-        {
-          method: "get",
-          headers: {
-            Accept: "text/html",
-            "Content-Type": "application/json"
-          }
+      window.alert(
+        "获取患者类别=" +
+          process.env.VUE_APP_REG_URL +
+          "/searchdicthealthterm/per_cate"
+      );
+      //let myHeaders = new Headers({
+      //  Accept: "text/html",
+      // 'Access-Control-Allow-Origin': '*',
+      //  'Content-Type': 'application/json'
+      //});
+      fetch(process.env.VUE_APP_REG_URL + "/searchdicthealthterm/per_cate", {
+        method: "get",
+        headers: {
+          Accept: "text/html",
+          "Content-Type": "application/json"
         }
-      )
+      })
         .then(function(response) {
           if (response.ok) {
-            //window.alert('ok');
+            window.alert('---ok='+ "|"+JSON.stringify(response.headers)+ "|"+JSON.stringify(response.body));
           } else {
-            window.alert("查询失败error");
+            window.alert("获取患者类别查询失败error");
           }
           return response.json();
         })
@@ -489,26 +497,27 @@ export default {
               // sel.patient_types[i] = objdata[i].termName;
               // console.log("data0="+i+":" + sel.patient_types[i]);
               _this.patient_types.splice(i, 0, {
-                "item-value": objdata[i].termId,
-                "item-text": objdata[i].termName
+                "item-value": objdata[i].TermId,
+                "item-text": objdata[i].TermName
               });
             }
             // console.log("sel.patient_types[i]=" + _this.patient_types);
             return _this.patient_types;
           } else {
             //登录失败
-            window.alert("查询失败1");
+            window.alert("获取患者类别查询失败1");
           }
         })
         .catch(function(err) {
-          window.alert("查询error=" + err);
+          window.alert("获取患者类别查询error=" + err);
         });
     },
     //-------------------------获取挂号类别-----------------------------------------------------------
     getreg_type() {
       let _this = this;
-      fetch("http://192.168.100.253:9002/api/v1/searchdictregitem", {
+      fetch(process.env.VUE_APP_REG_URL + "/searchdictregitem", {
         method: "get",
+        mode: "cors",
         headers: {
           Accept: "text/html",
           "Content-Type": "application/json"
@@ -518,7 +527,7 @@ export default {
           if (response.ok) {
             //window.alert('ok');
           } else {
-            window.alert("查询失败error");
+            window.alert("查询挂号类别失败error");
           }
           return response.json();
         })
@@ -535,32 +544,29 @@ export default {
             return _this.reg_types;
           } else {
             //登录失败
-            window.alert("查询失败1");
+            window.alert("查询挂号类别失败1");
           }
         })
         .catch(function(err) {
-          window.alert("查询error=" + err);
+          window.alert("查询挂号类别error=" + err);
         });
     },
     //---------------------------------------获取性别列表----------------------------------------------
     getgender() {
       //查询性别
       let _this = this;
-      fetch(
-        "http://192.168.100.253:9002/api/v1/searchdicthealthterm/gender_type",
-        {
-          method: "get",
-          headers: {
-            Accept: "text/html",
-            "Content-Type": "application/json"
-          }
+      fetch(process.env.VUE_APP_REG_URL + "/searchdicthealthterm/gender_type", {
+        method: "get",
+        headers: {
+          Accept: "text/html",
+          "Content-Type": "application/json"
         }
-      )
+      })
         .then(function(response) {
           if (response.ok) {
             // window.alert('ok');
           } else {
-            window.alert("查询失败error" + response.err);
+            window.alert("查询性别失败error" + response.err);
           }
           return response.json();
         })
@@ -577,18 +583,18 @@ export default {
             return _this.genders;
           } else {
             //登录失败
-            window.alert("查询失败1");
+            window.alert("查询性别失败1");
           }
         })
         .catch(function(err) {
-          window.alert("查询error=" + err);
+          window.alert("查询性别error=" + err);
         });
     },
     getid_type() {
       //查询身份证件类型
       // this.get_dict_health_term("searchdicthealthterm","id_type","idcard_types");
       let _this = this;
-      fetch("http://192.168.100.253:9002/api/v1/searchdicthealthterm/id_type", {
+      fetch(process.env.VUE_APP_REG_URL + "/searchdicthealthterm/id_type", {
         method: "get",
         headers: {
           Accept: "text/html",
@@ -599,7 +605,7 @@ export default {
           if (response.ok) {
             // window.alert('ok');
           } else {
-            window.alert("查询失败error" + response.err);
+            window.alert("查询身份证件类型失败error" + response.err);
           }
           return response.json();
         })
@@ -616,31 +622,28 @@ export default {
             return _this.idcard_types;
           } else {
             //登录失败
-            window.alert("查询失败1");
+            window.alert("查询身份证件类型失败1");
           }
         })
         .catch(function(err) {
-          window.alert("查询error=" + err);
+          window.alert("查询身份证件类型error=" + err);
         });
     },
     getdept_codes() {
       //查询科室列表
       let _this = this;
-      fetch(
-        "http://192.168.100.253:9002/api/v1/searchdictdepartment/clinical",
-        {
-          method: "get",
-          headers: {
-            Accept: "text/html",
-            "Content-Type": "application/json"
-          }
+      fetch(process.env.VUE_APP_REG_URL + "/searchdictdepartment/clinical", {
+        method: "get",
+        headers: {
+          Accept: "text/html",
+          "Content-Type": "application/json"
         }
-      )
+      })
         .then(function(response) {
           if (response.ok) {
             // window.alert('ok');
           } else {
-            window.alert("查询失败error" + response.err);
+            window.alert("查询科室列表失败error" + response.err);
           }
           return response.json();
         })
@@ -657,11 +660,11 @@ export default {
             return _this.idcard_types;
           } else {
             //登录失败
-            window.alert("查询失败1");
+            window.alert("查询科室列表失败1");
           }
         })
         .catch(function(err) {
-          window.alert("查询error=" + err);
+          window.alert("查询科室列表error=" + err);
         });
     },
     dept_codeChanged() {
@@ -674,7 +677,8 @@ export default {
       //查询本科室可以挂号的专家列表
       let _this = this;
       fetch(
-        "http://192.168.100.253:9002/api/v1/searchdictpersonreg/" +
+        process.env.VUE_APP_REG_URL +
+          "/searchdictpersonreg/" +
           tdept_code +
           "|" +
           tpost_tech,
@@ -690,7 +694,9 @@ export default {
           if (response.ok) {
             // window.alert('ok');
           } else {
-            window.alert("查询失败error" + response.err);
+            window.alert(
+              "查询本科室可以挂号的专家列表失败error" + response.err
+            );
           }
           return response.json();
         })
@@ -707,17 +713,17 @@ export default {
             return _this.doctor_codes;
           } else {
             //登录失败
-            window.alert("查询失败1");
+            window.alert("查询本科室可以挂号的专家列表失败1");
           }
         })
         .catch(function(err) {
-          window.alert("查询error=" + err);
+          window.alert("查询本科室可以挂号的专家列表error=" + err);
         });
     },
     //------------------获取省份列表---------------------------
     getprovs() {
       let _this = this;
-      fetch("http://192.168.100.253:9002/api/v1/searchdictprov", {
+      fetch(process.env.VUE_APP_REG_URL + "/searchdictprov", {
         method: "get",
         headers: {
           Accept: "text/html",
@@ -728,7 +734,7 @@ export default {
           if (response.ok) {
             // window.alert('ok');
           } else {
-            window.alert("查询失败error" + response.err);
+            window.alert("查询省份列表失败error" + response.err);
           }
           return response.json();
         })
@@ -744,11 +750,11 @@ export default {
             }
           } else {
             //登录失败
-            window.alert("查询失败1");
+            window.alert("查询省份列表失败1");
           }
         })
         .catch(function(err) {
-          window.alert("查询error=" + err);
+          window.alert("查询省份列表error=" + err);
         });
     },
     //------------------获取指定省份的市列表---------------------------
@@ -758,7 +764,7 @@ export default {
     },
     getcitys(tprovid) {
       let _this = this;
-      fetch("http://192.168.100.253:9002/api/v1/searchdictcity/" + tprovid, {
+      fetch(process.env.VUE_APP_REG_URL + "/searchdictcity/" + tprovid, {
         method: "get",
         headers: {
           Accept: "text/html",
@@ -769,7 +775,7 @@ export default {
           if (response.ok) {
             // window.alert('ok');
           } else {
-            window.alert("查询失败error" + response.err);
+            window.alert("查询城市列表失败error" + response.err);
           }
           return response.json();
         })
@@ -785,11 +791,11 @@ export default {
             }
           } else {
             //登录失败
-            window.alert("查询失败1");
+            window.alert("地址-查询城市列表失败1");
           }
         })
         .catch(function(err) {
-          window.alert("查询error=" + err);
+          window.alert("地址-查询城市列表失败=" + err);
         });
     },
     //------------------获取指定市的区县列表---------------------------
@@ -799,7 +805,7 @@ export default {
     },
     getcountys(tcityid) {
       let _this = this;
-      fetch("http://192.168.100.253:9002/api/v1/searchdictcounty/" + tcityid, {
+      fetch(process.env.VUE_APP_REG_URL + "/searchdictcounty/" + tcityid, {
         method: "get",
         headers: {
           Accept: "text/html",
@@ -810,7 +816,7 @@ export default {
           if (response.ok) {
             // window.alert('ok');
           } else {
-            window.alert("查询失败error" + response.err);
+            window.alert("地址-指定市的区县失败error" + response.err);
           }
           return response.json();
         })
@@ -826,11 +832,11 @@ export default {
             }
           } else {
             //登录失败
-            window.alert("查询失败1");
+            window.alert("地址-指定市的区县失败1");
           }
         })
         .catch(function(err) {
-          window.alert("查询error=" + err);
+          window.alert("地址-指定市的区县失败error=" + err);
         });
     },
     //------------------获取指定区县的街道列表---------------------------
@@ -840,21 +846,18 @@ export default {
     },
     getstreets(tcountyid) {
       let _this = this;
-      fetch(
-        "http://192.168.100.253:9002/api/v1/searchdictstreet/" + tcountyid,
-        {
-          method: "get",
-          headers: {
-            Accept: "text/html",
-            "Content-Type": "application/json"
-          }
+      fetch(process.env.VUE_APP_REG_URL + "/searchdictstreet/" + tcountyid, {
+        method: "get",
+        headers: {
+          Accept: "text/html",
+          "Content-Type": "application/json"
         }
-      )
+      })
         .then(function(response) {
           if (response.ok) {
             // window.alert('ok');
           } else {
-            window.alert("查询失败error" + response.err);
+            window.alert("查询指定区县的街道失败error" + response.err);
           }
           return response.json();
         })
@@ -870,32 +873,29 @@ export default {
             }
           } else {
             //登录失败
-            window.alert("查询失败1");
+            window.alert("查询指定区县的街道失败1");
           }
         })
         .catch(function(err) {
-          window.alert("查询error=" + err);
+          window.alert("查询指定区县的街道error=" + err);
         });
     },
     //从词典获取信息----------------暂时不用，没有解决this之后动态变量的问题------------------
     get_dict_health_term(tschmethod, tclassid, toutarrays) {
       let _this = this;
       console.log("in=" + tschmethod + " | " + tclassid + " | " + toutarrays);
-      fetch(
-        "http://192.168.100.253:9002/api/v1/" + tschmethod + "/" + tclassid,
-        {
-          method: "get",
-          headers: {
-            Accept: "text/html",
-            "Content-Type": "application/json"
-          }
+      fetch(process.env.VUE_APP_REG_URL + "/" + tschmethod + "/" + tclassid, {
+        method: "get",
+        headers: {
+          Accept: "text/html",
+          "Content-Type": "application/json"
         }
-      )
+      })
         .then(function(response) {
           if (response.ok) {
             // window.alert('ok');
           } else {
-            window.alert("查询失败error" + response.err);
+            window.alert("查询从词典获取信息失败error" + response.err);
           }
           return response.json();
         })
@@ -915,11 +915,11 @@ export default {
             return _this.toutarrays;
           } else {
             //登录失败
-            window.alert("查询失败1");
+            window.alert("查询从词典获取信息失败1");
           }
         })
         .catch(function(err) {
-          window.alert("查询error=" + err);
+          window.alert("查询从词典获取信息error=" + err);
         });
     }
     // ---------------------end methods----------------

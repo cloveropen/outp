@@ -15,7 +15,7 @@
     <v-card-text>
       <span>Number 10</span><br>
       <span class="text--primary">
-        <span>Whitehaven Beach</span><br>
+        <span>Whitehaven Beach</span><br/>
         <span>Whitsunday Island, Whitsunday Islands</span>
       </span>
     </v-card-text>
