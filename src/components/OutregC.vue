@@ -299,7 +299,8 @@
 
 <script>
 import { getpatient_type,
-         get_regopcode } from "../scripts/outreg.js"
+         get_regopcode,
+         getgender } from "../scripts/outreg.js"
 
 export default {
   data: () => ({
@@ -359,8 +360,9 @@ export default {
   }),
   created() {
     this.out_reg.regOpcode = get_regopcode();
-    this.patient_types = getpatient_type()
+    this.patient_types = getpatient_type();
     console.log("this.out_reg.regOpcode ="+this.out_reg.regOpcode )
+    this.genders = getgender();
     // this.getgender();
     // this.getid_type();
     // this.getreg_type();
@@ -579,7 +581,8 @@ export default {
           window.alert("查询挂号类别error=" + err);
         });
     },
-    //---------------------------------------获取性别列表----------------------------------------------
+    /*//---------------------------------------获取性别列表----------------------------------------------
+    
     getgender() {
       //查询性别
       let _this = this;
@@ -617,7 +620,7 @@ export default {
         .catch(function(err) {
           window.alert("查询性别error=" + err);
         });
-    },
+    },*/
     getid_type() {
       //查询身份证件类型
       // this.get_dict_health_term("searchdicthealthterm","id_type","idcard_types");
