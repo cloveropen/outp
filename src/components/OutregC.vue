@@ -300,7 +300,9 @@
 <script>
 import { getpatient_type,
          get_regopcode,
-         getgender } from "../scripts/outreg.js"
+         getgender,
+         getid_type,
+         getreg_type } from "../scripts/outreg.js"
 
 export default {
   data: () => ({
@@ -361,11 +363,10 @@ export default {
   created() {
     this.out_reg.regOpcode = get_regopcode();
     this.patient_types = getpatient_type();
-    console.log("this.out_reg.regOpcode ="+this.out_reg.regOpcode )
     this.genders = getgender();
-    // this.getgender();
-    // this.getid_type();
-    // this.getreg_type();
+    this.idcard_types = getid_type();
+    this.reg_types = getreg_type();
+    
     // this.getdept_codes();
     // this.getprovs();
     //console.log("this.patient_type[0]=" + this.patient_types[0]);
@@ -490,59 +491,8 @@ export default {
           window.alert("根据条码号获取患者信息查询error=" + err);
         });
     },
-    //-------------------------获取患者类别-----------------------------------------------------------
-    /*getpatient_type() {
-      let _this = this;
-      window.alert(
-        "获取患者类别=" +
-          process.env.VUE_APP_REG_URL +
-          "/searchdicthealthterm/per_cate"
-      );
-      //let myHeaders = new Headers({
-      //  Accept: "text/html",
-      // 'Access-Control-Allow-Origin': '*',
-      //  'Content-Type': 'application/json'
-      //});
-      fetch(process.env.VUE_APP_REG_URL + "/searchdicthealthterm/per_cate", {
-        method: "get",
-        headers: {
-          Accept: "text/html",
-          "Content-Type": "application/json"
-        }
-      })
-        .then(function(response) {
-          if (response.ok) {
-            window.alert('---ok='+ "|"+JSON.stringify(response.headers)+ "|"+JSON.stringify(response.body));
-          } else {
-            window.alert("获取患者类别查询失败error");
-          }
-          return response.json();
-        })
-        .then(function(data) {
-          let tresultCode = data.resultCode;
-          if (tresultCode === "0") {
-            let objdata = JSON.parse(data.outdata);
-            //console.log("data1=" + data.outdata+"|"+data.outdata.length);
-            for (let i = 0; i < objdata.length; i++) {
-              // sel.patient_types[i] = objdata[i].termName;
-              // console.log("data0="+i+":" + sel.patient_types[i]);
-              _this.patient_types.splice(i, 0, {
-                "item-value": objdata[i].TermId,
-                "item-text": objdata[i].TermName
-              });
-            }
-            // console.log("sel.patient_types[i]=" + _this.patient_types);
-            return _this.patient_types;
-          } else {
-            //登录失败
-            window.alert("获取患者类别查询失败1");
-          }
-        })
-        .catch(function(err) {
-          window.alert("获取患者类别查询error=" + err);
-        });
-    },*/
-    //-------------------------获取挂号类别-----------------------------------------------------------
+ 
+    /*//-------------------------获取挂号类别-----------------------------------------------------------
     getreg_type() {
       let _this = this;
       fetch(process.env.VUE_APP_REG_URL + "/searchdictregitem", {
@@ -580,86 +530,7 @@ export default {
         .catch(function(err) {
           window.alert("查询挂号类别error=" + err);
         });
-    },
-    /*//---------------------------------------获取性别列表----------------------------------------------
-    
-    getgender() {
-      //查询性别
-      let _this = this;
-      fetch(process.env.VUE_APP_REG_URL + "/searchdicthealthterm/gender_type", {
-        method: "get",
-        headers: {
-          Accept: "text/html",
-          "Content-Type": "application/json"
-        }
-      })
-        .then(function(response) {
-          if (response.ok) {
-            // window.alert('ok');
-          } else {
-            window.alert("查询性别失败error" + response.err);
-          }
-          return response.json();
-        })
-        .then(function(data) {
-          let tresultCode = data.resultCode;
-          if (tresultCode === "0") {
-            let objdata = JSON.parse(data.outdata);
-            for (let i = 0; i < objdata.length; i++) {
-              _this.genders.splice(i, 0, {
-                "item-value": objdata[i].termId,
-                "item-text": objdata[i].termName
-              });
-            }
-            return _this.genders;
-          } else {
-            //登录失败
-            window.alert("查询性别失败1");
-          }
-        })
-        .catch(function(err) {
-          window.alert("查询性别error=" + err);
-        });
     },*/
-    getid_type() {
-      //查询身份证件类型
-      // this.get_dict_health_term("searchdicthealthterm","id_type","idcard_types");
-      let _this = this;
-      fetch(process.env.VUE_APP_REG_URL + "/searchdicthealthterm/id_type", {
-        method: "get",
-        headers: {
-          Accept: "text/html",
-          "Content-Type": "application/json"
-        }
-      })
-        .then(function(response) {
-          if (response.ok) {
-            // window.alert('ok');
-          } else {
-            window.alert("查询身份证件类型失败error" + response.err);
-          }
-          return response.json();
-        })
-        .then(function(data) {
-          let tresultCode = data.resultCode;
-          if (tresultCode === "0") {
-            let objdata = JSON.parse(data.outdata);
-            for (let i = 0; i < objdata.length; i++) {
-              _this.idcard_types.splice(i, 0, {
-                "item-value": objdata[i].termId,
-                "item-text": objdata[i].termName
-              });
-            }
-            return _this.idcard_types;
-          } else {
-            //登录失败
-            window.alert("查询身份证件类型失败1");
-          }
-        })
-        .catch(function(err) {
-          window.alert("查询身份证件类型error=" + err);
-        });
-    },
     getdept_codes() {
       //查询科室列表
       let _this = this;
