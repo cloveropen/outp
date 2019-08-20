@@ -1,6 +1,6 @@
 <template>
   <v-card class="mx-auto" max-width="99%" min-width="100%">
-    <v-img class="white--text" height="100px" :src="require('../assets/outreg.jpg')">
+    <v-img class="white--text" height="60px" :src="require('../assets/outreg.jpg')">
       <v-card-title class="align-end fill-height">门诊挂号</v-card-title>
     </v-img>
 
@@ -45,7 +45,7 @@
           </v-flex>
           <v-flex d-flex>
             &emsp;&emsp;
-            <v-text-field v-model="out_reg.idcard" label="身份证号" disabled></v-text-field>
+            <v-text-field v-model="out_reg.idcard" label="身份证号" disabled></v-text-field>&emsp;&emsp;
           </v-flex>
         </v-layout>
         <v-layout row wrap>
@@ -69,36 +69,23 @@
             ></v-select>
           </v-flex>
           <v-flex>
-            <v-layout row wrap>              
+            <v-layout row wrap>
               <v-flex d-flex>
                 &emsp;&emsp;
                 <v-text-field v-model="out_reg.ageY" label="年龄(岁)"></v-text-field>
-              </v-flex>              
+              </v-flex>
               <v-flex d-flex>
                 &emsp;&emsp;
                 <v-text-field v-model="out_reg.ageM" label="年龄(月)"></v-text-field>
-              </v-flex>              
+              </v-flex>
               <v-flex d-flex>
                 &emsp;&emsp;
-                <v-text-field v-model="out_reg.ageD" label="年龄(天)"></v-text-field>
+                <v-text-field v-model="out_reg.ageD" label="年龄(天)"></v-text-field>&emsp;&emsp;
               </v-flex>
             </v-layout>
-          </v-flex>          
-          <v-flex d-flex>
-            &emsp;&emsp;
-            <v-select
-              v-model="out_reg.idcardType"
-              :items="idcard_types"
-              item-text="item-text"
-              item-value="item-value"
-              label="证件类型"
-              hide-details
-              prepend-icon="map"
-              single-line
-            ></v-select>
           </v-flex>
         </v-layout>
-        <v-layout row wrap>          
+        <v-layout row wrap>
           <v-flex d-flex>
             &emsp;&emsp;
             <v-select
@@ -113,7 +100,7 @@
               prepend-icon="map"
               single-line
             ></v-select>
-          </v-flex>          
+          </v-flex>
           <v-flex d-flex>
             &emsp;&emsp;
             <v-select
@@ -127,9 +114,9 @@
               prepend-icon="group_work"
               single-line
               required
-              @input="dept_codeChanged"
+              @input="dept_codeChanged($event)"
             ></v-select>
-          </v-flex>          
+          </v-flex>
           <v-flex d-flex>
             &emsp;&emsp;
             <v-select
@@ -148,7 +135,7 @@
             <v-switch v-model="out_reg.visitPriority" label="就诊优先"></v-switch>
           </v-flex>
         </v-layout>
-        <v-layout row wrap>          
+        <v-layout row wrap>
           <v-flex d-flex>
             &emsp;&emsp;
             <v-select
@@ -164,7 +151,7 @@
               required
               @input="prov_Changed"
             ></v-select>
-          </v-flex>          
+          </v-flex>
           <v-flex d-flex>
             &emsp;&emsp;
             <v-select
@@ -180,7 +167,7 @@
               required
               @input="city_Changed"
             ></v-select>
-          </v-flex>          
+          </v-flex>
           <v-flex d-flex>
             &emsp;&emsp;
             <v-select
@@ -196,7 +183,7 @@
               required
               @input="county_Changed"
             ></v-select>
-          </v-flex>          
+          </v-flex>
           <v-flex d-flex>
             &emsp;&emsp;
             <v-select
@@ -210,11 +197,24 @@
               prepend-icon="group_work"
               single-line
               required
-            ></v-select>
+            ></v-select>&emsp;&emsp;
           </v-flex>
           <v-flex d-flex>
             &emsp;&emsp;
             <v-text-field v-model="out_reg.addrHouseNmb" label="单位或住址(详细地址)"></v-text-field>
+          </v-flex>
+          <v-flex d-flex>
+            &emsp;&emsp;
+            <v-select
+              v-model="out_reg.idcardType"
+              :items="idcard_types"
+              item-text="item-text"
+              item-value="item-value"
+              label="证件类型"
+              hide-details
+              prepend-icon="map"
+              single-line
+            ></v-select>&emsp;&emsp;
           </v-flex>
         </v-layout>
 
@@ -222,7 +222,6 @@
         <v-layout row wrap>
           <v-flex xs12>
             <v-card elevation="25">
-              
               <v-card-title primary-title>
                 <div>
                   <div class="headline">
@@ -245,7 +244,7 @@
           <v-container fluid grid-list-lg>
             <v-layout row wrap>
               <v-flex xs12>
-                <v-card elevation="20" >
+                <v-card elevation="20">
                   <v-card-title primary-title>
                     <div>
                       <div class="headline">医保患者信息</div>
@@ -298,11 +297,19 @@
 </template>
 
 <script>
-import { getpatient_type,
-         get_regopcode,
-         getgender,
-         getid_type,
-         getreg_type } from "../scripts/outreg.js"
+import {
+  getpatient_type,
+  get_regopcode,
+  getgender,
+  getid_type,
+  getreg_type,
+  getdept_codes,
+  getdoctor_codes,
+  getprovs,
+  getcitys,
+  getcountys,
+  getstreets
+} from "../scripts/outreg.js";
 
 export default {
   data: () => ({
@@ -343,9 +350,9 @@ export default {
       doctorCode: "", //门诊接诊医生
       idcard: "", //患者身份证号码
       idcardType: "jmsfz", //患者身份证件类别
-      addrProv: "210000000000", //地址
-      addrCity: "210100000000",
-      addrCounty: "210105000000",
+      addrProv: process.env.VUE_APP_HSP_PROV, //地址
+      addrCity: process.env.VUE_APP_HSP_CITY,
+      addrCounty: process.env.VUE_APP_HSP_COUNTY,
       addrTownship: "",
       addrStreet: "",
       addrHouseNmb: "",
@@ -366,10 +373,9 @@ export default {
     this.genders = getgender();
     this.idcard_types = getid_type();
     this.reg_types = getreg_type();
-    
-    // this.getdept_codes();
-    // this.getprovs();
-    //console.log("this.patient_type[0]=" + this.patient_types[0]);
+    this.dept_codes = getdept_codes();
+    this.addr_provs = getprovs();
+    this.addr_citys = getcitys(process.env.VUE_APP_HSP_PROV);
   },
   methods: {
     validate() {
@@ -389,10 +395,10 @@ export default {
       window.alert("医保读卡");
     },
     test() {
-      console.log("1")
-      this.patient_types = getpatient_type()
-      console.log("2")
-      console.log( this.patient_types.length)
+      console.log("1");
+      this.patient_types = getpatient_type();
+      console.log("2");
+      console.log(this.patient_types.length);
     },
     //------------------------确认现金挂号------------------------------------------------------------
     outreg_cash() {
@@ -443,16 +449,6 @@ export default {
     sch_weixin() {
       console.log(this.$refs.form.data);
     },
-    //--------------------------查询操作员编号--------------------------------------------------------
-    /*get_regopcode() {
-      let user = JSON.parse(localStorage.getItem("user"));
-      if (!user) {
-        return this.$parent.$router.push({ path: "/login" });
-      }
-      this.out_reg.regOpcode = user.opid;
-      console.log("regopid=" + user.opid);
-    },*/
-    //--------------------------根据条码号获取患者信息------------------------------------------------
     getpatient(e) {
       let texpid = e;
       if (texpid.length < 13) {
@@ -491,341 +487,33 @@ export default {
           window.alert("根据条码号获取患者信息查询error=" + err);
         });
     },
- 
-    /*//-------------------------获取挂号类别-----------------------------------------------------------
-    getreg_type() {
-      let _this = this;
-      fetch(process.env.VUE_APP_REG_URL + "/searchdictregitem", {
-        method: "get",
-        mode: "cors",
-        headers: {
-          Accept: "text/html",
-          "Content-Type": "application/json"
-        }
-      })
-        .then(function(response) {
-          if (response.ok) {
-            //window.alert('ok');
-          } else {
-            window.alert("查询挂号类别失败error");
-          }
-          return response.json();
-        })
-        .then(function(data) {
-          let tresultCode = data.resultCode;
-          if (tresultCode === "0") {
-            let objdata = JSON.parse(data.outdata);
-            for (let i = 0; i < objdata.length; i++) {
-              _this.reg_types.splice(i, 0, {
-                "item-value": objdata[i].itemCode,
-                "item-text": objdata[i].itemName
-              });
-            }
-            return _this.reg_types;
-          } else {
-            //登录失败
-            window.alert("查询挂号类别失败1");
-          }
-        })
-        .catch(function(err) {
-          window.alert("查询挂号类别error=" + err);
-        });
-    },*/
-    getdept_codes() {
-      //查询科室列表
-      let _this = this;
-      fetch(process.env.VUE_APP_REG_URL + "/searchdictdepartment/clinical", {
-        method: "get",
-        headers: {
-          Accept: "text/html",
-          "Content-Type": "application/json"
-        }
-      })
-        .then(function(response) {
-          if (response.ok) {
-            // window.alert('ok');
-          } else {
-            window.alert("查询科室列表失败error" + response.err);
-          }
-          return response.json();
-        })
-        .then(function(data) {
-          let tresultCode = data.resultCode;
-          if (tresultCode === "0") {
-            let objdata = JSON.parse(data.outdata);
-            for (let i = 0; i < objdata.length; i++) {
-              _this.dept_codes.splice(i, 0, {
-                "item-value": objdata[i].deptCode,
-                "item-text": objdata[i].deptName
-              });
-            }
-            return _this.idcard_types;
-          } else {
-            //登录失败
-            window.alert("查询科室列表失败1");
-          }
-        })
-        .catch(function(err) {
-          window.alert("查询科室列表error=" + err);
-        });
-    },
-    dept_codeChanged() {
+
+    dept_codeChanged(e) {
       let tdept_code = this.out_reg.deptCode;
+      console.log("e=" + e);
       let tpost_tech = "1";
-      this.doctor_codes = [];
-      this.getdoctor_codes(tdept_code, tpost_tech);
+      this.doctor_codes = getdoctor_codes(tdept_code, tpost_tech);
     },
-    getdoctor_codes(tdept_code, tpost_tech) {
-      //查询本科室可以挂号的专家列表
-      let _this = this;
-      fetch(
-        process.env.VUE_APP_REG_URL +
-          "/searchdictpersonreg/" +
-          tdept_code +
-          "|" +
-          tpost_tech,
-        {
-          method: "get",
-          headers: {
-            Accept: "text/html",
-            "Content-Type": "application/json"
-          }
-        }
-      )
-        .then(function(response) {
-          if (response.ok) {
-            // window.alert('ok');
-          } else {
-            window.alert(
-              "查询本科室可以挂号的专家列表失败error" + response.err
-            );
-          }
-          return response.json();
-        })
-        .then(function(data) {
-          let tresultCode = data.resultCode;
-          if (tresultCode === "0") {
-            let objdata = JSON.parse(data.outdata);
-            for (let i = 0; i < objdata.length; i++) {
-              _this.doctor_codes.splice(i, 0, {
-                "item-value": objdata[i].personId,
-                "item-text": objdata[i].personName
-              });
-            }
-            return _this.doctor_codes;
-          } else {
-            //登录失败
-            window.alert("查询本科室可以挂号的专家列表失败1");
-          }
-        })
-        .catch(function(err) {
-          window.alert("查询本科室可以挂号的专家列表error=" + err);
-        });
-    },
-    //------------------获取省份列表---------------------------
-    getprovs() {
-      let _this = this;
-      fetch(process.env.VUE_APP_REG_URL + "/searchdictprov", {
-        method: "get",
-        headers: {
-          Accept: "text/html",
-          "Content-Type": "application/json"
-        }
-      })
-        .then(function(response) {
-          if (response.ok) {
-            // window.alert('ok');
-          } else {
-            window.alert("查询省份列表失败error" + response.err);
-          }
-          return response.json();
-        })
-        .then(function(data) {
-          let tresultCode = data.resultCode;
-          if (tresultCode === "0") {
-            let objdata = JSON.parse(data.outdata);
-            for (let i = 0; i < objdata.length; i++) {
-              _this.addr_provs.splice(i, 0, {
-                "item-value": objdata[i].provinceId,
-                "item-text": objdata[i].name
-              });
-            }
-          } else {
-            //登录失败
-            window.alert("查询省份列表失败1");
-          }
-        })
-        .catch(function(err) {
-          window.alert("查询省份列表error=" + err);
-        });
-    },
+
     //------------------获取指定省份的市列表---------------------------
     prov_Changed() {
       let tprovid = this.out_reg.addrProv;
-      this.getcitys(tprovid);
+      this.addr_citys = getcitys(tprovid);
     },
-    getcitys(tprovid) {
-      let _this = this;
-      fetch(process.env.VUE_APP_REG_URL + "/searchdictcity/" + tprovid, {
-        method: "get",
-        headers: {
-          Accept: "text/html",
-          "Content-Type": "application/json"
-        }
-      })
-        .then(function(response) {
-          if (response.ok) {
-            // window.alert('ok');
-          } else {
-            window.alert("查询城市列表失败error" + response.err);
-          }
-          return response.json();
-        })
-        .then(function(data) {
-          let tresultCode = data.resultCode;
-          if (tresultCode === "0") {
-            let objdata = JSON.parse(data.outdata);
-            for (let i = 0; i < objdata.length; i++) {
-              _this.addr_citys.splice(i, 0, {
-                "item-value": objdata[i].cityId,
-                "item-text": objdata[i].name
-              });
-            }
-          } else {
-            //登录失败
-            window.alert("地址-查询城市列表失败1");
-          }
-        })
-        .catch(function(err) {
-          window.alert("地址-查询城市列表失败=" + err);
-        });
-    },
+
     //------------------获取指定市的区县列表---------------------------
     city_Changed() {
       let tcityid = this.out_reg.addrCity;
-      this.getcountys(tcityid);
+      this.addr_countys = getcountys(tcityid);
     },
-    getcountys(tcityid) {
-      let _this = this;
-      fetch(process.env.VUE_APP_REG_URL + "/searchdictcounty/" + tcityid, {
-        method: "get",
-        headers: {
-          Accept: "text/html",
-          "Content-Type": "application/json"
-        }
-      })
-        .then(function(response) {
-          if (response.ok) {
-            // window.alert('ok');
-          } else {
-            window.alert("地址-指定市的区县失败error" + response.err);
-          }
-          return response.json();
-        })
-        .then(function(data) {
-          let tresultCode = data.resultCode;
-          if (tresultCode === "0") {
-            let objdata = JSON.parse(data.outdata);
-            for (let i = 0; i < objdata.length; i++) {
-              _this.addr_countys.splice(i, 0, {
-                "item-value": objdata[i].countryId,
-                "item-text": objdata[i].name
-              });
-            }
-          } else {
-            //登录失败
-            window.alert("地址-指定市的区县失败1");
-          }
-        })
-        .catch(function(err) {
-          window.alert("地址-指定市的区县失败error=" + err);
-        });
-    },
+
     //------------------获取指定区县的街道列表---------------------------
     county_Changed() {
       let tcountyid = this.out_reg.addrCounty;
-      this.getstreets(tcountyid);
-    },
-    getstreets(tcountyid) {
-      let _this = this;
-      fetch(process.env.VUE_APP_REG_URL + "/searchdictstreet/" + tcountyid, {
-        method: "get",
-        headers: {
-          Accept: "text/html",
-          "Content-Type": "application/json"
-        }
-      })
-        .then(function(response) {
-          if (response.ok) {
-            // window.alert('ok');
-          } else {
-            window.alert("查询指定区县的街道失败error" + response.err);
-          }
-          return response.json();
-        })
-        .then(function(data) {
-          let tresultCode = data.resultCode;
-          if (tresultCode === "0") {
-            let objdata = JSON.parse(data.outdata);
-            for (let i = 0; i < objdata.length; i++) {
-              _this.addr_townships.splice(i, 0, {
-                "item-value": objdata[i].townId,
-                "item-text": objdata[i].name
-              });
-            }
-          } else {
-            //登录失败
-            window.alert("查询指定区县的街道失败1");
-          }
-        })
-        .catch(function(err) {
-          window.alert("查询指定区县的街道error=" + err);
-        });
-    },
-    //从词典获取信息----------------暂时不用，没有解决this之后动态变量的问题------------------
-    get_dict_health_term(tschmethod, tclassid, toutarrays) {
-      let _this = this;
-      console.log("in=" + tschmethod + " | " + tclassid + " | " + toutarrays);
-      fetch(process.env.VUE_APP_REG_URL + "/" + tschmethod + "/" + tclassid, {
-        method: "get",
-        headers: {
-          Accept: "text/html",
-          "Content-Type": "application/json"
-        }
-      })
-        .then(function(response) {
-          if (response.ok) {
-            // window.alert('ok');
-          } else {
-            window.alert("查询从词典获取信息失败error" + response.err);
-          }
-          return response.json();
-        })
-        .then(function(data) {
-          let tresultCode = data.resultCode;
-          if (tresultCode === "0") {
-            let objdata = JSON.parse(data.outdata);
-            for (let i = 0; i < objdata.length; i++) {
-              console.log(
-                "_this.toutarrays=" +
-                  _this.toutarrays +
-                  " toutarrays=" +
-                  toutarrays
-              );
-              _this.toutarrays.splice(i, 0, objdata[i].termName);
-            }
-            return _this.toutarrays;
-          } else {
-            //登录失败
-            window.alert("查询从词典获取信息失败1");
-          }
-        })
-        .catch(function(err) {
-          window.alert("查询从词典获取信息error=" + err);
-        });
+      this.addr_townships = getstreets(tcountyid);
     }
+
     // ---------------------end methods----------------
-   
   }
 };
 </script>
