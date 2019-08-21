@@ -1,13 +1,12 @@
 <template>
   <v-container class="grey lighten-5">
     <v-form ref="form" v-model="valid" lazy-validation>
-    <v-card class="mx-auto" max-width="99%" min-width="100%">
-      <v-img class="white--text" height="60px" :src="require('../assets/outreg.jpg')">
-        <v-card-title class="align-end fill-height">门诊挂号</v-card-title>
-      </v-img>
+      <v-card class="mx-auto" max-width="99%" min-width="100%">
+        <v-img class="white--text" height="60px" :src="require('../assets/outreg.jpg')">
+          <v-card-title class="align-end fill-height">门诊挂号</v-card-title>
+        </v-img>
 
-      <v-card-text>
-        
+        <v-card-text>
           <v-layout row wrap>
             &emsp;&emsp;
             <v-flex d-flex>
@@ -184,8 +183,7 @@
                 single-line
                 required
                 @input="county_Changed"
-              ></v-select>
-              &emsp;&emsp;
+              ></v-select>&emsp;&emsp;
             </v-flex>
             <v-flex d-flex>
               &emsp;&emsp;
@@ -204,7 +202,7 @@
             </v-flex>
             <v-flex d-flex>
               &emsp;&emsp;
-              <v-text-field v-model="out_reg.addrHouseNmb" label="单位或住址(详细地址)"></v-text-field>              
+              <v-text-field v-model="out_reg.addrHouseNmb" label="单位或住址(详细地址)"></v-text-field>
             </v-flex>
             <v-flex d-flex>
               &emsp;&emsp;
@@ -220,8 +218,7 @@
               ></v-select>&emsp;&emsp;
             </v-flex>
           </v-layout>
-
-          <v-spacer></v-spacer>          
+          <!-- <v-spacer></v-spacer>           -->
           <v-row>
             <v-col cols="6">
               <v-card class="pa-4" tile elevation="18">
@@ -247,74 +244,90 @@
             <v-col sm="12">
               <!-- <v-card class="pa-2" outlined tile>就诊人信息</v-card> -->
               <v-row no-gutters>
-                <v-col cols="8" sm="4">
-                  <v-card
-                    class="pa-2"
-                    outlined
-                    style="background-color: lightgrey;"
-                    tile
-                  >
-                  <video id="player" controls autoplay></video>
-<button id="capture">Capture</button>
-<canvas id="snapshot" width=320 height=240></canvas></v-card>
+                <v-col cols="6" sm="7">
+                  <v-card class="pa-4" elevation="18" >
+                    <div>
+                      <video ref="video" id="video" width="640" height="480" autoplay></video>
+                    </div>
+                    <!-- <div>
+                      <button id="snap" v-on:click="capture()">Snap Photo</button>
+                    </div>
+                    <canvas ref="canvas" id="canvas" width="640" height="480"></canvas>
+                    <ul>
+                      <v-list v-for="c in captures" :key="c">
+                        <img v-bind:src="c" height="50" />
+                      </v-list>
+                    </ul> -->
+                  </v-card>
                 </v-col>
-                <v-col cols="4" sm="8">
-                  <v-card class="pa-2" outlined tile>
+                <v-col cols="6" sm="5">
+                  <v-card class="pa-4" elevation="18" tile>
                     <v-row>
-                      <v-col cols="12"><div class="title">患者医保信息</div></v-col>
+                      <v-col cols="12">
+                        <div class="title">患者医保信息</div>
+                      </v-col>
                     </v-row>
                     <v-row>
-                      <v-col cols="6"><div class="subtitle-1">&emsp;&emsp;医保个人编号:{{ out_reg.micard }}</div></v-col>
-                      <v-col cols="6"><div class="subtitle-1">&emsp;&emsp;医保卡余额:{{ out_reg.miPaccLeft }}</div></v-col>
+                      <v-col cols="6">
+                        <div class="subtitle-1">&emsp;&emsp;医保个人编号:{{ out_reg.micard }}</div>
+                      </v-col>
+                      <v-col cols="6">
+                        <div class="subtitle-1">&emsp;&emsp;医保卡余额:{{ out_reg.miPaccLeft }}</div>
+                      </v-col>
                     </v-row>
                     <v-row>
-                      <v-col cols="6"><div class="subtitle-1">&emsp;&emsp;医保类别:{{ out_reg.miType }}</div></v-col>
-                      <v-col cols="6"><div class="subtitle-1">&emsp;&emsp;参保单位:{{ out_reg.miCompany }}</div></v-col>
-                    </v-row>    
-                    <v-row>
-                      <v-col cols="12"><div class="subtitle-1">&emsp;&emsp;读卡信息:{{ out_reg.miStr }}</div></v-col>
+                      <v-col cols="6">
+                        <div class="subtitle-1">&emsp;&emsp;医保类别:{{ out_reg.miType }}</div>
+                      </v-col>
+                      <v-col cols="6">
+                        <div class="subtitle-1">&emsp;&emsp;参保单位:{{ out_reg.miCompany }}</div>
+                      </v-col>
                     </v-row>
-                  </v-card>                       
+                    <v-row>
+                      <v-col cols="12">
+                        <div class="subtitle-1">&emsp;&emsp;读卡信息:{{ out_reg.miStr }}</div>
+                      </v-col>
+                    </v-row>
+                  </v-card>
                 </v-col>
               </v-row>
             </v-col>
           </v-row>
-      </v-card-text>
+        </v-card-text>
 
-      <v-card-actions>
-        <div align="center">
-        <v-btn :disabled="!valid" color="success" @click="validate">读健康卡</v-btn>
-        <v-btn :disabled="!valid" color="success" @click="readcard_mi">读医保卡</v-btn>
-        <v-btn :disabled="!valid" color="success" @click="outreg_cash">现金挂号</v-btn>
-        <v-btn :disabled="!valid" color="success" @click="outreg_weixin">微信挂号</v-btn>
-        <v-btn :disabled="!valid" color="success" @click="sch_weixin">查询微信订单</v-btn>
-        <v-btn color="error" @click="reset">下一位</v-btn>
-        <v-btn color="warning" @click="resetValidation">返回主页</v-btn>
-        </div>
-      </v-card-actions>
-    </v-card>
+        <v-card-actions>
+          <div align="center">
+            <v-btn id="snap" :disabled="!valid" color="success" @click="capture">拍照</v-btn>
+            <v-btn :disabled="!valid" color="success" @click="validate">读健康卡</v-btn>
+            <v-btn :disabled="!valid" color="success" @click="readcard_mi">读医保卡</v-btn>
+            <v-btn :disabled="!valid" color="success" @click="outreg_cash">现金挂号</v-btn>
+            <v-btn :disabled="!valid" color="success" @click="outreg_weixin">微信挂号</v-btn>
+            <v-btn :disabled="!valid" color="success" @click="sch_weixin">查询微信订单</v-btn>
+            <v-btn color="error" @click="reset">下一位</v-btn>
+            <v-btn color="warning" @click="resetValidation">返回主页</v-btn>
+          </div>
+        </v-card-actions>
+      </v-card>
     </v-form>
   </v-container>
 </template>
 <script>
-  var player = document.getElementById('player');
-  var snapshotCanvas = document.getElementById('snapshot');
-  var captureButton = document.getElementById('capture');
+var player = document.getElementById("player");
+var snapshotCanvas = document.getElementById("snapshot");
+var captureButton = document.getElementById("capture");
 
-  var handleSuccess = function(stream) {
-    // Attach the video stream to the video element and autoplay.
-    player.srcObject = stream;
-  };
+var handleSuccess = function(stream) {
+  // Attach the video stream to the video element and autoplay.
+  player.srcObject = stream;
+};
 
-  captureButton.addEventListener('click', function() {
-    var context = snapshot.getContext('2d');
-    // Draw the video frame to the canvas.
-    context.drawImage(player, 0, 0, snapshotCanvas.width,
-        snapshotCanvas.height);
-  });
+captureButton.addEventListener("click", function() {
+  var context = snapshot.getContext("2d");
+  // Draw the video frame to the canvas.
+  context.drawImage(player, 0, 0, snapshotCanvas.width, snapshotCanvas.height);
+});
 
-  navigator.mediaDevices.getUserMedia({video: true})
-      .then(handleSuccess);
+navigator.mediaDevices.getUserMedia({ video: true }).then(handleSuccess);
 </script>
 <script>
 import {
@@ -385,7 +398,10 @@ export default {
       deptRegNmb: "",
       doctorRegNmb: "",
       regOpcode: "" //挂号员
-    }
+    },
+    video: {},
+    canvas: {},
+    captures: []
   }),
   created() {
     this.out_reg.regOpcode = get_regopcode();
@@ -396,6 +412,15 @@ export default {
     this.dept_codes = getdept_codes();
     this.addr_provs = getprovs();
     this.addr_citys = getcitys(process.env.VUE_APP_HSP_PROV);
+  },
+  mounted() {
+    this.video = this.$refs.video;
+    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+      navigator.mediaDevices.getUserMedia({ video: true }).then(stream => {
+        this.video.srcObject = stream;
+        this.video.play();
+      });
+    }
   },
   methods: {
     validate() {
@@ -531,6 +556,12 @@ export default {
     county_Changed() {
       let tcountyid = this.out_reg.addrCounty;
       this.addr_townships = getstreets(tcountyid);
+    },
+    capture() {
+      this.canvas = this.$refs.canvas;
+      var ctx = this.canvas.getContext("2d");
+      ctx.drawImage(this.video, 0, 0, 640, 480);
+      this.captures.push(this.$refs.canvas.toDataURL("image/png"));
     }
 
     // ---------------------end methods----------------
