@@ -11,7 +11,7 @@
 
 <script>
 import Basepage from "../components/Basepage";
-import helloworld from "../components/media-with-text";
+import helloworld from "../components/unique-layouts";
 export default {
   components: {
     Basepage,

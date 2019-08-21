@@ -1,6 +1,6 @@
 <template>
   <v-app id="outp.cloveropen.com">
-    <Basepage />
+    <Basepage />    
     <v-container fluid fill-height>
       <v-layout justify-start>
         <outreg />

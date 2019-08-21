@@ -11,7 +11,7 @@
 
 <script>
 import Basepage from "../components/Basepage";
-import helloworld from "../components/usage";
+import helloworld from "../components/grow-shrink";
 export default {
   components: {
     Basepage,

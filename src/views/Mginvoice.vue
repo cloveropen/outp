@@ -11,7 +11,7 @@
 
 <script>
 import Basepage from "../components/Basepage";
-import helloworld from "../components/HelloWorld";
+import helloworld from "../components/offset";
 export default {
   components: {
     Basepage,

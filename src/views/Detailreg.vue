@@ -11,7 +11,7 @@
 
 <script>
 import Basepage from "../components/Basepage";
-import helloworld from "../components/intermediate";
+import helloworld from "../components/spacer";
 export default {
   components: {
     Basepage,
