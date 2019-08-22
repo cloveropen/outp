@@ -5,7 +5,6 @@
         <v-img class="white--text" height="60px" :src="require('../assets/outreg.jpg')">
           <v-card-title class="align-end fill-height">门诊挂号</v-card-title>
         </v-img>
-
         <v-card-text>
           <v-layout row wrap>
             &emsp;&emsp;
@@ -15,8 +14,7 @@
                 label="条码号"
                 required
                 :counter="13"
-                :rules="barcodeRules"
-                @input="getpatient($event)"
+                @input="expidChanged($event)"
               ></v-text-field>
             </v-flex>
             <v-flex d-flex>
@@ -245,7 +243,7 @@
               <!-- <v-card class="pa-2" outlined tile>就诊人信息</v-card> -->
               <v-row no-gutters>
                 <v-col cols="6" sm="7">
-                  <v-card class="pa-4" elevation="18" >
+                  <v-card class="pa-4" elevation="18">
                     <div>
                       <video ref="video" id="video" width="640" height="480" autoplay></video>
                     </div>
@@ -257,7 +255,7 @@
                       <v-list v-for="c in captures" :key="c">
                         <img v-bind:src="c" height="50" />
                       </v-list>
-                    </ul> -->
+                    </ul>-->
                   </v-card>
                 </v-col>
                 <v-col cols="6" sm="5">
@@ -299,36 +297,17 @@
           <div align="center">
             <v-btn id="snap" :disabled="!valid" color="success" @click="capture">拍照</v-btn>
             <v-btn :disabled="!valid" color="success" @click="validate">读健康卡</v-btn>
-            <v-btn :disabled="!valid" color="success" @click="readcard_mi">读医保卡</v-btn>
-            <v-btn :disabled="!valid" color="success" @click="outreg_cash">现金挂号</v-btn>
-            <v-btn :disabled="!valid" color="success" @click="outreg_weixin">微信挂号</v-btn>
-            <v-btn :disabled="!valid" color="success" @click="sch_weixin">查询微信订单</v-btn>
-            <v-btn color="error" @click="reset">下一位</v-btn>
-            <v-btn color="warning" @click="resetValidation">返回主页</v-btn>
+            <v-btn :disabled="!valid" color="success" v-on:click="readcardClicked($event)">读医保卡</v-btn>
+            <v-btn :disabled="!valid" color="success" @click="outregcashClicked($event)">现金挂号</v-btn>
+            <v-btn :disabled="!valid" color="success" @click="outregweixinClicked($event)">微信挂号</v-btn>
+            <v-btn :disabled="!valid" color="success" @click="schweixinClicked($event)">查询微信订单</v-btn>
+            <v-btn color="warning" @click="reset">下一位</v-btn>
           </div>
         </v-card-actions>
       </v-card>
     </v-form>
   </v-container>
 </template>
-<script>
-var player = document.getElementById("player");
-var snapshotCanvas = document.getElementById("snapshot");
-var captureButton = document.getElementById("capture");
-
-var handleSuccess = function(stream) {
-  // Attach the video stream to the video element and autoplay.
-  player.srcObject = stream;
-};
-
-captureButton.addEventListener("click", function() {
-  var context = snapshot.getContext("2d");
-  // Draw the video frame to the canvas.
-  context.drawImage(player, 0, 0, snapshotCanvas.width, snapshotCanvas.height);
-});
-
-navigator.mediaDevices.getUserMedia({ video: true }).then(handleSuccess);
-</script>
 <script>
 import {
   getpatient_type,
@@ -341,7 +320,12 @@ import {
   getprovs,
   getcitys,
   getcountys,
-  getstreets
+  getstreets,
+  getpatient,
+  readcard_mi,
+  outreg_cash,
+  outreg_weixin,
+  sch_weixin
 } from "../scripts/outreg.js";
 
 export default {
@@ -351,10 +335,10 @@ export default {
       v => !!v || "姓名不能为空",
       v => (v && v.length >= 2) || "姓名长度不能少于2个汉字"
     ],
-    barcodeRules: [
-      v => !!v || "条形码不能为空",
-      v => (v && v.length >= 13) || "条形码应该为13位数字"
-    ],
+    //barcodeRules: [
+    //  v => !!v || "条形码不能为空",
+    //  v => (v && v.length >= 13) || "条形码应该为13位数字"
+    //],
     patient_types: [], //患者类别列表
     genders: [], //性别列表
     idcard_types: [], //身份证件类型列表
@@ -412,6 +396,8 @@ export default {
     this.dept_codes = getdept_codes();
     this.addr_provs = getprovs();
     this.addr_citys = getcitys(process.env.VUE_APP_HSP_PROV);
+    this.addr_countys = getcountys(process.env.VUE_APP_HSP_CITY);
+    this.addr_townships = getstreets(process.env.VUE_APP_HSP_COUNTY);
   },
   mounted() {
     this.video = this.$refs.video;
@@ -434,105 +420,30 @@ export default {
     resetValidation() {
       this.$refs.form.resetValidation();
     },
-    //----------------------医保读卡------------------------------------------------------------------
-    readcard_mi() {
-      this.$refs.form.resetValidation();
-      window.alert("医保读卡");
-    },
-    test() {
-      console.log("1");
-      this.patient_types = getpatient_type();
-      console.log("2");
-      console.log(this.patient_types.length);
-    },
-    //------------------------确认现金挂号------------------------------------------------------------
-    outreg_cash() {
-      // let _this = this;
-      console.log(
-        "JSON.stringify(this.out_reg)=" + JSON.stringify(this.out_reg)
-      );
-      fetch(process.env.VUE_APP_REG_URL + "/saveoutreg", {
-        method: "post",
-        // credentials: "include", // send cookies
-        // mode: 'cors',
-        body: JSON.stringify(this.out_reg),
-        headers: {
-          Accept: "application/json, text/plain, */*",
-          "Content-Type": "application/json"
-        }
-      })
-        .then(function(response) {
-          if (response.ok) {
-            //window.alert('ok');
-          } else {
-            window.alert("确认现金挂号查询失败error");
-          }
-          return response.json();
-        })
-        .then(function(data) {
-          console.log("data1=" + data.outdata + "|" + data.outdata.length);
-          let tresultCode = data.resultCode;
-          window.alert("tresultCode=" + tresultCode);
-          if (tresultCode === "0") {
-            //现金挂号按钮disable
-            window.alert("现金挂号完成");
-            //打印挂号单
-          } else {
-            //登录失败
-            window.alert("确认现金挂号失败1");
-          }
-        })
-        .catch(function(err) {
-          window.alert("确认现金挂号error=" + err);
-        });
-    },
-    //------------------------确认微信挂号------------------------------------------------------------
-    outreg_weixin() {
-      console.log(this.$refs.form.data);
-    },
-    //-------------------------查询微信订单-----------------------------------------------------------
-    sch_weixin() {
-      console.log(this.$refs.form.data);
-    },
-    getpatient(e) {
+    expidChanged(e) {
       let texpid = e;
       if (texpid.length < 13) {
         return;
       }
-      let _this = this;
-      fetch(process.env.VUE_APP_REG_URL + "/searchoutregexpid/" + texpid, {
-        method: "get",
-        headers: {
-          Accept: "text/html",
-          "Content-Type": "application/json"
-        }
-      })
-        .then(function(response) {
-          if (response.ok) {
-            //window.alert('ok');
-          } else {
-            window.alert("根据条码号获取患者信息查询失败error");
-          }
-          return response.json();
-        })
-        .then(function(data) {
-          let tresultCode = data.resultCode;
-          if (tresultCode === "0") {
-            let toutreg = JSON.parse(data.outdata);
-            _this.out_reg = toutreg;
-            _this.get_regopcode();
-            // console.log("sel.patient_types[i]=" + _this.patient_types);
-            return _this.out_reg;
-          } else {
-            //登录失败
-            window.alert("根据条码号获取患者信息查询失败1");
-          }
-        })
-        .catch(function(err) {
-          window.alert("根据条码号获取患者信息查询error=" + err);
-        });
+      this.out_reg = getpatient(texpid);
+      this.out_reg.regOpcode = get_regopcode();
     },
-
+    readcardClicked(e) {
+      console.log("e=" + e.target.innerText);
+      readcard_mi();
+    },
+    outregcashClicked(e) {
+      console.log("e=" + e.target.innerText);
+      outreg_cash(this.out_reg);
+    },
+    outregweixinClicked(e) {
+      console.log("e=" + e.target.innerText);
+      outreg_weixin();
+    },
+    schweixinClicked(e) {
+      console.log("e=" + e.target.innerText);
+      sch_weixin();
+    },
     dept_codeChanged(e) {
       let tdept_code = this.out_reg.deptCode;
       console.log("e=" + e);
