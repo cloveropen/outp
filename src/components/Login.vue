@@ -40,7 +40,7 @@
                 </v-flex>
 
                 <v-flex xs12 md4>
-                  <v-btn color="success" :disabled="!valid" @click="loginSubmit">登录</v-btn>
+                  <v-btn color="success" :disabled="!valid" @click="loginSubmit">登录</v-btn>                
                 </v-flex>
               </v-layout>
             </v-container>
@@ -108,7 +108,7 @@ export default {
             sel.$parent.$router.push({ path: "/" });
           } else {
             //登录失败
-            window.alert("登录失败1");
+            window.alert("登录失败!\n体验请使用:\n  用户编码8888,密码eastwill");
             sel.loginmsg = "登录失败";
             localStorage.removeItem("user");
           }

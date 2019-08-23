@@ -9,13 +9,7 @@
           <v-layout row wrap>
             &emsp;&emsp;
             <v-flex d-flex>
-              <v-text-field
-                v-model="out_reg.exPid"
-                label="条码号"
-                required
-                :counter="13"
-                @input="expidChanged($event)"
-              ></v-text-field>
+              <v-text-field v-model="out_reg.exPid" label="条码号" :counter="13" @input="expidChanged($event)"></v-text-field>
             </v-flex>
             <v-flex d-flex>
               &emsp;&emsp;
@@ -34,13 +28,7 @@
             </v-flex>
             <v-flex d-flex>
               &emsp;&emsp;
-              <v-text-field
-                v-model="out_reg.patientName"
-                label="患者姓名"
-                required
-                :counter="6"
-                :rules="nameRules"
-              ></v-text-field>
+              <v-text-field v-model="out_reg.patientName" label="患者姓名" required :counter="6" :rules="nameRules"></v-text-field>
             </v-flex>
             <v-flex d-flex>
               &emsp;&emsp;
@@ -181,7 +169,8 @@
                 single-line
                 required
                 @input="county_Changed"
-              ></v-select>&emsp;&emsp;
+              ></v-select
+              >&emsp;&emsp;
             </v-flex>
             <v-flex d-flex>
               &emsp;&emsp;
@@ -196,7 +185,8 @@
                 prepend-icon="group_work"
                 single-line
                 required
-              ></v-select>&emsp;&emsp;
+              ></v-select
+              >&emsp;&emsp;
             </v-flex>
             <v-flex d-flex>
               &emsp;&emsp;
@@ -213,17 +203,15 @@
                 hide-details
                 prepend-icon="map"
                 single-line
-              ></v-select>&emsp;&emsp;
+              ></v-select
+              >&emsp;&emsp;
             </v-flex>
           </v-layout>
           <!-- <v-spacer></v-spacer>           -->
           <v-row>
             <v-col cols="6">
               <v-card class="pa-4" tile elevation="18">
-                <div
-                  align="right"
-                  class="title"
-                >挂号费合计:&nbsp;&nbsp;{{out_reg.regPrice + out_reg.CheckupPrice}}&emsp;&emsp;&emsp;&emsp;</div>
+                <div align="right" class="title">挂号费合计:&nbsp;&nbsp;{{ out_reg.regPrice + out_reg.CheckupPrice }}&emsp;&emsp;&emsp;&emsp;</div>
               </v-card>
             </v-col>
             <v-col cols="3">
@@ -331,10 +319,7 @@ import {
 export default {
   data: () => ({
     valid: true,
-    nameRules: [
-      v => !!v || "姓名不能为空",
-      v => (v && v.length >= 2) || "姓名长度不能少于2个汉字"
-    ],
+    nameRules: [v => !!v || "姓名不能为空", v => (v && v.length >= 2) || "姓名长度不能少于2个汉字"],
     //barcodeRules: [
     //  v => !!v || "条形码不能为空",
     //  v => (v && v.length >= 13) || "条形码应该为13位数字"
@@ -450,19 +435,16 @@ export default {
       let tpost_tech = "1";
       this.doctor_codes = getdoctor_codes(tdept_code, tpost_tech);
     },
-
     //------------------获取指定省份的市列表---------------------------
     prov_Changed() {
       let tprovid = this.out_reg.addrProv;
       this.addr_citys = getcitys(tprovid);
     },
-
     //------------------获取指定市的区县列表---------------------------
     city_Changed() {
       let tcityid = this.out_reg.addrCity;
       this.addr_countys = getcountys(tcityid);
     },
-
     //------------------获取指定区县的街道列表---------------------------
     county_Changed() {
       let tcountyid = this.out_reg.addrCounty;
@@ -474,7 +456,6 @@ export default {
       ctx.drawImage(this.video, 0, 0, 640, 480);
       this.captures.push(this.$refs.canvas.toDataURL("image/png"));
     }
-
     // ---------------------end methods----------------
   }
 };
