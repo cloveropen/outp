@@ -9,7 +9,7 @@
           <v-layout row wrap>
             &emsp;&emsp;
             <v-flex d-flex>
-              <v-text-field v-model="out_reg.exPid" label="条码号" :counter="13" @input="expidChanged($event)"></v-text-field>
+              <v-text-field v-model="out_reg.exPid" label="条码号" :counter="13" @input="expidChanged($event)"> </v-text-field>
             </v-flex>
             <v-flex d-flex>
               &emsp;&emsp;
@@ -234,16 +234,7 @@
                   <v-card class="pa-4" elevation="18">
                     <div>
                       <video ref="video" id="video" width="640" height="480" autoplay></video>
-                    </div>
-                    <!-- <div>
-                      <button id="snap" v-on:click="capture()">Snap Photo</button>
-                    </div>
-                    <canvas ref="canvas" id="canvas" width="640" height="480"></canvas>
-                    <ul>
-                      <v-list v-for="c in captures" :key="c">
-                        <img v-bind:src="c" height="50" />
-                      </v-list>
-                    </ul>-->
+                    </div>                  
                   </v-card>
                 </v-col>
                 <v-col cols="6" sm="5">
@@ -281,19 +272,57 @@
           </v-row>
         </v-card-text>
 
-        <v-card-actions>
-          <div align="center">
-            <v-btn id="snap" :disabled="!valid" color="success" @click="capture">拍照</v-btn>
-            <v-btn :disabled="!valid" color="success" @click="validate">读健康卡</v-btn>
-            <v-btn :disabled="!valid" color="success" v-on:click="readcardClicked($event)">读医保卡</v-btn>
-            <v-btn :disabled="!valid" color="success" @click="outregcashClicked($event)">现金挂号</v-btn>
-            <v-btn :disabled="!valid" color="success" @click="outregweixinClicked($event)">微信挂号</v-btn>
-            <v-btn :disabled="!valid" color="success" @click="schweixinClicked($event)">查询微信订单</v-btn>
-            <v-btn color="warning" @click="reset">下一位</v-btn>
-          </div>
+        <v-card-actions class="justify-center">
+          <v-btn id="snap" :disabled="!valid" color="success" @click="capture">拍照</v-btn>
+          <v-btn :disabled="!valid" color="success" @click="validate">读健康卡</v-btn>
+          <v-btn :disabled="!valid" color="success" v-on:click="readcardClicked($event)">读医保卡</v-btn>
+          <v-btn :disabled="!valid" color="success" @click="outregcashClicked($event)">现金挂号</v-btn>
+          <v-btn :disabled="!valid" color="success" @click="outregweixinClicked($event)">微信挂号</v-btn>
+          <v-btn :disabled="!valid" color="success" @click="schweixinClicked($event)">
+            查询微信订单
+          </v-btn>
+          <v-btn color="warning" @click="reset">下一位</v-btn>
         </v-card-actions>
       </v-card>
     </v-form>
+    <canvas ref="canvas" id="canvas" width="640" height="480" hidden></canvas>
+    <!-- <ul>
+      <v-list v-for="c in captures" :key="c">
+        <img v-bind:src="c" height="180" />
+      </v-list>
+    </ul> -->
+
+    <v-row>
+      <v-col sm="12">      
+       <!--  第二级 -->
+        <v-row no-gutters>
+          <v-col cols="8" sm="6">
+            <!-- 第三级 显示照片 -->
+            <v-row no-gutters>
+              <v-col><img v-bind:src="this.out_reg_pic.pic1" height="120" /></v-col>  
+              <v-col><img v-bind:src="this.out_reg_pic.pic2" height="120" /></v-col>  
+              <v-col><img v-bind:src="this.out_reg_pic.pic3" height="120" /></v-col>  
+            </v-row>
+            <v-row no-gutters>
+              <v-col><img v-bind:src="this.out_reg_pic.pic4" height="120" /></v-col>  
+              <v-col><img v-bind:src="this.out_reg_pic.pic5" height="120" /></v-col>  
+              <v-col><img v-bind:src="this.out_reg_pic.pic6" height="120" /></v-col>  
+            </v-row>       
+          </v-col>
+          <v-col cols="4" sm="6" >
+            <v-card
+              class="pa-2"
+              outlined
+              style="background-color: lightgrey;"
+              tile
+            >
+              打印挂号单样式
+            </v-card>
+          </v-col>
+        </v-row>
+      </v-col>
+    </v-row>
+
   </v-container>
 </template>
 <script>
@@ -335,6 +364,7 @@ export default {
     addr_countys: [], //单位或住址(区县)
     addr_townships: [], //单位或住址(街道)
     out_reg: {
+      hspCode: process.env.VUE_APP_HSP_CODE,
       pid: "", //门诊号
       pidType: "O", //患者标识类别
       exPid: "", //条形码
@@ -346,7 +376,7 @@ export default {
       patientType: "", //患者类型
       regType: "pz", // 挂号类别
       regPrice: 0.0, //挂号费
-      CheckupPrice: 0.0, //诊察费
+      CheckPrice: 0.0, //诊察费
       visitPriority: "0", //就诊优先标志
       deptCode: "", //就诊科室
       doctorCode: "", //门诊接诊医生
@@ -358,19 +388,44 @@ export default {
       addrTownship: "",
       addrStreet: "",
       addrHouseNmb: "",
-      miPaccLeft: 0,
+      miPaccLeft: 0.0,
       miCompany: "",
       miStr: "",
       miType: "",
       micard: "",
       payType: "",
-      deptRegNmb: "",
-      doctorRegNmb: "",
-      regOpcode: "" //挂号员
+      regOpcode: "", //挂号员
+      payCash: 0.0, //现金支付金额
+      payPacc: 0.0, //医保(农合)个人帐户支付金额
+      payFund: 0.0, //医保(农合)统筹支付金额
+      payNfc: 0.0, //移动支付金额
+      invoiceNmb: "", //挂号单收据流水号
+      flowNmb: "", //挂号单操作员流水号
+      mchIp: "", //本机局域网IP地址
+      ver: process.env.VUE_APP_VERSION //版本号
     },
     video: {},
     canvas: {},
-    captures: []
+    //captures: [],
+    capture_num: 0,
+    out_reg_pic: {
+      hspCode: process.env.VUE_APP_HSP_CODE,
+      pid: "",
+      exPid: "",
+      patientName: "",
+      idcard: "",
+      healthId: "",
+      micard: "",
+      captureTime: "",
+      captureOpid: "",
+      mchIp: "",
+      pic1: "",
+      pic2: "",
+      pic3: "",
+      pic4: "",
+      pic5: "",
+      pic6: ""
+    }
   }),
   created() {
     this.out_reg.regOpcode = get_regopcode();
@@ -453,8 +508,40 @@ export default {
     capture() {
       this.canvas = this.$refs.canvas;
       var ctx = this.canvas.getContext("2d");
+      //console.log(this.$refs.canvas.toDataURL("image/png"));
       ctx.drawImage(this.video, 0, 0, 640, 480);
-      this.captures.push(this.$refs.canvas.toDataURL("image/png"));
+      //this.captures.push(this.$refs.canvas.toDataURL("image/png"));
+      switch (this.capture_num)
+      {
+        case 0:
+          this.out_reg_pic.pic1 = this.$refs.canvas.toDataURL("image/png")
+          this.capture_num ++;
+          break;
+        case 1:
+          this.out_reg_pic.pic2 = this.$refs.canvas.toDataURL("image/png")
+          this.capture_num ++;
+          break;
+        case 2:
+          this.out_reg_pic.pic3 = this.$refs.canvas.toDataURL("image/png")
+          this.capture_num ++;
+          break;
+        case 3:
+          this.out_reg_pic.pic4 = this.$refs.canvas.toDataURL("image/png")
+          this.capture_num ++;
+          break;
+        case 4:
+          this.out_reg_pic.pic5 = this.$refs.canvas.toDataURL("image/png")
+          this.capture_num ++;
+          break;
+        case 5:
+          this.out_reg_pic.pic6 = this.$refs.canvas.toDataURL("image/png")
+          this.capture_num ++;
+          break;  
+        default:
+          this.capture_num = 0;
+          this.out_reg_pic.pic1 = this.$refs.canvas.toDataURL("image/png")
+      }
+      //--
     }
     // ---------------------end methods----------------
   }
