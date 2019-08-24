@@ -1,4 +1,4 @@
-## [DEMO](http://120.27.1.240:9801)
+## [DEMO](https://cloveropen.app-hos.com:9081)
 ## HIS设计
    ### 组成部分:
    + 患者主索引系统、
