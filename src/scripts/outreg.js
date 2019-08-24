@@ -172,6 +172,54 @@ export function getreg_type() {
   return reg_types;
 }
 
+//----------------------------查询指定挂号类别的挂号费------------------------------------------------------
+export async function getregprice(treg_type) {
+  let treg_price = Array.of();
+  //let treg_price = 0.0;
+  //let tchk_price = 0.0;
+  await fetch(
+    process.env.VUE_APP_REG_URL + "/searchdictregitemprice/" + treg_type,
+    {
+      method: "get",
+      headers: {
+        Accept: "text/html",
+        "Content-Type": "application/json"
+      }
+    }
+  )
+    .then(function(response) {
+      if (response.ok) {
+        // window.alert("---ok=");
+      } else {
+        window.alert("获取指定挂号类别的挂号费失败error" + response.text);
+      }
+      return response.json();
+    })
+    .then(function(data) {
+      let tresultCode = data.resultCode;
+      if (tresultCode === "0") {
+        let objdata = JSON.parse(data.outdata);
+        treg_price = [objdata[0].refPrice, objdata[0].realPrice];
+        /*for (let i = 0; i < objdata.length; i++) {
+          treg_price.splice(i, 0, {
+            regprice: objdata[i].refPrice,
+            chkprice: objdata[i].realPrice
+          });
+        }*/
+        console.log("treg_price=" + JSON.stringify(treg_price));
+        //return treg_price;
+      } else {
+        window.alert("获取指定挂号类别的挂号费失败1" + data.errorMsg);
+        return treg_price;
+      }
+    })
+    .catch(function(err) {
+      window.alert("获取指定挂号类别的挂号费查询error=" + err);
+      return treg_price;
+    });
+  return treg_price;
+}
+
 //-------------------------------------查询科室列表------------------------------------------------------
 export function getdept_codes() {
   let dept_codes = Array.of(); //科室列表

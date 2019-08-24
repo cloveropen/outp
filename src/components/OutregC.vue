@@ -2,14 +2,24 @@
   <v-container class="grey lighten-5">
     <v-form ref="form" v-model="valid" lazy-validation>
       <v-card class="mx-auto" max-width="99%" min-width="100%">
-        <v-img class="white--text" height="60px" :src="require('../assets/outreg.jpg')">
+        <v-img
+          class="white--text"
+          height="60px"
+          :src="require('../assets/outreg.jpg')"
+        >
           <v-card-title class="align-end fill-height">门诊挂号</v-card-title>
         </v-img>
         <v-card-text>
           <v-layout row wrap>
             &emsp;&emsp;
             <v-flex d-flex>
-              <v-text-field v-model="out_reg.exPid" label="条码号" :counter="13" @input="expidChanged($event)"> </v-text-field>
+              <v-text-field
+                v-model="out_reg.exPid"
+                label="条码号"
+                :counter="13"
+                @input="expidChanged($event)"
+              >
+              </v-text-field>
             </v-flex>
             <v-flex d-flex>
               &emsp;&emsp;
@@ -28,17 +38,32 @@
             </v-flex>
             <v-flex d-flex>
               &emsp;&emsp;
-              <v-text-field v-model="out_reg.patientName" label="患者姓名" required :counter="6" :rules="nameRules"></v-text-field>
+              <v-text-field
+                v-model="out_reg.patientName"
+                label="患者姓名"
+                required
+                :counter="6"
+                :rules="nameRules"
+              ></v-text-field>
             </v-flex>
             <v-flex d-flex>
               &emsp;&emsp;
-              <v-text-field v-model="out_reg.idcard" label="身份证号" disabled></v-text-field>&emsp;&emsp;
+              <v-text-field
+                v-model="out_reg.idcard"
+                label="身份证号"
+                disabled
+              ></v-text-field
+              >&emsp;&emsp;
             </v-flex>
           </v-layout>
           <v-layout row wrap>
             &emsp;&emsp;
             <v-flex d-flex>
-              <v-text-field v-model="out_reg.pid" label="门诊号" disabled></v-text-field>
+              <v-text-field
+                v-model="out_reg.pid"
+                label="门诊号"
+                disabled
+              ></v-text-field>
             </v-flex>
             <v-flex d-flex>
               &emsp;&emsp;
@@ -59,15 +84,25 @@
               <v-layout row wrap>
                 <v-flex d-flex>
                   &emsp;&emsp;
-                  <v-text-field v-model="out_reg.ageY" label="年龄(岁)"></v-text-field>
+                  <v-text-field
+                    v-model="out_reg.ageY"
+                    label="年龄(岁)"
+                  ></v-text-field>
                 </v-flex>
                 <v-flex d-flex>
                   &emsp;&emsp;
-                  <v-text-field v-model="out_reg.ageM" label="年龄(月)"></v-text-field>
+                  <v-text-field
+                    v-model="out_reg.ageM"
+                    label="年龄(月)"
+                  ></v-text-field>
                 </v-flex>
                 <v-flex d-flex>
                   &emsp;&emsp;
-                  <v-text-field v-model="out_reg.ageD" label="年龄(天)"></v-text-field>&emsp;&emsp;
+                  <v-text-field
+                    v-model="out_reg.ageD"
+                    label="年龄(天)"
+                  ></v-text-field
+                  >&emsp;&emsp;
                 </v-flex>
               </v-layout>
             </v-flex>
@@ -86,6 +121,7 @@
                 hide-details
                 prepend-icon="map"
                 single-line
+                @input="reg_typeChanged($event)"
               ></v-select>
             </v-flex>
             <v-flex d-flex>
@@ -119,7 +155,10 @@
             </v-flex>
             <v-flex d-flex>
               &emsp;&emsp;
-              <v-switch v-model="out_reg.visitPriority" label="就诊优先"></v-switch>
+              <v-switch
+                v-model="out_reg.visitPriority"
+                label="就诊优先"
+              ></v-switch>
             </v-flex>
           </v-layout>
           <v-layout row wrap>
@@ -190,7 +229,10 @@
             </v-flex>
             <v-flex d-flex>
               &emsp;&emsp;
-              <v-text-field v-model="out_reg.addrHouseNmb" label="单位或住址(详细地址)"></v-text-field>
+              <v-text-field
+                v-model="out_reg.addrHouseNmb"
+                label="单位或住址(详细地址)"
+              ></v-text-field>
             </v-flex>
             <v-flex d-flex>
               &emsp;&emsp;
@@ -211,17 +253,25 @@
           <v-row>
             <v-col cols="6">
               <v-card class="pa-4" tile elevation="18">
-                <div align="right" class="title">挂号费合计:&nbsp;&nbsp;{{ out_reg.regPrice + out_reg.CheckupPrice }}&emsp;&emsp;&emsp;&emsp;</div>
+                <div align="right" class="title">
+                  挂号费合计:&nbsp;&nbsp;{{
+                    out_reg.regPrice + out_reg.CheckPrice
+                  }}&emsp;&emsp;&emsp;&emsp;
+                </div>
               </v-card>
             </v-col>
             <v-col cols="3">
               <v-card class="pa-4" tile elevation="20">
-                <div class="subtitle-1">其中挂号费:&nbsp;&nbsp;{{ out_reg.regPrice }}</div>
+                <div class="subtitle-1">
+                  其中挂号费:&nbsp;&nbsp;{{ out_reg.regPrice }}
+                </div>
               </v-card>
             </v-col>
             <v-col cols="3">
               <v-card class="pa-4" tile elevation="20">
-                <div class="subtitle-1">其中诊察费:&nbsp;&nbsp;{{ out_reg.CheckupPrice }}</div>
+                <div class="subtitle-1">
+                  其中诊察费:&nbsp;&nbsp;{{ out_reg.CheckPrice }}
+                </div>
               </v-card>
             </v-col>
           </v-row>
@@ -233,8 +283,14 @@
                 <v-col cols="6" sm="7">
                   <v-card class="pa-4" elevation="18">
                     <div>
-                      <video ref="video" id="video" width="640" height="480" autoplay></video>
-                    </div>                  
+                      <video
+                        ref="video"
+                        id="video"
+                        width="640"
+                        height="480"
+                        autoplay
+                      ></video>
+                    </div>
                   </v-card>
                 </v-col>
                 <v-col cols="6" sm="5">
@@ -246,23 +302,33 @@
                     </v-row>
                     <v-row>
                       <v-col cols="6">
-                        <div class="subtitle-1">&emsp;&emsp;医保个人编号:{{ out_reg.micard }}</div>
+                        <div class="subtitle-1">
+                          &emsp;&emsp;医保个人编号:{{ out_reg.micard }}
+                        </div>
                       </v-col>
                       <v-col cols="6">
-                        <div class="subtitle-1">&emsp;&emsp;医保卡余额:{{ out_reg.miPaccLeft }}</div>
+                        <div class="subtitle-1">
+                          &emsp;&emsp;医保卡余额:{{ out_reg.miPaccLeft }}
+                        </div>
                       </v-col>
                     </v-row>
                     <v-row>
                       <v-col cols="6">
-                        <div class="subtitle-1">&emsp;&emsp;医保类别:{{ out_reg.miType }}</div>
+                        <div class="subtitle-1">
+                          &emsp;&emsp;医保类别:{{ out_reg.miType }}
+                        </div>
                       </v-col>
                       <v-col cols="6">
-                        <div class="subtitle-1">&emsp;&emsp;参保单位:{{ out_reg.miCompany }}</div>
+                        <div class="subtitle-1">
+                          &emsp;&emsp;参保单位:{{ out_reg.miCompany }}
+                        </div>
                       </v-col>
                     </v-row>
                     <v-row>
                       <v-col cols="12">
-                        <div class="subtitle-1">&emsp;&emsp;读卡信息:{{ out_reg.miStr }}</div>
+                        <div class="subtitle-1">
+                          &emsp;&emsp;读卡信息:{{ out_reg.miStr }}
+                        </div>
                       </v-col>
                     </v-row>
                   </v-card>
@@ -273,15 +339,39 @@
         </v-card-text>
 
         <v-card-actions class="justify-center">
-          <v-btn id="snap" :disabled="!valid" color="success" @click="capture">拍照</v-btn>
-          <v-btn :disabled="!valid" color="success" @click="validate">读健康卡</v-btn>
-          <v-btn :disabled="!valid" color="success" v-on:click="readcardClicked($event)">读医保卡</v-btn>
-          <v-btn :disabled="!valid" color="success" @click="outregcashClicked($event)">现金挂号</v-btn>
-          <v-btn :disabled="!valid" color="success" @click="outregweixinClicked($event)">微信挂号</v-btn>
-          <v-btn :disabled="!valid" color="success" @click="schweixinClicked($event)">
+          <v-btn id="snap" :disabled="!valid" color="success" @click="capture"
+            >拍照</v-btn
+          >
+          <v-btn :disabled="!valid" color="success" @click="validate"
+            >读健康卡</v-btn
+          >
+          <v-btn
+            :disabled="!valid"
+            color="success"
+            v-on:click="readcardClicked($event)"
+            >读医保卡</v-btn
+          >
+          <v-btn
+            :disabled="!valid"
+            color="success"
+            @click="outregcashClicked($event)"
+            >现金挂号</v-btn
+          >
+          <v-btn
+            :disabled="!valid"
+            color="success"
+            @click="outregweixinClicked($event)"
+            >微信挂号</v-btn
+          >
+          <v-btn
+            :disabled="!valid"
+            color="success"
+            @click="schweixinClicked($event)"
+          >
             查询微信订单
           </v-btn>
-          <v-btn color="warning" @click="reset">下一位</v-btn>
+          <!-- <v-btn color="warning" @click="reset">下一位</v-btn> -->
+          <v-btn color="warning">下一位</v-btn>
         </v-card-actions>
       </v-card>
     </v-form>
@@ -293,36 +383,47 @@
     </ul> -->
 
     <v-row>
-      <v-col sm="12">      
-       <!--  第二级 -->
+      <v-col sm="12">
+        <!--  第二级 -->
         <v-row no-gutters>
           <v-col cols="8" sm="6">
             <!-- 第三级 显示照片 -->
             <v-row no-gutters>
-              <v-col><img v-bind:src="this.out_reg_pic.pic1" height="120" /></v-col>  
-              <v-col><img v-bind:src="this.out_reg_pic.pic2" height="120" /></v-col>  
-              <v-col><img v-bind:src="this.out_reg_pic.pic3" height="120" /></v-col>  
+              <v-col
+                ><img v-bind:src="this.out_reg_pic.pic1" height="120"
+              /></v-col>
+              <v-col
+                ><img v-bind:src="this.out_reg_pic.pic2" height="120"
+              /></v-col>
+              <v-col
+                ><img v-bind:src="this.out_reg_pic.pic3" height="120"
+              /></v-col>
             </v-row>
             <v-row no-gutters>
-              <v-col><img v-bind:src="this.out_reg_pic.pic4" height="120" /></v-col>  
-              <v-col><img v-bind:src="this.out_reg_pic.pic5" height="120" /></v-col>  
-              <v-col><img v-bind:src="this.out_reg_pic.pic6" height="120" /></v-col>  
-            </v-row>       
+              <v-col
+                ><img v-bind:src="this.out_reg_pic.pic4" height="120"
+              /></v-col>
+              <v-col
+                ><img v-bind:src="this.out_reg_pic.pic5" height="120"
+              /></v-col>
+              <v-col
+                ><img v-bind:src="this.out_reg_pic.pic6" height="120"
+              /></v-col>
+            </v-row>
           </v-col>
-          <v-col cols="4" sm="6" >
+          <v-col cols="4" sm="6">
             <v-card
               class="pa-2"
               outlined
               style="background-color: lightgrey;"
               tile
             >
-              打印挂号单样式
+              挂号单打印样式
             </v-card>
           </v-col>
         </v-row>
       </v-col>
     </v-row>
-
   </v-container>
 </template>
 <script>
@@ -342,13 +443,17 @@ import {
   readcard_mi,
   outreg_cash,
   outreg_weixin,
-  sch_weixin
+  sch_weixin,
+  getregprice
 } from "../scripts/outreg.js";
 
 export default {
   data: () => ({
     valid: true,
-    nameRules: [v => !!v || "姓名不能为空", v => (v && v.length >= 2) || "姓名长度不能少于2个汉字"],
+    nameRules: [
+      v => !!v || "姓名不能为空",
+      v => (v && v.length >= 2) || "姓名长度不能少于2个汉字"
+    ],
     //barcodeRules: [
     //  v => !!v || "条形码不能为空",
     //  v => (v && v.length >= 13) || "条形码应该为13位数字"
@@ -486,9 +591,17 @@ export default {
     },
     dept_codeChanged(e) {
       let tdept_code = this.out_reg.deptCode;
-      console.log("e=" + e);
+      console.log("dept_codeChanged e=" + e);
       let tpost_tech = "1";
       this.doctor_codes = getdoctor_codes(tdept_code, tpost_tech);
+    },
+    reg_typeChanged(e) {
+      console.log("reg_typeChanged e=" + e);
+      let treg_type = this.out_reg.regType;
+      getregprice(treg_type).then(data => {
+        this.out_reg.regPrice = data[0];
+        this.out_reg.CheckPrice = data[1];
+      });
     },
     //------------------获取指定省份的市列表---------------------------
     prov_Changed() {
@@ -511,35 +624,34 @@ export default {
       //console.log(this.$refs.canvas.toDataURL("image/png"));
       ctx.drawImage(this.video, 0, 0, 640, 480);
       //this.captures.push(this.$refs.canvas.toDataURL("image/png"));
-      switch (this.capture_num)
-      {
+      switch (this.capture_num) {
         case 0:
-          this.out_reg_pic.pic1 = this.$refs.canvas.toDataURL("image/png")
-          this.capture_num ++;
+          this.out_reg_pic.pic1 = this.$refs.canvas.toDataURL("image/png");
+          this.capture_num++;
           break;
         case 1:
-          this.out_reg_pic.pic2 = this.$refs.canvas.toDataURL("image/png")
-          this.capture_num ++;
+          this.out_reg_pic.pic2 = this.$refs.canvas.toDataURL("image/png");
+          this.capture_num++;
           break;
         case 2:
-          this.out_reg_pic.pic3 = this.$refs.canvas.toDataURL("image/png")
-          this.capture_num ++;
+          this.out_reg_pic.pic3 = this.$refs.canvas.toDataURL("image/png");
+          this.capture_num++;
           break;
         case 3:
-          this.out_reg_pic.pic4 = this.$refs.canvas.toDataURL("image/png")
-          this.capture_num ++;
+          this.out_reg_pic.pic4 = this.$refs.canvas.toDataURL("image/png");
+          this.capture_num++;
           break;
         case 4:
-          this.out_reg_pic.pic5 = this.$refs.canvas.toDataURL("image/png")
-          this.capture_num ++;
+          this.out_reg_pic.pic5 = this.$refs.canvas.toDataURL("image/png");
+          this.capture_num++;
           break;
         case 5:
-          this.out_reg_pic.pic6 = this.$refs.canvas.toDataURL("image/png")
-          this.capture_num ++;
-          break;  
+          this.out_reg_pic.pic6 = this.$refs.canvas.toDataURL("image/png");
+          this.capture_num++;
+          break;
         default:
           this.capture_num = 0;
-          this.out_reg_pic.pic1 = this.$refs.canvas.toDataURL("image/png")
+          this.out_reg_pic.pic1 = this.$refs.canvas.toDataURL("image/png");
       }
       //--
     }
