@@ -566,14 +566,13 @@ export default {
     },
     expidChanged(e) {
       let texpid = e;
-      //if (texpid.length < 13) {
-      //  return;
-      //}
-      //this.out_reg = getpatient(texpid);
-      let data = getpatient(texpid)
-      console.log("000000this.out_reg="+JSON.stringify(data));
-     
-      //this.out_reg.regOpcode = get_regopcode();
+       console.log("texpid e=" + e);
+      if (texpid.length<10){
+        return;
+      }
+      getpatient(texpid).then(data => {
+        this.out_reg = data;
+      });
     },
     readcardClicked(e) {
       console.log("e=" + e.target.innerText);
@@ -600,15 +599,10 @@ export default {
     reg_typeChanged(e) {
       console.log("reg_typeChanged e=" + e);
       let treg_type = this.out_reg.regType;
-      let tarray = getregprice(treg_type)
-      console.log("tarray="+JSON.stringify(tarray))
-      this.out_reg.regPrice = tarray[0]
-      this.out_reg.CheckPrice = tarray[1]
-     // [this.out_reg.regPrice,this.out_reg.CheckPrice] = getregprice(treg_type)
-      //getregprice(treg_type).then(data => {
-      //  this.out_reg.regPrice = data[0];
-      //  this.out_reg.CheckPrice = data[1];
-      //});
+      getregprice(treg_type).then(data => {
+        this.out_reg.regPrice = data[0];
+        this.out_reg.CheckPrice = data[1];
+      });
     },
     //------------------获取指定省份的市列表---------------------------
     prov_Changed() {

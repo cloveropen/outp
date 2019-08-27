@@ -72,16 +72,43 @@ export function getreg_type() {
 }
 
 //----------------------------查询指定挂号类别的挂号费------------------------------------------------------
-export function getregprice(treg_type) {
-  let treg_price_array = Array.of();
-  let turl =
-    process.env.VUE_APP_REG_URL + "/searchdictregitemprice/" + treg_type;
-  fetch_data_api(turl, "get").then(data => {
-    treg_price_array = [data[0].refPrice, data[0].realPrice];
-    console.log("treg_price=" + JSON.stringify(treg_price_array));
-    return treg_price_array;
-  });
-  return treg_price_array;
+export async function getregprice(treg_type) {
+  let treg_price = Array.of();
+  await fetch(
+    process.env.VUE_APP_REG_URL + "/searchdictregitemprice/" + treg_type,
+    {
+      method: "get",
+      headers: {
+        Accept: "text/html",
+        "Content-Type": "application/json"
+      }
+    }
+  )
+    .then(function(response) {
+      if (response.ok) {
+        // window.alert("---ok=");
+      } else {
+        window.alert("获取指定挂号类别的挂号费失败error" + response.text);
+      }
+      return response.json();
+    })
+    .then(function(data) {
+      let tresultCode = data.resultCode;
+      if (tresultCode === "0") {
+        let objdata = JSON.parse(data.outdata);
+        treg_price = [objdata[0].refPrice, objdata[0].realPrice];
+        console.log("treg_price=" + JSON.stringify(treg_price));
+        //return treg_price;
+      } else {
+        window.alert("获取指定挂号类别的挂号费失败1" + data.errorMsg);
+        return treg_price;
+      }
+    })
+    .catch(function(err) {
+      window.alert("获取指定挂号类别的挂号费查询error=" + err);
+      return treg_price;
+    });
+  return treg_price;
 }
 
 //-------------------------------------查询科室列表------------------------------------------------------
@@ -191,16 +218,41 @@ export function readcard_mi() {
   window.alert("医保读卡");
   return "医保读卡";
 }
-//-----------------------------根据条码号获取患者信息查询-----------------------------------
-export function getpatient(texpid) {
+
+//----------------------------查询患者主索引信息------------------------------------------------------
+export async function getpatient(texpid) {
   let toutreg = {};
-  let turl = process.env.VUE_APP_REG_URL + "/searchoutregexpid/" + texpid;
-  fetch_data_api(turl, "get").then(data => {
-    toutreg = JSON.parse(data);
-    console.log(data+"------------------"+JSON.stringify(toutreg))
-    return toutreg;
-  });
-  //return toutreg;
+  await fetch(process.env.VUE_APP_REG_URL + "/searchoutregexpid/" + texpid, {
+    method: "get",
+    headers: {
+      Accept: "text/html",
+      "Content-Type": "application/json"
+    }
+  })
+    .then(function(response) {
+      if (response.ok) {
+        // window.alert("---ok=");
+      } else {
+        window.alert("查询患者主索引信息失败error" + response.text);
+      }
+      return response.json();
+    })
+    .then(function(data) {
+      let tresultCode = data.resultCode;
+      if (tresultCode === "0") {
+        toutreg = JSON.parse(data.outdata);
+        //console.log("toutreg=" + JSON.stringify(toutreg));
+        //return toutreg;
+      } else {
+        window.alert("查询患者主索引信息失败1" + data.errorMsg);
+        return toutreg;
+      }
+    })
+    .catch(function(err) {
+      window.alert("查询患者主索引信息查询error=" + err);
+      return toutreg;
+    });
+  return toutreg;
 }
 
 //------------------------确认现金挂号------------------------------------------------------------
@@ -291,6 +343,6 @@ async function fetch_data_api(turl, tmethod) {
       window.alert("查询error=" + err);
       return err;
     });
-  console.log("ret_data="+JSON.stringify(ret_data));
+  //console.log("ret_data="+JSON.stringify(ret_data));
   return await ret_data;
 }
