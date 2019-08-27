@@ -254,7 +254,7 @@
               <v-card class="pa-4" tile elevation="18">
                 <div align="right" class="title">
                   挂号费合计:&nbsp;&nbsp;{{
-                    out_reg.regPrice + out_reg.CheckPrice
+                    out_reg.regPrice + out_reg.checkPrice
                   }}&emsp;&emsp;&emsp;&emsp;
                 </div>
               </v-card>
@@ -269,7 +269,7 @@
             <v-col cols="3">
               <v-card class="pa-4" tile elevation="20">
                 <div class="subtitle-1">
-                  其中诊察费:&nbsp;&nbsp;{{ out_reg.CheckPrice }}
+                  其中诊察费:&nbsp;&nbsp;{{ out_reg.checkPrice }}
                 </div>
               </v-card>
             </v-col>
@@ -442,6 +442,7 @@ import {
   readcard_mi,
   outreg_cash,
   outreg_weixin,
+  outreg_pic,
   sch_weixin,
   getregprice
 } from "../scripts/outreg.js";
@@ -480,7 +481,7 @@ export default {
       patientType: "", //患者类型
       regType: "pz", // 挂号类别
       regPrice: 0.0, //挂号费
-      CheckPrice: 0.0, //诊察费
+      checkPrice: 0.0, //诊察费
       visitPriority: "0", //就诊优先标志
       deptCode: "", //就诊科室
       doctorCode: "", //门诊接诊医生
@@ -580,7 +581,19 @@ export default {
     },
     outregcashClicked(e) {
       console.log("e=" + e.target.innerText);
-      outreg_cash(this.out_reg);
+      outreg_cash(this.out_reg).then(data =>{
+        this.out_reg.pid = data;
+        console.log("outregcashClicked this.out_reg_pic.pid=" +this.out_reg_pic.pid);
+        this.out_reg_pic.pid = this.out_reg.pid;
+        this.out_reg_pic.exPid = this.out_reg.exPid;
+        this.out_reg_pic.patientName = this.out_reg.patientName;
+        this.out_reg_pic.idcard = this.out_reg.idcard;
+        this.out_reg_pic.healthId = this.out_reg.healthId;
+        this.out_reg_pic.micard = this.out_reg.micard;
+        this.out_reg_pic.captureOpid = this.out_reg.regOpcode;
+        outreg_pic(this.out_reg_pic);
+      });
+      
     },
     outregweixinClicked(e) {
       console.log("e=" + e.target.innerText);
@@ -601,7 +614,7 @@ export default {
       let treg_type = this.out_reg.regType;
       getregprice(treg_type).then(data => {
         this.out_reg.regPrice = data[0];
-        this.out_reg.CheckPrice = data[1];
+        this.out_reg.checkPrice = data[1];
       });
     },
     //------------------获取指定省份的市列表---------------------------

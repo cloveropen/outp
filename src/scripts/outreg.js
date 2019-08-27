@@ -256,9 +256,10 @@ export async function getpatient(texpid) {
 }
 
 //------------------------确认现金挂号------------------------------------------------------------
-export function outreg_cash(tout_reg) {
+export async function outreg_cash(tout_reg) {
+  let tpid = "";
   console.log("JSON.stringify(tout_reg)=" + JSON.stringify(tout_reg));
-  fetch(process.env.VUE_APP_REG_URL + "/saveoutreg", {
+  await fetch(process.env.VUE_APP_REG_URL + "/saveoutreg", {
     method: "post",
     // credentials: "include", // send cookies
     // mode: 'cors',
@@ -277,12 +278,11 @@ export function outreg_cash(tout_reg) {
       return response.json();
     })
     .then(function(data) {
-      console.log("data1=" + data.outdata + "|" + data.outdata.length);
       let tresultCode = data.resultCode;
-      window.alert("tresultCode=" + tresultCode);
       if (tresultCode === "0") {
         //现金挂号按钮disable
-        window.alert("现金挂号完成");
+        //window.alert("现金挂号完成" + data.outdata);
+        tpid = data.outdata;
         //打印挂号单
       } else {
         //登录失败
@@ -291,6 +291,42 @@ export function outreg_cash(tout_reg) {
     })
     .catch(function(err) {
       window.alert("确认现金挂号error=" + err);
+    });
+  return await tpid;
+}
+
+//------------------------上传挂号照片------------------------------------------------------------
+export function outreg_pic(tout_reg_pic) {
+  //console.log("JSON.stringify(tout_reg_pic)=" + JSON.stringify(tout_reg_pic));
+  fetch(process.env.VUE_APP_REG_URL + "/saveoutregpic", {
+    method: "post",
+    body: JSON.stringify(tout_reg_pic),
+    headers: {
+      Accept: "application/json, text/plain, */*",
+      "Content-Type": "application/json"
+    }
+  })
+    .then(function(response) {
+      if (response.ok) {
+        //window.alert('ok');
+      } else {
+        window.alert("上传挂号照片失败error");
+      }
+      return response.json();
+    })
+    .then(function(data) {
+      let tresultCode = data.resultCode;
+      if (tresultCode === "0") {
+        //现金挂号按钮disable
+        window.alert("上传挂号照片完成" + data.outdata);
+        //打印挂号单
+      } else {
+        //登录失败
+        window.alert("上传挂号照片失败1");
+      }
+    })
+    .catch(function(err) {
+      window.alert("上传挂号照片error=" + err);
     });
   return "";
 }
