@@ -11,7 +11,7 @@
 
 <script>
 import Basepage from "../components/Basepage";
-import helloworld from "../components/unique-layouts";
+import helloworld from "../components/customize-rows";
 export default {
   components: {
     Basepage,

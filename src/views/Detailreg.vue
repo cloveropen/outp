@@ -11,7 +11,7 @@
 
 <script>
 import Basepage from "../components/Basepage";
-import helloworld from "../components/spacer";
+import helloworld from "../components/edit-dialog";
 export default {
   components: {
     Basepage,

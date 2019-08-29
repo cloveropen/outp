@@ -3,7 +3,7 @@
     <Basepage />
     <v-container fluid fill-height>
       <v-layout justify-start>
-        <helloworld />
+        <outcash />
       </v-layout>
     </v-container>
   </v-app>
@@ -11,11 +11,11 @@
 
 <script>
 import Basepage from "../components/Basepage";
-import helloworld from "../components/grow-shrink";
+import outcash from "../components/OutcashC";
 export default {
   components: {
     Basepage,
-    helloworld
+    outcash
   }
 };
 </script>

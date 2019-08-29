@@ -11,7 +11,7 @@
 
 <script>
 import Basepage from "../components/Basepage";
-import helloworld from "../components/grids";
+import helloworld from "../components/usage";
 export default {
   components: {
     Basepage,

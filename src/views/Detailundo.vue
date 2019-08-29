@@ -11,7 +11,7 @@
 
 <script>
 import Basepage from "../components/Basepage";
-import helloworld from "../components/row-column-breakpoint";
+import helloworld from "../components/expand";
 export default {
   components: {
     Basepage,
