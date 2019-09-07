@@ -1,8 +1,8 @@
 <template>
   <v-container class="grey lighten-5">
-    <v-card class="mx-auto" max-width="99%" min-width="100%" justify-center>
+    <v-card class="mx-auto" max-width="99%" min-width="100%">
       <v-card-text>
-        <v-layout row wrap >
+        <v-layout row wrap>
           <v-flex d-flex>
             &emsp;&emsp;
             <v-text-field
@@ -28,17 +28,7 @@
             <v-btn color="success" @click="loginSubmit">验证</v-btn>
             &emsp;&emsp;
           </v-flex>
-          <v-row>
-          <v-flex d-flex flex-wrap>
-            &emsp;&emsp;
-            <v-text-field
-              v-model="topname"
-              label="操作员姓名"
-              disabled
-            ></v-text-field
-            >&emsp;&emsp;
-          </v-flex>
-          <br/>
+
           <v-flex d-flex>
             &emsp;&emsp;
             <v-text-field
@@ -56,7 +46,6 @@
             ></v-text-field
             >&emsp;&emsp;
           </v-flex>
-          </v-row>
         </v-layout>
       </v-card-text>
 
@@ -95,8 +84,6 @@
             class="elevation-1"
           ></v-data-table>
         </v-expansion-panel-content>
-      </v-expansion-panel>
-      <v-expansion-panel>
         <v-expansion-panel-content>
           <!-- -------------------------退挂号明细栏 --------------------------------------------- -->
           <v-data-table
@@ -151,7 +138,6 @@
 export default {
   data: () => ({
     topcode: "",
-    topname: "",
     tpasswd: "",
     passRules: [
       v => !!v || "用户密码不能为空",
