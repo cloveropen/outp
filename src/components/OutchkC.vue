@@ -6,108 +6,45 @@
           <v-flex d-flex>
             &emsp;&emsp;
             <v-text-field
-              v-model="out_reg.pid"
-              label="门诊号"
-              @input="getfeedetail($event)"
-            ></v-text-field
-            >&emsp;&emsp;
-          </v-flex>
-          <v-flex d-flex>
-            <v-text-field
-              v-model="out_reg.patientName"
-              label="姓名"
-              disabled
-            ></v-text-field
-            >&emsp;&emsp;
-          </v-flex>
-          <v-flex d-flex>
-            <v-text-field
-              v-model="out_reg.regType"
-              label="就诊类别"
-              disabled
-            ></v-text-field
-            >&emsp;&emsp;
-          </v-flex>
-          <v-flex d-flex>
-            <v-text-field
-              v-model="out_reg.patientType"
-              label="患者类别"
-              disabled
-            ></v-text-field
-            >&emsp;&emsp;
-          </v-flex>
-          <v-flex d-flex>
-            <v-text-field
-              v-model="out_reg.miPaccLeft"
-              label="医保卡余额"
-              disabled
+              v-model="topcode"
+              label="操作员号"
+              required
             ></v-text-field
             >&emsp;&emsp;
           </v-flex>
           <v-flex d-flex>
             &emsp;&emsp;
             <v-text-field
-              v-model="out_reg.outDiag"
-              label="门诊诊断"
+              v-model="passwd"
+              :rules="passRules"
+              label="密码"
+              required
+              type="password"
+            ></v-text-field
+            >&emsp;&emsp;
+          </v-flex>
+
+          <v-flex d-flex>
+            <v-btn color="success" @click="loginSubmit">验证</v-btn>
+            &emsp;&emsp;
+          </v-flex>
+
+          <v-flex d-flex>
+            &emsp;&emsp;
+            <v-text-field
+              v-model="tbeg"
+              label="开始时间"
               disabled
             ></v-text-field
             >&emsp;&emsp;
           </v-flex>
           <v-flex d-flex>
             <v-text-field
-              v-model="out_reg.addr"
-              label="住址"
+              v-model="tend"
+              label="结束时间"
               disabled
             ></v-text-field
             >&emsp;&emsp;
-          </v-flex>
-        </v-layout>
-      </v-card-text>
-    </v-card>
-    <!--------------------------结算信息栏----------------------------------------------- -->
-    <v-card class="mx-auto" max-width="99%" min-width="100%">
-      <v-card-text>
-        <v-layout row wrap>
-          <v-flex d-flex>
-            &emsp;&emsp;
-            <v-text-field
-              v-model="out_reg.payShould"
-              label="应收金额"
-              disabled
-            ></v-text-field>
-            &emsp;&emsp;
-          </v-flex>
-          <v-flex d-flex>
-            <v-text-field
-              v-model="out_reg.payCash"
-              label="现金支付"
-              disabled
-            ></v-text-field>
-            &emsp;&emsp;
-          </v-flex>
-          <v-flex d-flex>
-            <v-text-field
-              v-model="out_reg.payNfc"
-              label="移动支付"
-              disabled
-            ></v-text-field>
-            &emsp;&emsp;
-          </v-flex>
-          <v-flex d-flex>
-            <v-text-field
-              v-model="out_reg.payPacc"
-              label="医保帐户"
-              disabled
-            ></v-text-field>
-            &emsp;&emsp;
-          </v-flex>
-          <v-flex d-flex>
-            <v-text-field
-              v-model="out_reg.payFund"
-              label="医保统筹"
-              disabled
-            ></v-text-field>
-            &emsp;&emsp;
           </v-flex>
         </v-layout>
       </v-card-text>
@@ -115,85 +52,99 @@
       <v-card-actions class="justify-center">
         <v-layout row wrap no-gutters>
           <v-flex d-flex><v-spacer></v-spacer></v-flex>
-          <v-radio-group row v-model="payType">
-            <v-flex d-flex
-              ><v-radio key="cash" label="现金" value="cash"></v-radio
-            ></v-flex>
-            <v-flex d-flex
-              ><v-radio key="wechat" label="微信" value="wechat"></v-radio
-            ></v-flex>
-            <v-flex d-flex
-              ><v-radio key="alipay" label="支付宝" value="alipay"></v-radio
-            ></v-flex>
-          </v-radio-group>
-
           <v-flex d-flex
-            ><v-btn id="snap" :disabled="!valid" color="success"
-              >预 结 算</v-btn
-            >
+            ><v-btn id="snap" :disabled="!valid" color="success">计算</v-btn>
             <v-btn
               depressed
               :disabled="!valid"
               color="success"
               @click="validate"
-              >生成支付码</v-btn
+              >确认交班</v-btn
             >
             <v-btn :disabled="!valid" color="success" @click="validate"
-              >确认收款</v-btn
+              >打印结算表</v-btn
             >
             <v-btn :disabled="!valid" color="success" @click="validate"
-              >打印收据</v-btn
-            >
-            <v-btn :disabled="!valid" color="success" @click="validate"
-              >新增处方</v-btn
-            >
-            <v-btn :disabled="!valid" color="success" @click="validate"
-              >查询历史</v-btn
-            >
-            <v-btn :disabled="!valid" color="warning" @click="validate"
-              >下一患者</v-btn
+              >打印退款明细</v-btn
             >
             <v-spacer></v-spacer
           ></v-flex>
         </v-layout>
       </v-card-actions>
     </v-card>
-    <!-- -------------------------费用明细栏 --------------------------------------------- -->
-    <v-data-table
-      :headers="headers"
-      :items="fee_details"
-      :items-per-page="10"
-      class="elevation-1"
-    ></v-data-table>
+    <v-expansion-panels inset focusable>
+      <v-expansion-panel>
+        <v-expansion-panel-header ripple><b>交班结算表</b></v-expansion-panel-header>
+        <v-expansion-panel-content>
+          <!-- -------------------------交班结算栏 --------------------------------------------- -->
+          <v-data-table
+            :headers="headers"
+            :items="fee_details"
+            :items-per-page="10"
+            class="elevation-1"
+          ></v-data-table>
+        </v-expansion-panel-content>
+        <v-expansion-panel-content>
+          <!-- -------------------------退挂号明细栏 --------------------------------------------- -->
+          <v-data-table
+            :headers="headers"
+            :items="fee_details"
+            :items-per-page="10"
+            class="elevation-1"
+          ></v-data-table>
+        </v-expansion-panel-content>
+      </v-expansion-panel>
+      <v-expansion-panel>
+        <v-expansion-panel-header>退收款明细</v-expansion-panel-header>
+        <v-expansion-panel-content>
+          <!-- -------------------------退收款明细栏 --------------------------------------------- -->
+          <v-data-table
+            :headers="headers"
+            :items="fee_details"
+            :items-per-page="10"
+            class="elevation-1"
+          ></v-data-table>
+        </v-expansion-panel-content>
+      </v-expansion-panel>
+      <v-expansion-panel>
+        <v-expansion-panel-header>退预交金明细</v-expansion-panel-header>
+        <v-expansion-panel-content>
+          <!-- -------------------------退预交金明细栏 --------------------------------------------- -->
+          <v-data-table
+            :headers="headers"
+            :items="fee_details"
+            :items-per-page="10"
+            class="elevation-1"
+          ></v-data-table>
+        </v-expansion-panel-content>
+      </v-expansion-panel>
+      <v-expansion-panel>
+        <v-expansion-panel-header>出院结算召回明细</v-expansion-panel-header>
+        <v-expansion-panel-content>
+          <!-- -------------------------出院结算召回明细 --------------------------------------------- -->
+          <v-data-table
+            :headers="headers"
+            :items="fee_details"
+            :items-per-page="10"
+            class="elevation-1"
+          ></v-data-table>
+        </v-expansion-panel-content>
+      </v-expansion-panel>
+    </v-expansion-panels>
   </v-container>
 </template>
 
 <script>
 export default {
   data: () => ({
-    valid: true,
-    nameRules: [
-      v => !!v || "姓名不能为空",
-      v => (v && v.length >= 2) || "姓名长度不能少于2个汉字"
+    topcode: "",
+    tpasswd: "",
+    passRules: [
+      v => !!v || "用户密码不能为空",
+      v => v.length >= 6 || "用户密码长度必须超过6个字符"
     ],
-    out_reg: {
-      seq: 0,
-      hspCode: process.env.VUE_APP_HSP_CODE,
-      pid: "", //门诊号
-      patientName: "",
-      patientType: "",
-      regType: "",
-      prescNmb: "",
-      outDiag: "", //门诊诊断
-      miPaccLeft: 0.0, //医保卡余额
-      addr: "", //住址
-      payShould: 0.0, //应收金额
-      payCash: 0.0, //实收现金
-      payNfc: 0.0, //移动支付
-      payPacc: 0.0, //医保帐户
-      payFund: 0.0 //医保统筹      
-    },
-    payType: "cash", //支付方式选择
+    tbeg: "",
+    tend: "",
     headers: [
       {
         text: "项目名称",
@@ -258,13 +209,15 @@ export default {
             return response.json();
           })
           .then(function(data) {
-            console.log("data="+JSON.stringify(data))
+            console.log("data=" + JSON.stringify(data));
             let tresultCode = data.resultCode;
             //window.alert("tresultCode="+tresultCode)
             if (tresultCode === "0") {
               _this.out_reg = JSON.parse(data.outdata);
               console.log(" this.out_reg=" + JSON.stringify(_this.out_reg));
-              console.log(" this.out_reg.patientName=" + _this.out_reg.patientName);
+              console.log(
+                " this.out_reg.patientName=" + _this.out_reg.patientName
+              );
               //return toutreg;
             } else {
               window.alert("查询患者主索引信息失败1" + data.errorMsg);
@@ -280,7 +233,7 @@ export default {
       console.log(" this.out_reg=" + JSON.stringify(_this.out_reg));
       return _this.out_reg;
     },
-    getfeedetail(e){
+    getfeedetail(e) {
       console.log("getfeedetail pid=" + e);
       //门诊号规则:患者主索引8位，门诊号为11位，门诊号=主索引编号+3位数字，后3位数字为挂号的序号
       let tpid = e.trim();
@@ -310,12 +263,12 @@ export default {
             return response.json();
           })
           .then(function(data) {
-            console.log("data="+JSON.stringify(data))
+            console.log("data=" + JSON.stringify(data));
             let tresultCode = data.resultCode;
             //window.alert("tresultCode="+tresultCode)
             if (tresultCode === "0") {
               _this.fee_details = JSON.parse(data.outdata);
-              console.log(" this.out_reg=" + JSON.stringify(_this.fee_details));          
+              console.log(" this.out_reg=" + JSON.stringify(_this.fee_details));
             } else {
               window.alert("查询患者主索引信息失败1" + data.errorMsg);
             }

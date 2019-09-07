@@ -3,7 +3,7 @@
     <Basepage />
     <v-container fluid fill-height>
       <v-layout justify-start>
-        <helloworld />
+        <outchk />
       </v-layout>
     </v-container>
   </v-app>
@@ -11,11 +11,11 @@
 
 <script>
 import Basepage from "../components/Basepage";
-import helloworld from "../components/usage";
+import outchk from "../components/OutchkC";
 export default {
   components: {
     Basepage,
-    helloworld
+    outchk
   }
 };
 </script>
