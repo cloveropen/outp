@@ -3,7 +3,7 @@
     <Basepage />
     <v-container fluid fill-height>
       <v-layout justify-start>
-        <helloworld />
+        <detailreg />
       </v-layout>
     </v-container>
   </v-app>
@@ -11,11 +11,11 @@
 
 <script>
 import Basepage from "../components/Basepage";
-import helloworld from "../components/edit-dialog";
+import detailreg from "../components/DetailregC";
 export default {
   components: {
     Basepage,
-    helloworld
+    detailreg
   }
 };
 </script>

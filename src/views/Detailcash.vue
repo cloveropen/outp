@@ -3,7 +3,7 @@
     <Basepage />
     <v-container fluid fill-height>
       <v-layout justify-start>
-        <helloworld />
+        <detailcash />
       </v-layout>
     </v-container>
   </v-app>
@@ -11,11 +11,11 @@
 
 <script>
 import Basepage from "../components/Basepage";
-import helloworld from "../components/customize-rows";
+import detailcash from "../components/DetailcashC";
 export default {
   components: {
     Basepage,
-    helloworld
+    detailcash
   }
 };
 </script>
