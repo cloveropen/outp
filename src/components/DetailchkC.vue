@@ -26,11 +26,11 @@
             &emsp;&emsp;
             <v-text-field
               v-model="topcode"
-              label="操作员号(选填)"
+              label="操作员号(必填)"
+              required
             ></v-text-field
             >&emsp;&emsp;
-          </v-flex>
-          
+          </v-flex>         
         </v-layout>
       </v-card-text>
 
@@ -45,9 +45,8 @@
               @click="validate"
               >查询</v-btn
             >
-            <v-btn :disabled="!valid" color="success" @click="validate"
-              >导出</v-btn
-            >
+            <v-btn :disabled="!valid" color="success" @click="validate">导出汇总</v-btn>
+            <v-btn :disabled="!valid" color="success" @click="validate">导出明细</v-btn>
             <v-spacer></v-spacer
           ></v-flex>
         </v-layout>
@@ -59,10 +58,10 @@
             :items-per-page="10"
             class="elevation-1"
           ></v-data-table>
-    <v-expansion-panels inset focusable>
+    <v-expansion-panels popout focusable>
       <v-expansion-panel>
         <v-expansion-panel-header ripple
-          >退号明细</v-expansion-panel-header
+          >本班次交班明细</v-expansion-panel-header
         >
         <v-expansion-panel-content>
           <v-data-table
@@ -82,6 +81,7 @@ export default {
   data: () => ({
     topcode: "",    
     tdatetype: "schedule",   
+    tpid: "",
     headers: [
       {
         text: "门诊号",

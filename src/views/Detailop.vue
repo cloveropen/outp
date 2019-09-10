@@ -3,7 +3,7 @@
     <Basepage />
     <v-container fluid fill-height>
       <v-layout justify-start>
-        <helloworld />
+        <detailop />
       </v-layout>
     </v-container>
   </v-app>
@@ -11,11 +11,11 @@
 
 <script>
 import Basepage from "../components/Basepage";
-import helloworld from "../components/datablegroup";
+import detailop from "../components/DetailopC";
 export default {
   components: {
     Basepage,
-    helloworld
+    detailop
   }
 };
 </script>

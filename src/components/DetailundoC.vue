@@ -30,7 +30,14 @@
             ></v-text-field
             >&emsp;&emsp;
           </v-flex>
-          
+          <v-flex d-flex>
+            &emsp;&emsp;
+            <v-text-field
+              v-model="tpid"
+              label="门诊号(选填)"
+            ></v-text-field
+            >&emsp;&emsp;
+          </v-flex>
         </v-layout>
       </v-card-text>
 
@@ -45,21 +52,42 @@
               @click="validate"
               >查询</v-btn
             >
-            <v-btn :disabled="!valid" color="success" @click="validate"
-              >导出</v-btn
-            >
+            <v-btn :disabled="!valid" color="success" @click="validate">导出退号</v-btn>
+            <v-btn :disabled="!valid" color="success" @click="validate">导出退款明细</v-btn>
+            <v-btn :disabled="!valid" color="success" @click="validate">导出退款汇总</v-btn>
             <v-spacer></v-spacer
           ></v-flex>
         </v-layout>
       </v-card-actions>
     </v-card>   
-<v-data-table
+
+    <v-expansion-panels inset focusable>
+      <v-expansion-panel>
+        <v-expansion-panel-header ripple
+          >退款结算信息</v-expansion-panel-header
+        >
+        <v-expansion-panel-content>
+          <v-data-table
             :headers="headers"
             :items="fee_details"
             :items-per-page="10"
             class="elevation-1"
           ></v-data-table>
-    <v-expansion-panels inset focusable>
+        </v-expansion-panel-content>
+      </v-expansion-panel>
+      <v-expansion-panel>
+        <v-expansion-panel-header ripple
+          >退款数据明细</v-expansion-panel-header
+        >
+        <v-expansion-panel-content>
+          <v-data-table
+            :headers="headers"
+            :items="fee_details"
+            :items-per-page="10"
+            class="elevation-1"
+          ></v-data-table>
+        </v-expansion-panel-content>
+      </v-expansion-panel>
       <v-expansion-panel>
         <v-expansion-panel-header ripple
           >退号明细</v-expansion-panel-header
@@ -82,6 +110,7 @@ export default {
   data: () => ({
     topcode: "",    
     tdatetype: "schedule",   
+    tpid: "",
     headers: [
       {
         text: "门诊号",

@@ -7,7 +7,7 @@
             &emsp;&emsp;
             <v-text-field
               v-model="topcode"
-              label="操作员号"
+              label="管理员号"
               required
             ></v-text-field
             >&emsp;&emsp;
@@ -31,41 +31,216 @@
 
           <v-flex d-flex>
             &emsp;&emsp;
-            <v-text-field
-              v-model="tbeg"
-              label="开始时间"
-              disabled
-            ></v-text-field
-            >&emsp;&emsp;
-          </v-flex>
-          <v-flex d-flex>
-            <v-text-field
-              v-model="tend"
-              label="结束时间"
-              disabled
-            ></v-text-field
+            <v-text-field v-model="topname" label="姓名" readonly></v-text-field
             >&emsp;&emsp;
           </v-flex>
         </v-layout>
       </v-card-text>
-
+      <v-row no-gutters>
+        <v-col cols="5" sm="5">
+          <v-card class="pa-5" outlined>
+            <v-list shaped>
+              <v-list-item-group color="primary">
+                <v-list-item>
+                  <v-list-item-icon>
+                    <v-icon>mdi-flag</v-icon>
+                  </v-list-item-icon>
+                  <v-list-item-content>
+                    <v-list-item-title>
+                      <v-select
+                        v-model="invoice_rec.reason"
+                        :items="reasons"
+                        menu-props="auto"
+                        label="领用人"
+                        hide-details
+                        single-line
+                        required
+                      ></v-select>
+                    </v-list-item-title>
+                  </v-list-item-content>
+                </v-list-item>
+              </v-list-item-group>
+            </v-list>
+            <v-list shaped>
+              <v-subheader>上次领用</v-subheader>
+              <v-list-item-group color="primary">
+                <v-list-item>
+                  <v-list-item-icon>
+                    <v-icon>mdi-account</v-icon>
+                  </v-list-item-icon>
+                  <v-list-item-content>
+                    <v-list-item-title
+                      >挂号收据号:{{
+                        invoice_rec.invoice_nmb1
+                      }}</v-list-item-title
+                    >
+                  </v-list-item-content>
+                </v-list-item>
+                <v-list-item>
+                  <v-list-item-icon>
+                    <v-icon>mdi-account</v-icon>
+                  </v-list-item-icon>
+                  <v-list-item-content>
+                    <v-list-item-title
+                      >收款收据号:{{
+                        invoice_rec.invoice_nmb2
+                      }}</v-list-item-title
+                    >
+                  </v-list-item-content>
+                </v-list-item>
+                <v-list-item>
+                  <v-list-item-icon>
+                    <v-icon>mdi-account</v-icon>
+                  </v-list-item-icon>
+                  <v-list-item-content>
+                    <v-list-item-title
+                      >预交金收据号:{{
+                        invoice_rec.invoice_nmb3
+                      }}</v-list-item-title
+                    >
+                  </v-list-item-content>
+                </v-list-item>
+                <v-list-item>
+                  <v-list-item-icon>
+                    <v-icon>mdi-account</v-icon>
+                  </v-list-item-icon>
+                  <v-list-item-content>
+                    <v-list-item-title
+                      >出院结算收据号:{{
+                        invoice_rec.invoice_nmb4
+                      }}</v-list-item-title
+                    >
+                  </v-list-item-content>
+                </v-list-item>
+                <v-list-item>
+                  <v-list-item-icon>
+                    <v-icon>mdi-account</v-icon>
+                  </v-list-item-icon>
+                  <v-list-item-content>
+                    <v-list-item-title
+                      >移动支付收款收据号:{{
+                        invoice_rec.invoice_nmb5
+                      }}</v-list-item-title
+                    >
+                  </v-list-item-content>
+                </v-list-item>
+                <v-list-item>
+                  <v-list-item-icon>
+                    <v-icon>mdi-account</v-icon>
+                  </v-list-item-icon>
+                  <v-list-item-content>
+                    <v-list-item-title
+                      >移动支付预交金收据号:{{
+                        invoice_rec.invoice_nmb6
+                      }}</v-list-item-title
+                    >
+                  </v-list-item-content>
+                </v-list-item>
+              </v-list-item-group>
+            </v-list>
+          </v-card>
+        </v-col>
+        <v-col cols="7" sm="7">
+          <v-card class="pa-5" outlined>
+            <v-list shaped>
+              <v-subheader>本次领用</v-subheader>
+              <v-list-item-group color="primary">
+                <v-list-item>
+                  <v-list-item-icon>
+                    <v-icon>mdi-clock</v-icon>
+                  </v-list-item-icon>
+                  <v-list-item-content>
+                    <v-list-item-title>
+                      <v-text-field
+                        v-model="invoice_rec.new_invoice_nmb1"
+                        label="挂号收据号"
+                      ></v-text-field>
+                    </v-list-item-title>
+                  </v-list-item-content>
+                </v-list-item>
+                <v-list-item>
+                  <v-list-item-icon>
+                    <v-icon>mdi-clock</v-icon>
+                  </v-list-item-icon>
+                  <v-list-item-content>
+                    <v-list-item-title>
+                      <v-text-field
+                        v-model="invoice_rec.new_invoice_nmb2"
+                        label="收款收据号"
+                      ></v-text-field
+                    ></v-list-item-title>
+                  </v-list-item-content>
+                </v-list-item>
+                <v-list-item>
+                  <v-list-item-icon>
+                    <v-icon>mdi-clock</v-icon>
+                  </v-list-item-icon>
+                  <v-list-item-content>
+                    <v-list-item-title>
+                      <v-text-field
+                        v-model="invoice_rec.new_invoice_nmb3"
+                        label="预交金收据号"
+                      ></v-text-field
+                    ></v-list-item-title>
+                  </v-list-item-content>
+                </v-list-item>
+                <v-list-item>
+                  <v-list-item-icon>
+                    <v-icon>mdi-clock</v-icon>
+                  </v-list-item-icon>
+                  <v-list-item-content>
+                    <v-list-item-title>
+                      <v-text-field
+                        v-model="invoice_rec.new_invoice_nmb4"
+                        label="出院结算收据号"
+                      ></v-text-field
+                    ></v-list-item-title>
+                  </v-list-item-content>
+                </v-list-item>
+                <v-list-item>
+                  <v-list-item-icon>
+                    <v-icon>mdi-clock</v-icon>
+                  </v-list-item-icon>
+                  <v-list-item-content>
+                    <v-list-item-title>
+                      <v-text-field
+                        v-model="invoice_rec.new_invoice_nmb5"
+                        label="移动支付收款收据号"
+                      ></v-text-field
+                    ></v-list-item-title>
+                  </v-list-item-content>
+                </v-list-item>
+                <v-list-item>
+                  <v-list-item-icon>
+                    <v-icon>mdi-clock</v-icon>
+                  </v-list-item-icon>
+                  <v-list-item-content>
+                    <v-list-item-title
+                      ><v-text-field
+                        v-model="invoice_rec.new_invoice_nmb6"
+                        label="移动支付预交金收据号"
+                      ></v-text-field
+                    ></v-list-item-title>
+                  </v-list-item-content>
+                </v-list-item>
+              </v-list-item-group>
+            </v-list>
+          </v-card>
+        </v-col>
+      </v-row>
       <v-card-actions class="justify-center">
         <v-layout row wrap no-gutters>
           <v-flex d-flex><v-spacer></v-spacer></v-flex>
-          <v-flex d-flex
-            ><v-btn id="snap" :disabled="!valid" color="success">计算</v-btn>
+          <v-flex d-flex>
             <v-btn
               depressed
               :disabled="!valid"
               color="success"
               @click="validate"
-              >确认交班</v-btn
+              >确认发票领用</v-btn
             >
             <v-btn :disabled="!valid" color="success" @click="validate"
-              >打印结算表</v-btn
-            >
-            <v-btn :disabled="!valid" color="success" @click="validate"
-              >打印退款明细</v-btn
+              >导出明细</v-btn
             >
             <v-spacer></v-spacer
           ></v-flex>
@@ -74,54 +249,11 @@
     </v-card>
     <v-expansion-panels inset focusable>
       <v-expansion-panel>
-        <v-expansion-panel-header ripple><b>交班结算表</b></v-expansion-panel-header>
+        <v-expansion-panel-header ripple
+          ><b>发票领用记录表</b></v-expansion-panel-header
+        >
         <v-expansion-panel-content>
-          <!-- -------------------------交班结算栏 --------------------------------------------- -->
-          <v-data-table
-            :headers="headers"
-            :items="fee_details"
-            :items-per-page="10"
-            class="elevation-1"
-          ></v-data-table>
-        </v-expansion-panel-content>
-        <v-expansion-panel-content>
-          <!-- -------------------------退挂号明细栏 --------------------------------------------- -->
-          <v-data-table
-            :headers="headers"
-            :items="fee_details"
-            :items-per-page="10"
-            class="elevation-1"
-          ></v-data-table>
-        </v-expansion-panel-content>
-      </v-expansion-panel>
-      <v-expansion-panel>
-        <v-expansion-panel-header>退收款明细</v-expansion-panel-header>
-        <v-expansion-panel-content>
-          <!-- -------------------------退收款明细栏 --------------------------------------------- -->
-          <v-data-table
-            :headers="headers"
-            :items="fee_details"
-            :items-per-page="10"
-            class="elevation-1"
-          ></v-data-table>
-        </v-expansion-panel-content>
-      </v-expansion-panel>
-      <v-expansion-panel>
-        <v-expansion-panel-header>退预交金明细</v-expansion-panel-header>
-        <v-expansion-panel-content>
-          <!-- -------------------------退预交金明细栏 --------------------------------------------- -->
-          <v-data-table
-            :headers="headers"
-            :items="fee_details"
-            :items-per-page="10"
-            class="elevation-1"
-          ></v-data-table>
-        </v-expansion-panel-content>
-      </v-expansion-panel>
-      <v-expansion-panel>
-        <v-expansion-panel-header>出院结算召回明细</v-expansion-panel-header>
-        <v-expansion-panel-content>
-          <!-- -------------------------出院结算召回明细 --------------------------------------------- -->
+          <!-- -------------------------发票领用记录表 --------------------------------------------- -->
           <v-data-table
             :headers="headers"
             :items="fee_details"
@@ -143,8 +275,24 @@ export default {
       v => !!v || "用户密码不能为空",
       v => v.length >= 6 || "用户密码长度必须超过6个字符"
     ],
-    tbeg: "",
-    tend: "",
+    topname: "",
+    invoice_rec: {
+      opcode: "",
+      opname: "",
+      reason: "",
+      invoice_nmb1: "",
+      invoice_nmb2: "",
+      invoice_nmb3: "",
+      invoice_nmb4: "",
+      invoice_nmb5: "",
+      invoice_nmb6: "",
+      new_invoice_nmb1: "",
+      new_invoice_nmb2: "",
+      new_invoice_nmb3: "",
+      new_invoice_nmb4: "",
+      new_invoice_nmb5: "",
+      new_invoice_nmb6: ""
+    },
     headers: [
       {
         text: "项目名称",

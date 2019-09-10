@@ -124,8 +124,8 @@ export default {
         children: [
           { text: "挂号明细", id: "detail_reg" },
           { text: "收款明细", id: "detail_cash" },
-          { text: "交班结算", id: "detail_chk" },
-          { text: "退号退款", id: "detail_undo" },
+          { text: "交班明细", id: "detail_chk" },
+          { text: "退号退款明细", id: "detail_undo" },
           { text: "操作日志", id: "detail_op" }
         ]
       },
@@ -135,9 +135,9 @@ export default {
         text: "管理与维护",
         model: false,
         children: [
-          { text: "词典维护", id: "mg_dict" },
+          { text: "收费词典查询", id: "mg_dict" },
           { text: "数据分析", id: "mg_analyse" },
-          { text: "收据管理", id: "mg_invoice" }
+          { text: "发票管理", id: "mg_invoice" }
         ]
       },
       { icon: "help", text: "退出登录", id: "logout" }

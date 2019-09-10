@@ -27,7 +27,6 @@
             <v-text-field
               v-model="topcode"
               label="操作员号(选填)"
-              required
             ></v-text-field
             >&emsp;&emsp;
           </v-flex>
@@ -36,7 +35,6 @@
             <v-text-field
               v-model="tpid"
               label="门诊号(选填)"
-              required
             ></v-text-field
             >&emsp;&emsp;
           </v-flex>

@@ -2,35 +2,38 @@
   <v-container class="grey lighten-5">
     <v-card class="mx-auto" max-width="99%" min-width="100%">
       <v-card-text>
-           <v-layout row wrap>
-          <v-flex d-flex><v-spacer></v-spacer></v-flex>
-          <v-radio-group row v-model="tdatetype">
-            <v-flex d-flex
-              ><v-radio key="today" label="今天" value="today"></v-radio
-            ></v-flex>
-            <v-flex d-flex
-              ><v-radio key="wechat" label="本班次" value="schedule"></v-radio
-            ></v-flex>
-            <v-flex d-flex
-              ><v-radio key="alipay" label="昨天" value="yesterday"></v-radio
-            ></v-flex>
-            <v-flex d-flex
-              ><v-radio key="alipay" label="三天前" value="3daysbf"></v-radio
-            ></v-flex>
-            <v-flex d-flex
-              ><v-radio key="alipay" label="一周前" value="weekbf"></v-radio
-            ></v-flex>
-          </v-radio-group>
-       
+        <v-layout row wrap>
           <v-flex d-flex>
             &emsp;&emsp;
             <v-text-field
               v-model="topcode"
-              label="操作员号(选填)"
+              label="操作员号"
+              required
             ></v-text-field
             >&emsp;&emsp;
           </v-flex>
-          
+          <v-flex d-flex>
+            &emsp;&emsp;
+            <v-text-field
+              v-model="passwd"
+              :rules="passRules"
+              label="密码"
+              required
+              type="password"
+            ></v-text-field
+            >&emsp;&emsp;
+          </v-flex>
+
+          <v-flex d-flex>
+            <v-btn color="success" @click="loginSubmit">验证</v-btn>
+            &emsp;&emsp;
+          </v-flex>
+
+          <v-flex d-flex>
+            &emsp;&emsp;
+            <v-text-field v-model="topname" label="姓名" readonly></v-text-field
+            >&emsp;&emsp;
+          </v-flex>
         </v-layout>
       </v-card-text>
 
@@ -52,57 +55,57 @@
           ></v-flex>
         </v-layout>
       </v-card-actions>
-    </v-card>   
-<v-data-table
-            :headers="headers"
-            :items="fee_details"
-            :items-per-page="10"
-            class="elevation-1"
-          ></v-data-table>
-    <v-expansion-panels inset focusable>
-      <v-expansion-panel>
-        <v-expansion-panel-header ripple
-          >退号明细</v-expansion-panel-header
-        >
-        <v-expansion-panel-content>
-          <v-data-table
-            :headers="headers"
-            :items="fee_details"
-            :items-per-page="10"
-            class="elevation-1"
-          ></v-data-table>
-        </v-expansion-panel-content>
-      </v-expansion-panel>
-    </v-expansion-panels>
+    </v-card>
+    <v-data-table
+        :headers="headers"
+        :items="fee_details"
+        :items-per-page="10"
+        class="elevation-1"
+    ></v-data-table>   
   </v-container>
 </template>
 
 <script>
 export default {
   data: () => ({
-    topcode: "",    
-    tdatetype: "schedule",   
+    topcode: "",
+    tpasswd: "",
+    passRules: [
+      v => !!v || "用户密码不能为空",
+      v => v.length >= 6 || "用户密码长度必须超过6个字符"
+    ],
+    topname: "",
+    invoice_rec: {
+      opcode: "",
+      opname: "",
+      reason: "",
+      invoice_nmb1: "",
+      invoice_nmb2: "",
+      invoice_nmb3: "",
+      invoice_nmb4: "",
+      invoice_nmb5: "",
+      invoice_nmb6: "",
+      new_invoice_nmb1: "",
+      new_invoice_nmb2: "",
+      new_invoice_nmb3: "",
+      new_invoice_nmb4: "",
+      new_invoice_nmb5: "",
+      new_invoice_nmb6: ""
+    },
     headers: [
       {
-        text: "门诊号",
+        text: "项目名称",
         align: "left",
-        sortable: true,
-        value: "pid"
+        sortable: false,
+        value: "item_name"
       },
-      { text: "姓名", value: "patient_name" },
-      { text: "挂号时间", value: "reg_time" },
-      { text: "操作员", value: "reg_opcode" },
-      { text: "挂号费", value: "reg_price" },
-      { text: "诊察费", value: "check_price" },
-      { text: "现金支付", value: "pay_cash" },
-      { text: "个人帐户", value: "pay_pacc" },
-      { text: "统筹支付", value: "pay_fund" },
-      { text: "移动支付", value: "pay_nfc" },
-      { text: "收据号", value: "invoice_nmb" },
-      { text: "流水号", value: "flow_nmb" },
-      { text: "接诊", value: "visit_flag" },
-      { text: "退号", value: "reg_cancel" }
-    ]
+      { text: "单价", value: "real_price" },
+      { text: "数量", value: "quantity" },
+      { text: "天数", value: "days" },
+      { text: "开具时间", value: "cal_time" },
+      { text: "医师", value: "cal_opcode" }
+    ],
+    reasons: ["新换收据", "打印机夹纸", "打印机空走", "设置错误", "其他原因"]
   }),
 
   created() {

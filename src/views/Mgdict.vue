@@ -3,7 +3,7 @@
     <Basepage />
     <v-container fluid fill-height>
       <v-layout justify-start>
-        <helloworld />
+        <mgdict />
       </v-layout>
     </v-container>
   </v-app>
@@ -11,11 +11,11 @@
 
 <script>
 import Basepage from "../components/Basepage";
-import helloworld from "../components/HelloWorld";
+import mgdict from "../components/MgdictC";
 export default {
   components: {
     Basepage,
-    helloworld
+    mgdict
   }
 };
 </script>
