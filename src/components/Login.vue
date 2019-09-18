@@ -55,8 +55,8 @@
 export default {
   data: () => ({
     valid: false,
-    username: "",
-    passwd: "",
+    username: "8888",
+    passwd: "eastwill",
     loginmsg: "",
     nameRules: [
       v => !!v || "用户编码不能为空",
@@ -108,7 +108,7 @@ export default {
             sel.$parent.$router.push({ path: "/" });
           } else {
             //登录失败
-            window.alert("登录失败!\n体验请使用:\n  用户编码8888,密码eastwill");
+            window.alert("登录失败!\n");
             sel.loginmsg = "登录失败";
             localStorage.removeItem("user");
           }
