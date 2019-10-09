@@ -22,10 +22,10 @@
                 <v-flex xs12 md4>
                   <v-text-field
                     v-model="username"
-                    :rules="nameRules"
-                    :counter="4"
+                    :rules="nameRules"                    
                     label="用户编码"
                     required
+                    prepend-icon="person"
                   ></v-text-field>
                 </v-flex>
 
@@ -36,11 +36,12 @@
                     label="密码"
                     required
                     type="password"
+                    prepend-icon="lock"
                   ></v-text-field>
                 </v-flex>
 
                 <v-flex xs12 md4>
-                  <v-btn color="success" :disabled="!valid" @click="loginSubmit">登录</v-btn>                
+                  <v-btn color="success" large :disabled="!valid" @click="loginSubmit">登录</v-btn>                
                 </v-flex>
               </v-layout>
             </v-container>

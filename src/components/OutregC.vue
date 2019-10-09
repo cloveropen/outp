@@ -32,7 +32,6 @@
                 :rules="[v => !!v || '患者类别不能为空']"
                 hide-details
                 prepend-icon="map"
-                single-line
               ></v-select>
             </v-flex>
             <v-flex d-flex>
@@ -49,7 +48,7 @@
               &emsp;&emsp;
               <v-text-field
                 v-model="out_reg.idcard"
-                label="身份证号"
+                label="身份证号(读卡或扫码获取)"
                 disabled
               ></v-text-field
               >&emsp;&emsp;
@@ -60,7 +59,7 @@
             <v-flex d-flex>
               <v-text-field
                 v-model="out_reg.pid"
-                label="门诊号"
+                label="门诊号(确认挂号生成)"
                 disabled
               ></v-text-field>
             </v-flex>
@@ -75,7 +74,6 @@
                 label="性别"
                 hide-details
                 prepend-icon="map"
-                single-line
                 required
               ></v-select>
             </v-flex>
@@ -119,7 +117,6 @@
                 :rules="[v => !!v || '挂号类别不能为空']"
                 hide-details
                 prepend-icon="map"
-                single-line
                 @input="reg_typeChanged($event)"
               ></v-select>
             </v-flex>
@@ -134,7 +131,6 @@
                 label="就诊科室"
                 hide-details
                 prepend-icon="group_work"
-                single-line
                 required
                 @input="dept_codeChanged($event)"
               ></v-select>
@@ -168,11 +164,10 @@
                 :items="addr_provs"
                 item-text="item-text"
                 item-value="item-value"
-                :rules="[v => !!v || '单位或住址省份不能为空']"
-                label="单位或住址(省份)"
+                :rules="[v => !!v || '住址省份不能为空']"
+                label="住址(省份)"
                 hide-details
                 prepend-icon="group_work"
-                single-line
                 required
                 @input="prov_Changed"
               ></v-select>
@@ -184,11 +179,10 @@
                 :items="addr_citys"
                 item-text="item-text"
                 item-value="item-value"
-                :rules="[v => !!v || '单位或住址-市不能为空']"
-                label="单位或住址(市)"
+                :rules="[v => !!v || '住址-市不能为空']"
+                label="住址(市)"
                 hide-details
                 prepend-icon="group_work"
-                single-line
                 required
                 @input="city_Changed"
               ></v-select>
@@ -200,11 +194,10 @@
                 :items="addr_countys"
                 item-text="item-text"
                 item-value="item-value"
-                :rules="[v => !!v || '单位或住址-区县不能为空']"
-                label="单位或住址(区县)"
+                :rules="[v => !!v || '住址-区县不能为空']"
+                label="住址(区县)"
                 hide-details
                 prepend-icon="group_work"
-                single-line
                 required
                 @input="county_Changed"
               ></v-select
@@ -217,11 +210,10 @@
                 :items="addr_townships"
                 item-text="item-text"
                 item-value="item-value"
-                :rules="[v => !!v || '单位或住址-街道社区不能为空']"
-                label="单位或住址(街道社区)"
+                :rules="[v => !!v || '住址-街道社区不能为空']"
+                label="住址(街道社区)"
                 hide-details
                 prepend-icon="group_work"
-                single-line
                 required
               ></v-select
               >&emsp;&emsp;
@@ -230,22 +222,16 @@
               &emsp;&emsp;
               <v-text-field
                 v-model="out_reg.addrHouseNmb"
-                label="单位或住址(详细地址)"
+                label="住址(详细地址)"
               ></v-text-field>
             </v-flex>
             <v-flex d-flex>
               &emsp;&emsp;
-              <v-select
-                v-model="out_reg.idcardType"
-                :items="idcard_types"
-                item-text="item-text"
-                item-value="item-value"
-                label="证件类型"
-                hide-details
-                prepend-icon="map"
-                single-line
-              ></v-select
-              >&emsp;&emsp;
+              <v-text-field
+                v-model="out_reg.addrHouseNmb"
+                label="工作单位"
+              ></v-text-field>
+              &emsp;&emsp;
             </v-flex>
           </v-layout>
           <!-- <v-spacer></v-spacer>           -->
