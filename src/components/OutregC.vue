@@ -239,86 +239,94 @@
             <v-flex d-flex>
               &emsp;&emsp;
               <v-card class="pa-4" tile elevation="18" width="95%">
-                &emsp;&emsp;&emsp;&emsp;<div class="title">
+                &emsp;&emsp;&emsp;&emsp;
+                <div class="title regfee">
                   挂号费合计:&nbsp;&nbsp;{{
                     out_reg.regPrice + out_reg.checkPrice
                   }}&emsp;&emsp;&emsp;&emsp;
                 </div>
-                <div class="subtitle-1">
+                <div class="subtitle-1 regfee">
                   &emsp;&emsp;其中挂号费:&nbsp;&nbsp;{{ out_reg.regPrice }}
                 </div>
-                <div class="subtitle-1">
+                <div class="subtitle-1 regfee">
                   &emsp;&emsp;其中诊察费:&nbsp;&nbsp;{{ out_reg.checkPrice }}
                 </div>
               </v-card>
-            </v-flex>            
+            </v-flex>
           </v-layout>
 
-          <v-row>
-            <v-col sm="12">
-              <!-- <v-card class="pa-2" outlined tile>就诊人信息</v-card> -->
-              <v-row no-gutters>
-                <v-col cols="6" sm="7">
-                  <v-card class="pa-4" elevation="18">
-                    <div>
-                      <video
-                        ref="video"
-                        id="video"
-                        width="640"
-                        height="480"
-                        autoplay
-                      ></video>
-                    </div>
-                  </v-card>
-                </v-col>
-                <v-col cols="6" sm="5">
-                  <v-card class="pa-4" elevation="18" tile>
-                    <v-row>
-                      <v-col cols="12">
-                        <div class="title">患者医保信息</div>
-                      </v-col>
-                    </v-row>
-                    <v-row>
-                      <v-col cols="6">
-                        <div class="subtitle-1">
-                          &emsp;&emsp;医保个人编号:{{ out_reg.micard }}
-                        </div>
-                      </v-col>
-                      <v-col cols="6">
-                        <div class="subtitle-1">
-                          &emsp;&emsp;医保卡余额:{{ out_reg.miPaccLeft }}
-                        </div>
-                      </v-col>
-                    </v-row>
-                    <v-row>
-                      <v-col cols="6">
-                        <div class="subtitle-1">
-                          &emsp;&emsp;医保类别:{{ out_reg.miType }}
-                        </div>
-                      </v-col>
-                      <v-col cols="6">
-                        <div class="subtitle-1">
-                          &emsp;&emsp;参保单位:{{ out_reg.miCompany }}
-                        </div>
-                      </v-col>
-                    </v-row>
-                    <v-row>
-                      <v-col cols="12">
-                        <div class="subtitle-1">
-                          &emsp;&emsp;读卡信息:{{ out_reg.miStr }}
-                        </div>
-                      </v-col>
-                    </v-row>
-                  </v-card>
-                </v-col>
-              </v-row>
-            </v-col>
-          </v-row>
+          <v-layout row wrap>
+            <v-flex d-flex
+              >&emsp;&emsp;
+              <v-card class="pa-4 m-4" elevation="18" title>
+                <div>
+                  <video
+                    ref="video"
+                    id="video"
+                    width="640"
+                    height="480"
+                    autoplay
+                  ></video>
+                </div>
+              </v-card>
+            </v-flex>
+            <v-flex d-flex>
+              <v-card class="pa-4" elevation="18" tile width="100%">
+                <v-list dense>
+                  <v-list-item>
+                    <v-list-item-content>
+                      <v-list-item-title class="title mb-1"
+                        >患者医保信息</v-list-item-title
+                      >
+                      <v-list-item-subtitle
+                        >医保读卡获取信息</v-list-item-subtitle
+                      >
+                    </v-list-item-content>
+                  </v-list-item>
+                  <v-list-item>
+                    <v-list-item-content>
+                      <v-list-item-title class="subtitle-1"
+                        >医保个人编号:{{ out_reg.micard }}</v-list-item-title
+                      >
+                    </v-list-item-content>
+                  </v-list-item>
+                  <v-list-item>
+                    <v-list-item-content>
+                      <v-list-item-title class="subtitle-1"
+                        >医保卡余额:{{ out_reg.miPaccLeft }}</v-list-item-title
+                      >
+                    </v-list-item-content>
+                  </v-list-item>
+                  <v-list-item>
+                    <v-list-item-content>
+                      <v-list-item-title class="subtitle-1"
+                        >医保类别:{{ out_reg.miType }}</v-list-item-title
+                      >
+                    </v-list-item-content>
+                  </v-list-item>
+                  <v-list-item>
+                    <v-list-item-content>
+                      <v-list-item-title class="subtitle-1"
+                        >参保单位:{{ out_reg.miCompany }}</v-list-item-title
+                      >
+                    </v-list-item-content>
+                  </v-list-item>
+                  <v-list-item>
+                    <v-list-item-content>
+                      <v-list-item-title class="subtitle-1"
+                        >读卡信息:{{ out_reg.miStr }}</v-list-item-title
+                      >
+                    </v-list-item-content>
+                  </v-list-item>
+                </v-list> </v-card
+              >&emsp;&emsp;
+            </v-flex>
+          </v-layout>
         </v-card-text>
 
         <v-card-actions class="justify-center">
           <v-btn id="snap" :disabled="!valid" color="success" @click="capture"
-            >拍照</v-btn
+            >&emsp;拍&emsp;照&emsp;</v-btn
           >
           <v-btn :disabled="!valid" color="success" @click="validate"
             >读健康卡</v-btn
@@ -333,33 +341,25 @@
             :disabled="!valid"
             color="success"
             @click="outregcashClicked($event)"
-            >现金挂号</v-btn
+            >现金支付</v-btn
           >
           <v-btn
             :disabled="!valid"
             color="success"
             @click="outregweixinClicked($event)"
-            >微信挂号</v-btn
+            >微信支付</v-btn
           >
+          <v-btn color="warning">打印挂号单</v-btn>
           <v-btn
             :disabled="!valid"
             color="success"
-            @click="schweixinClicked($event)"
-          >
-            查询微信订单
+            @click="schweixinClicked($event)">查询微信订单
           </v-btn>
-          <!-- <v-btn color="warning" @click="reset">下一位</v-btn> -->
-          <v-btn color="warning">下一位</v-btn>
+          <!-- <v-btn color="warning" @click="reset">下一位</v-btn> -->          
         </v-card-actions>
       </v-card>
     </v-form>
-    <canvas ref="canvas" id="canvas" width="640" height="480" hidden></canvas>
-    <!-- <ul>
-      <v-list v-for="c in captures" :key="c">
-        <img v-bind:src="c" height="180" />
-      </v-list>
-    </ul> -->
-
+    <canvas ref="canvas" id="canvas" width="640" height="480" hidden></canvas>   
     <v-row>
       <v-col sm="12">
         <!--  第二级 -->
@@ -548,7 +548,7 @@ export default {
     expidChanged(e) {
       let texpid = e;
       console.log("texpid e=" + e);
-      if (texpid.length < 10){
+      if (texpid.length < 10) {
         return;
       }
       getpatient(texpid).then(data => {
@@ -563,7 +563,9 @@ export default {
       console.log("e=" + e.target.innerText);
       outreg_cash(this.out_reg).then(data => {
         this.out_reg.pid = data;
-        console.log("outregcashClicked this.out_reg_pic.pid=" + this.out_reg_pic.pid);
+        console.log(
+          "outregcashClicked this.out_reg_pic.pid=" + this.out_reg_pic.pid
+        );
         this.out_reg_pic.pid = this.out_reg.pid;
         this.out_reg_pic.exPid = this.out_reg.exPid;
         this.out_reg_pic.patientName = this.out_reg.patientName;
@@ -572,7 +574,7 @@ export default {
         this.out_reg_pic.micard = this.out_reg.micard;
         this.out_reg_pic.captureOpid = this.out_reg.regOpcode;
         outreg_pic(this.out_reg_pic);
-      });      
+      });
     },
     outregweixinClicked(e) {
       console.log("e=" + e.target.innerText);
@@ -654,7 +656,7 @@ export default {
 </script>
 
 <style>
-div {
+.regfee {
   display: inline;
-} 
+}
 </style>

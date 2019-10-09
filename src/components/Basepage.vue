@@ -120,7 +120,7 @@ export default {
         icon: "keyboard_arrow_up",
         "icon-alt": "keyboard_arrow_down",
         text: "查询与统计",
-        model: true,
+        model: false,
         children: [
           { text: "挂号明细", id: "detail_reg" },
           { text: "收款明细", id: "detail_cash" },
@@ -140,6 +140,7 @@ export default {
           { text: "发票管理", id: "mg_invoice" }
         ]
       },
+      { icon: "home", text: "返回主页", id: "home" },
       { icon: "help", text: "退出登录", id: "logout" }
     ]
   }),
@@ -152,6 +153,10 @@ export default {
       }
       switch (tstr)
       {
+        case "home":
+          this.$router.push({ path: "/" });
+          break;
+
         case "out_reg":
           this.$router.push({ path: "/outreg" });
           break;
