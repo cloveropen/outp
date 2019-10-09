@@ -228,38 +228,31 @@
             <v-flex d-flex>
               &emsp;&emsp;
               <v-text-field
-                v-model="out_reg.addrHouseNmb"
+                v-model="out_reg.company"
                 label="工作单位"
               ></v-text-field>
               &emsp;&emsp;
             </v-flex>
           </v-layout>
           <!-- <v-spacer></v-spacer>           -->
-          <v-row>
-            <v-col cols="6">
-              <v-card class="pa-4" tile elevation="18">
-                <div align="right" class="title">
+          <v-layout row wrap>
+            <v-flex d-flex>
+              &emsp;&emsp;
+              <v-card class="pa-4" tile elevation="18" width="95%">
+                &emsp;&emsp;&emsp;&emsp;<div class="title">
                   挂号费合计:&nbsp;&nbsp;{{
                     out_reg.regPrice + out_reg.checkPrice
                   }}&emsp;&emsp;&emsp;&emsp;
                 </div>
-              </v-card>
-            </v-col>
-            <v-col cols="3">
-              <v-card class="pa-4" tile elevation="20">
                 <div class="subtitle-1">
-                  其中挂号费:&nbsp;&nbsp;{{ out_reg.regPrice }}
+                  &emsp;&emsp;其中挂号费:&nbsp;&nbsp;{{ out_reg.regPrice }}
+                </div>
+                <div class="subtitle-1">
+                  &emsp;&emsp;其中诊察费:&nbsp;&nbsp;{{ out_reg.checkPrice }}
                 </div>
               </v-card>
-            </v-col>
-            <v-col cols="3">
-              <v-card class="pa-4" tile elevation="20">
-                <div class="subtitle-1">
-                  其中诊察费:&nbsp;&nbsp;{{ out_reg.checkPrice }}
-                </div>
-              </v-card>
-            </v-col>
-          </v-row>
+            </v-flex>            
+          </v-layout>
 
           <v-row>
             <v-col sm="12">
@@ -479,6 +472,7 @@ export default {
       addrTownship: "",
       addrStreet: "",
       addrHouseNmb: "",
+      company: "",
       miPaccLeft: 0.0,
       miCompany: "",
       miStr: "",
@@ -553,8 +547,8 @@ export default {
     },
     expidChanged(e) {
       let texpid = e;
-       console.log("texpid e=" + e);
-      if (texpid.length<10){
+      console.log("texpid e=" + e);
+      if (texpid.length < 10){
         return;
       }
       getpatient(texpid).then(data => {
@@ -567,9 +561,9 @@ export default {
     },
     outregcashClicked(e) {
       console.log("e=" + e.target.innerText);
-      outreg_cash(this.out_reg).then(data =>{
+      outreg_cash(this.out_reg).then(data => {
         this.out_reg.pid = data;
-        console.log("outregcashClicked this.out_reg_pic.pid=" +this.out_reg_pic.pid);
+        console.log("outregcashClicked this.out_reg_pic.pid=" + this.out_reg_pic.pid);
         this.out_reg_pic.pid = this.out_reg.pid;
         this.out_reg_pic.exPid = this.out_reg.exPid;
         this.out_reg_pic.patientName = this.out_reg.patientName;
@@ -578,8 +572,7 @@ export default {
         this.out_reg_pic.micard = this.out_reg.micard;
         this.out_reg_pic.captureOpid = this.out_reg.regOpcode;
         outreg_pic(this.out_reg_pic);
-      });
-      
+      });      
     },
     outregweixinClicked(e) {
       console.log("e=" + e.target.innerText);
@@ -660,4 +653,8 @@ export default {
 };
 </script>
 
-<style></style>
+<style>
+div {
+  display: inline;
+} 
+</style>
