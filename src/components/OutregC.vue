@@ -73,7 +73,7 @@
                 :rules="[v => !!v || '患者性别不能为空']"
                 label="性别"
                 hide-details
-                prepend-icon="map"
+                prepend-icon="info"
                 required
               ></v-select>
             </v-flex>
@@ -116,7 +116,7 @@
                 item-value="item-value"
                 :rules="[v => !!v || '挂号类别不能为空']"
                 hide-details
-                prepend-icon="map"
+                prepend-icon="donut_small"
                 @input="reg_typeChanged($event)"
               ></v-select>
             </v-flex>
@@ -144,7 +144,7 @@
                 item-value="item-value"
                 label="专家医师"
                 hide-details
-                prepend-icon="map"
+                prepend-icon="account_box"
                 single-line
               ></v-select>
             </v-flex>
@@ -167,7 +167,7 @@
                 :rules="[v => !!v || '住址省份不能为空']"
                 label="住址(省份)"
                 hide-details
-                prepend-icon="group_work"
+                prepend-icon="business"
                 required
                 @input="prov_Changed"
               ></v-select>
@@ -182,7 +182,7 @@
                 :rules="[v => !!v || '住址-市不能为空']"
                 label="住址(市)"
                 hide-details
-                prepend-icon="group_work"
+                prepend-icon="business"
                 required
                 @input="city_Changed"
               ></v-select>
@@ -197,7 +197,7 @@
                 :rules="[v => !!v || '住址-区县不能为空']"
                 label="住址(区县)"
                 hide-details
-                prepend-icon="group_work"
+                prepend-icon="business"
                 required
                 @input="county_Changed"
               ></v-select
@@ -213,7 +213,7 @@
                 :rules="[v => !!v || '住址-街道社区不能为空']"
                 label="住址(街道社区)"
                 hide-details
-                prepend-icon="group_work"
+                prepend-icon="business"
                 required
               ></v-select
               >&emsp;&emsp;
