@@ -349,7 +349,9 @@
             @click="outregweixinClicked($event)"
             >微信支付</v-btn
           >
-          <v-btn color="warning">打印挂号单</v-btn>
+          <v-btn color="warning"
+            :disabled="!valid"
+            @click="prnClicked($event)">打印挂号单</v-btn>
           <v-btn
             :disabled="!valid"
             color="success"
@@ -390,6 +392,12 @@
             </v-row>
           </v-col>
           <v-col cols="4" sm="6">
+            
+             <v-parallax
+    height="400"
+    dark
+    :src="require('../assets/img/blank_cash.jpg')">
+      <div id="print_reg">
             <v-card
               class="pa-2"
               outlined
@@ -398,6 +406,9 @@
             >
               挂号单打印样式
             </v-card>
+            </div>
+            </v-parallax>
+             
           </v-col>
         </v-row>
       </v-col>
@@ -612,6 +623,11 @@ export default {
     county_Changed() {
       let tcountyid = this.out_reg.addrCounty;
       this.addr_townships = getstreets(tcountyid);
+    },
+    //-------------------打印挂号单--------------------------------------------------
+    prnClicked(e) {
+      console.log("e=" + e.target.innerText);
+      this.$htmlToPaper('print_reg');
     },
     capture() {
       this.canvas = this.$refs.canvas;

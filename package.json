@@ -11,6 +11,7 @@
   "dependencies": {
     "core-js": "^2.6.5",
     "vue": "^2.6.10",
+    "vue-html-to-paper": "^1.1.1",
     "vue-router": "^3.0.3",
     "vuetify": "^2.0.0",
     "vuex": "^3.0.1"
