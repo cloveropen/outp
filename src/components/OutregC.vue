@@ -1,6 +1,6 @@
 <template>
   <v-container class="grey lighten-5">
-    <v-form ref="form" v-model="valid" lazy-validation>
+    <v-form ref="form_reg" v-model="valid" lazy-validation>
       <v-card class="mx-auto" max-width="99%" min-width="100%">
         <v-img
           class="white--text"
@@ -32,6 +32,7 @@
                 :rules="[v => !!v || '患者类别不能为空']"
                 hide-details
                 prepend-icon="map"
+                @input="patientTypeChanged($event)"
               ></v-select>
             </v-flex>
             <v-flex d-flex>
@@ -325,79 +326,90 @@
         </v-card-text>
 
         <v-card-actions class="justify-center">
-          <v-btn id="snap" :disabled="!valid" color="success" @click="capture"
-            >&emsp;拍&emsp;照&emsp;</v-btn
-          >
-          <v-btn :disabled="!valid" color="success" @click="validate"
-            >读健康卡</v-btn
-          >
-          <v-btn
-            :disabled="!valid"
-            color="success"
-            v-on:click="readcardClicked($event)"
-            >读医保卡</v-btn
-          >
-          <v-btn
-            :disabled="!valid"
-            color="success"
-            @click="outregcashClicked($event)"
-            >现金支付</v-btn
-          >
-          <v-btn
-            :disabled="!valid"
-            color="success"
-            @click="outregweixinClicked($event)"
-            >微信支付</v-btn
-          >
-          <v-btn color="warning"
-            :disabled="!valid"
-            @click="prnClicked($event)">打印挂号单</v-btn>
-          <v-btn
-            :disabled="!valid"
-            color="success"
-            @click="schweixinClicked($event)">查询微信订单
-          </v-btn>
-          <!-- <v-btn color="warning" @click="reset">下一位</v-btn> -->          
+          <v-row no-gutters>
+            <v-col><v-spacer></v-spacer></v-col>
+            <v-col cols="3">
+              <v-radio-group row v-model="out_reg.payType">
+                <v-radio
+                  key="cash"
+                  label="现金"
+                  color="success"
+                  value="cash"
+                ></v-radio>
+                <v-radio key="wechat" label="微信" value="wechat"></v-radio>
+                <v-radio key="alipay" label="支付宝" value="alipay"></v-radio>
+              </v-radio-group>
+            </v-col>
+            <v-col cols="8">
+              <v-btn
+                id="snap"
+                :disabled="!valid"
+                color="success"
+                @click="capture"
+                >&emsp;&emsp;拍&emsp;照&emsp;&emsp;</v-btn
+              >
+              <v-btn
+                color="success"
+                :style="display_btn_readhealth"
+                @click="validate"
+                >读 健 康 卡</v-btn
+              >
+              <v-btn
+                :style="display_btn_readmi"
+                color="success"
+                v-on:click="readcardClicked($event)"
+                >读 医 保 卡</v-btn
+              >
+              <v-btn
+                :disabled="!valid"
+                color="success"
+                @click="outregcashClicked($event)"
+                >确 认 挂 号</v-btn
+              >
+              <v-btn
+                color="warning"
+                :disabled="!valid"
+                @click="prnClicked($event)"
+                >打印挂号单</v-btn
+              >
+              <v-btn
+                :disabled="!valid"
+                color="success"
+                @click="schweixinClicked($event)"
+                >查询支付订单
+              </v-btn>
+            </v-col>
+          </v-row>
+          <!-- <v-btn color="warning" @click="reset">下一位</v-btn> -->
         </v-card-actions>
       </v-card>
     </v-form>
-    <canvas ref="canvas" id="canvas" width="640" height="480" hidden></canvas>   
-    <v-row>
-      <v-col sm="12">
-        <!--  第二级 -->
+    <v-divider></v-divider>
+    <v-spacer>&emsp;</v-spacer>
+
+    <canvas ref="canvas" id="canvas" width="640" height="480" hidden></canvas>
+    <v-row no-gutters>
+      <v-col cols="12" sm="12">
         <v-row no-gutters>
-          <v-col cols="8" sm="6">
-            <!-- 第三级 显示照片 -->
-            <v-row no-gutters>
-              <v-col
-                ><img v-bind:src="this.out_reg_pic.pic1" height="120"
-              /></v-col>
-              <v-col
-                ><img v-bind:src="this.out_reg_pic.pic2" height="120"
-              /></v-col>
-              <v-col
-                ><img v-bind:src="this.out_reg_pic.pic3" height="120"
-              /></v-col>
-            </v-row>
-            <v-row no-gutters>
-              <v-col
-                ><img v-bind:src="this.out_reg_pic.pic4" height="120"
-              /></v-col>
-              <v-col
-                ><img v-bind:src="this.out_reg_pic.pic5" height="120"
-              /></v-col>
-              <v-col
-                ><img v-bind:src="this.out_reg_pic.pic6" height="120"
-              /></v-col>
-            </v-row>
-          </v-col>
-          <v-col cols="4" sm="6">
-            
-             <v-parallax
-    height="400"
-    dark
-    :src="require('../assets/img/blank_cash.jpg')">
-      <div id="print_reg">
+          <v-col><img v-bind:src="this.out_reg_pic.pic1" height="240"/></v-col>
+          <v-col><img v-bind:src="this.out_reg_pic.pic2" height="240"/></v-col>
+          <v-col><img v-bind:src="this.out_reg_pic.pic3" height="240"/></v-col>
+        </v-row>
+        <v-row no-gutters>
+          <v-col><img v-bind:src="this.out_reg_pic.pic4" height="240"/></v-col>
+          <v-col><img v-bind:src="this.out_reg_pic.pic5" height="240"/></v-col>
+          <v-col><img v-bind:src="this.out_reg_pic.pic6" height="240"/></v-col>
+        </v-row>
+      </v-col>
+    </v-row>
+    <v-row no-gutters>
+      <v-col cols="12" sm="12">
+        <v-parallax
+          height="700"
+          dark
+          :src="require('../assets/img/blank_cash.jpg')"
+        >
+          <div id="print_reg">
             <v-card
               class="pa-2"
               outlined
@@ -406,11 +418,8 @@
             >
               挂号单打印样式
             </v-card>
-            </div>
-            </v-parallax>
-             
-          </v-col>
-        </v-row>
+          </div>
+        </v-parallax>
       </v-col>
     </v-row>
   </v-container>
@@ -431,7 +440,7 @@ import {
   getpatient,
   readcard_mi,
   outreg_cash,
-  outreg_weixin,
+  // outreg_weixin,
   outreg_pic,
   sch_weixin,
   getregprice
@@ -489,7 +498,7 @@ export default {
       miStr: "",
       miType: "",
       micard: "",
-      payType: "",
+      payType: "cash", //支付方式选择
       regOpcode: "", //挂号员
       payCash: 0.0, //现金支付金额
       payPacc: 0.0, //医保(农合)个人帐户支付金额
@@ -521,7 +530,9 @@ export default {
       pic4: "",
       pic5: "",
       pic6: ""
-    }
+    },
+    display_btn_readhealth: "display:none",
+    display_btn_readmi: "display:none"
   }),
   created() {
     this.out_reg.regOpcode = get_regopcode();
@@ -566,12 +577,31 @@ export default {
         this.out_reg = data;
       });
     },
+    //------------------医保类别医保1*读卡显示,农合2*显示读健康卡--------------
+    patientTypeChanged(e) {
+      let tptype = e;
+      console.log("tptype e=" + tptype);
+      this.display_btn_readmi = "display:none";
+      this.display_btn_readhealth = "display:none";
+      if (tptype.slice(0, 1) == "1") {
+        //医保
+        this.display_btn_readmi = "";
+      }
+      if (tptype.slice(0, 1) == "2") {
+        //农合
+        this.display_btn_readhealth = "";
+      }
+    },
     readcardClicked(e) {
       console.log("e=" + e.target.innerText);
       readcard_mi();
     },
     outregcashClicked(e) {
-      console.log("e=" + e.target.innerText);
+      console.log("确认挂号e=" + e);      
+      if(!this.$refs.form_reg.validate()) {
+        window.alert("请选择必须填写的字段");
+        return;
+      }
       outreg_cash(this.out_reg).then(data => {
         this.out_reg.pid = data;
         console.log(
@@ -586,10 +616,6 @@ export default {
         this.out_reg_pic.captureOpid = this.out_reg.regOpcode;
         outreg_pic(this.out_reg_pic);
       });
-    },
-    outregweixinClicked(e) {
-      console.log("e=" + e.target.innerText);
-      outreg_weixin();
     },
     schweixinClicked(e) {
       console.log("e=" + e.target.innerText);
@@ -627,7 +653,7 @@ export default {
     //-------------------打印挂号单--------------------------------------------------
     prnClicked(e) {
       console.log("e=" + e.target.innerText);
-      this.$htmlToPaper('print_reg');
+      this.$htmlToPaper("print_reg");
     },
     capture() {
       this.canvas = this.$refs.canvas;
