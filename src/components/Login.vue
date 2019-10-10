@@ -22,7 +22,7 @@
                 <v-flex xs12 md4>
                   <v-text-field
                     v-model="username"
-                    :rules="nameRules"                    
+                    :rules="nameRules"
                     label="用户编码"
                     required
                     prepend-icon="person"
@@ -41,7 +41,9 @@
                 </v-flex>
 
                 <v-flex xs12 md4>
-                  <v-btn color="success" large :disabled="!valid" @click="loginSubmit">登录</v-btn>                
+                  <v-btn color="success" large :disabled="!valid" @click="loginSubmit">
+                    登录
+                  </v-btn>                
                 </v-flex>
               </v-layout>
             </v-container>
