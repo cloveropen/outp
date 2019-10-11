@@ -14,7 +14,7 @@
             &emsp;&emsp;
             <v-flex d-flex>
               <v-text-field
-                v-model="out_reg.exPid"
+                v-model="out_reg.ex_pid"
                 label="条码号(可以为空)"
                 @input="expidChanged($event)"
               >
@@ -23,7 +23,7 @@
             <v-flex d-flex>
               &emsp;&emsp;
               <v-select
-                v-model="out_reg.patientType"
+                v-model="out_reg.patient_type"
                 label="患者类别"
                 required
                 :items="patient_types"
@@ -38,7 +38,7 @@
             <v-flex d-flex>
               &emsp;&emsp;
               <v-text-field
-                v-model="out_reg.patientName"
+                v-model="out_reg.patient_name"
                 label="患者姓名"
                 required
                 :counter="6"
@@ -83,21 +83,21 @@
                 <v-flex d-flex>
                   &emsp;&emsp;
                   <v-text-field
-                    v-model="out_reg.ageY"
+                    v-model="out_reg.age_y"
                     label="年龄(岁)"
                   ></v-text-field>
                 </v-flex>
                 <v-flex d-flex>
                   &emsp;&emsp;
                   <v-text-field
-                    v-model="out_reg.ageM"
+                    v-model="out_reg.age_m"
                     label="年龄(月)"
                   ></v-text-field>
                 </v-flex>
                 <v-flex d-flex>
                   &emsp;&emsp;
                   <v-text-field
-                    v-model="out_reg.ageD"
+                    v-model="out_reg.age_d"
                     label="年龄(天)"
                   ></v-text-field
                   >&emsp;&emsp;
@@ -109,7 +109,7 @@
             <v-flex d-flex>
               &emsp;&emsp;
               <v-select
-                v-model="out_reg.regType"
+                v-model="out_reg.reg_type"
                 label="挂号类别"
                 required
                 :items="reg_types"
@@ -124,7 +124,7 @@
             <v-flex d-flex>
               &emsp;&emsp;
               <v-select
-                v-model="out_reg.deptCode"
+                v-model="out_reg.dept_code"
                 :items="dept_codes"
                 item-text="item-text"
                 item-value="item-value"
@@ -139,7 +139,7 @@
             <v-flex d-flex>
               &emsp;&emsp;
               <v-select
-                v-model="out_reg.doctorCode"
+                v-model="out_reg.doctor_code"
                 :items="doctor_codes"
                 item-text="item-text"
                 item-value="item-value"
@@ -152,7 +152,7 @@
             <v-flex d-flex>
               &emsp;&emsp;
               <v-switch
-                v-model="out_reg.visitPriority"
+                v-model="out_reg.visit_priority"
                 label="就诊优先"
               ></v-switch>
             </v-flex>
@@ -161,7 +161,7 @@
             <v-flex d-flex>
               &emsp;&emsp;
               <v-select
-                v-model="out_reg.addrProv"
+                v-model="out_reg.addr_prov"
                 :items="addr_provs"
                 item-text="item-text"
                 item-value="item-value"
@@ -176,7 +176,7 @@
             <v-flex d-flex>
               &emsp;&emsp;
               <v-select
-                v-model="out_reg.addrCity"
+                v-model="out_reg.addr_city"
                 :items="addr_citys"
                 item-text="item-text"
                 item-value="item-value"
@@ -191,7 +191,7 @@
             <v-flex d-flex>
               &emsp;&emsp;
               <v-select
-                v-model="out_reg.addrCounty"
+                v-model="out_reg.addr_county"
                 :items="addr_countys"
                 item-text="item-text"
                 item-value="item-value"
@@ -207,7 +207,7 @@
             <v-flex d-flex>
               &emsp;&emsp;
               <v-select
-                v-model="out_reg.addrTownship"
+                v-model="out_reg.addr_township"
                 :items="addr_townships"
                 item-text="item-text"
                 item-value="item-value"
@@ -222,7 +222,7 @@
             <v-flex d-flex>
               &emsp;&emsp;
               <v-text-field
-                v-model="out_reg.addrHouseNmb"
+                v-model="out_reg.addr_house_nmb"
                 label="住址(详细地址)"
               ></v-text-field>
             </v-flex>
@@ -243,14 +243,14 @@
                 &emsp;&emsp;&emsp;&emsp;
                 <div class="title regfee">
                   挂号费合计:&nbsp;&nbsp;{{
-                    out_reg.regPrice + out_reg.checkPrice
+                    out_reg.reg_price + out_reg.check_price
                   }}&emsp;&emsp;&emsp;&emsp;
                 </div>
                 <div class="subtitle-1 regfee">
-                  &emsp;&emsp;其中挂号费:&nbsp;&nbsp;{{ out_reg.regPrice }}
+                  &emsp;&emsp;其中挂号费:&nbsp;&nbsp;{{ out_reg.reg_pPrice }}
                 </div>
                 <div class="subtitle-1 regfee">
-                  &emsp;&emsp;其中诊察费:&nbsp;&nbsp;{{ out_reg.checkPrice }}
+                  &emsp;&emsp;其中诊察费:&nbsp;&nbsp;{{ out_reg.check_price }}
                 </div>
               </v-card>
             </v-flex>
@@ -294,28 +294,28 @@
                   <v-list-item>
                     <v-list-item-content>
                       <v-list-item-title class="subtitle-1"
-                        >医保卡余额:{{ out_reg.miPaccLeft }}</v-list-item-title
+                        >医保卡余额:{{ out_reg.mi_pacc_left }}</v-list-item-title
                       >
                     </v-list-item-content>
                   </v-list-item>
                   <v-list-item>
                     <v-list-item-content>
                       <v-list-item-title class="subtitle-1"
-                        >医保类别:{{ out_reg.miType }}</v-list-item-title
+                        >医保类别:{{ out_reg.mi_type }}</v-list-item-title
                       >
                     </v-list-item-content>
                   </v-list-item>
                   <v-list-item>
                     <v-list-item-content>
                       <v-list-item-title class="subtitle-1"
-                        >参保单位:{{ out_reg.miCompany }}</v-list-item-title
+                        >参保单位:{{ out_reg.mi_company }}</v-list-item-title
                       >
                     </v-list-item-content>
                   </v-list-item>
                   <v-list-item>
                     <v-list-item-content>
                       <v-list-item-title class="subtitle-1"
-                        >读卡信息:{{ out_reg.miStr }}</v-list-item-title
+                        >读卡信息:{{ out_reg.mi_str }}</v-list-item-title
                       >
                     </v-list-item-content>
                   </v-list-item>
@@ -329,7 +329,7 @@
           <v-row no-gutters>
             <v-col><v-spacer></v-spacer></v-col>
             <v-col cols="3">
-              <v-radio-group row v-model="out_reg.payType">
+              <v-radio-group row v-model="out_reg.pay_type">
                 <v-radio
                   key="cash"
                   label="现金"
@@ -468,45 +468,45 @@ export default {
     addr_countys: [], //单位或住址(区县)
     addr_townships: [], //单位或住址(街道)
     out_reg: {
-      hspCode: process.env.VUE_APP_HSP_CODE,
+      hsp_code: process.env.VUE_APP_HSP_CODE,
       pid: "", //门诊号
-      pidType: "O", //患者标识类别
-      exPid: "", //条形码
-      patientName: "", //患者姓名
+      pid_type: "O", //患者标识类别
+      ex_pid: "", //条形码
+      patient_name: "", //患者姓名
       gender: "", //性别代码
-      ageY: "", // 年龄
-      ageM: "", //  年龄
-      ageD: "", //  年龄
-      patientType: "", //患者类型
-      regType: "pz", // 挂号类别
-      regPrice: 0.0, //挂号费
-      checkPrice: 0.0, //诊察费
-      visitPriority: "0", //就诊优先标志
-      deptCode: "", //就诊科室
-      doctorCode: "", //门诊接诊医生
+      age_y: 0, // 年龄
+      age_m: 0, //  年龄
+      age_d: 0, //  年龄
+      patient_type: "", //患者类型
+      reg_type: "pz", // 挂号类别
+      reg_price: 0.0, //挂号费
+      check_price: 0.0, //诊察费
+      visit_priority: "1", //就诊优先标志
+      dept_code: "", //就诊科室
+      doctor_code: "", //门诊接诊医生
       idcard: "", //患者身份证号码
-      idcardType: "jmsfz", //患者身份证件类别
-      addrProv: process.env.VUE_APP_HSP_PROV, //地址
-      addrCity: process.env.VUE_APP_HSP_CITY,
-      addrCounty: process.env.VUE_APP_HSP_COUNTY,
-      addrTownship: "",
-      addrStreet: "",
-      addrHouseNmb: "",
+      idcard_type: "jmsfz", //患者身份证件类别
+      addr_prov: process.env.VUE_APP_HSP_PROV, //地址
+      addr_city: process.env.VUE_APP_HSP_CITY,
+      addr_county: process.env.VUE_APP_HSP_COUNTY,
+      addr_township: "",
+      addr_street: "",
+      addr_house_nmb: "",
       company: "",
-      miPaccLeft: 0.0,
-      miCompany: "",
-      miStr: "",
-      miType: "",
+      mi_pacc_left: 0.0,
+      mi_company: "",
+      mi_str: "",
+      mi_type: "",
       micard: "",
-      payType: "cash", //支付方式选择
-      regOpcode: "", //挂号员
-      payCash: 0.0, //现金支付金额
-      payPacc: 0.0, //医保(农合)个人帐户支付金额
-      payFund: 0.0, //医保(农合)统筹支付金额
-      payNfc: 0.0, //移动支付金额
-      invoiceNmb: "", //挂号单收据流水号
-      flowNmb: "", //挂号单操作员流水号
-      mchIp: "", //本机局域网IP地址
+      pay_type: "cash", //支付方式选择
+      reg_opcode: "", //挂号员
+      pay_cash: 0.0, //现金支付金额
+      pay_pacc: 0.0, //医保(农合)个人帐户支付金额
+      pay_fund: 0.0, //医保(农合)统筹支付金额
+      pay_nfc: 0.0, //移动支付金额
+      invoice_nmb: "", //挂号单收据流水号
+      flow_nmb: "", //挂号单操作员流水号
+      mch_ip: "", //本机局域网IP地址
       ver: process.env.VUE_APP_VERSION //版本号
     },
     video: {},
@@ -514,16 +514,16 @@ export default {
     //captures: [],
     capture_num: 0,
     out_reg_pic: {
-      hspCode: process.env.VUE_APP_HSP_CODE,
+      hsp_code: process.env.VUE_APP_HSP_CODE,
       pid: "",
-      exPid: "",
-      patientName: "",
+      ex_pid: "",
+      patient_name: "",
       idcard: "",
-      healthId: "",
+      health_id: "",
       micard: "",
-      captureTime: "",
-      captureOpid: "",
-      mchIp: "",
+      capture_time: "",
+      capture_opid: "",
+      mch_ip: "",
       pic1: "",
       pic2: "",
       pic3: "",
@@ -535,7 +535,7 @@ export default {
     display_btn_readmi: "display:none"
   }),
   created() {
-    this.out_reg.regOpcode = get_regopcode();
+    this.out_reg.reg_opcode = get_regopcode();
     this.patient_types = getpatient_type();
     this.genders = getgender();
     this.idcard_types = getid_type();
@@ -608,12 +608,12 @@ export default {
           "outregcashClicked this.out_reg_pic.pid=" + this.out_reg_pic.pid
         );
         this.out_reg_pic.pid = this.out_reg.pid;
-        this.out_reg_pic.exPid = this.out_reg.exPid;
-        this.out_reg_pic.patientName = this.out_reg.patientName;
+        this.out_reg_pic.ex_pid = this.out_reg.ex_pid;
+        this.out_reg_pic.patient_name = this.out_reg.patient_name;
         this.out_reg_pic.idcard = this.out_reg.idcard;
-        this.out_reg_pic.healthId = this.out_reg.healthId;
+        this.out_reg_pic.health_id = this.out_reg.health_id;
         this.out_reg_pic.micard = this.out_reg.micard;
-        this.out_reg_pic.captureOpid = this.out_reg.regOpcode;
+        this.out_reg_pic.capture_opid = this.out_reg.reg_opcode;
         outreg_pic(this.out_reg_pic);
       });
     },
@@ -622,32 +622,32 @@ export default {
       sch_weixin();
     },
     dept_codeChanged(e) {
-      let tdept_code = this.out_reg.deptCode;
+      let tdept_code = this.out_reg.dept_code;
       console.log("dept_codeChanged e=" + e);
       let tpost_tech = "1";
       this.doctor_codes = getdoctor_codes(tdept_code, tpost_tech);
     },
     reg_typeChanged(e) {
       console.log("reg_typeChanged e=" + e);
-      let treg_type = this.out_reg.regType;
+      let treg_type = this.out_reg.reg_type;
       getregprice(treg_type).then(data => {
-        this.out_reg.regPrice = data[0];
-        this.out_reg.checkPrice = data[1];
+        this.out_reg.reg_price = data[0];
+        this.out_reg.check_price = data[1];
       });
     },
     //------------------获取指定省份的市列表---------------------------
     prov_Changed() {
-      let tprovid = this.out_reg.addrProv;
+      let tprovid = this.out_reg.addr_prov;
       this.addr_citys = getcitys(tprovid);
     },
     //------------------获取指定市的区县列表---------------------------
     city_Changed() {
-      let tcityid = this.out_reg.addrCity;
+      let tcityid = this.out_reg.addr_city;
       this.addr_countys = getcountys(tcityid);
     },
     //------------------获取指定区县的街道列表---------------------------
     county_Changed() {
-      let tcountyid = this.out_reg.addrCounty;
+      let tcountyid = this.out_reg.addr_county;
       this.addr_townships = getstreets(tcountyid);
     },
     //-------------------打印挂号单--------------------------------------------------
