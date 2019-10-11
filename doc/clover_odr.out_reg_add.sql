@@ -6,6 +6,7 @@ AS $cloveropen$
 DECLARE
     tor clover_odr.out_reg%rowtype;
     tempi clover_md.empi%rowtype;
+	torp clover_odr.out_reg_prn%rowtype;
 BEGIN
     select * from json_populate_record(null::clover_odr.out_reg,tin_str::json) into tor;
     select nextval('clover_odr.seq_out_reg') into tor.seq;
@@ -62,8 +63,44 @@ BEGIN
 
     end if;
 	----------------------------------------end empi-----------------------------------------
+	tor.visit_flag := '0'; --'0' 未支付 1-已支付 2-已接诊
     insert into clover_odr.out_reg values (tor.*);
-
+	------------------------------写入打印挂号单记录表，状态是未交费-------------------------
+    select nextval('clover_odr.seq_out_reg_prn') into torp.seq;
+	torp.hsp_code
+	torp.pid
+	torp.ex_pid
+	torp.patient_name
+	torp.reg_type
+	torp.wait_period
+	torp.dept
+	torp.doctor
+	torp.location
+	torp.pay_type
+	torp.reg_price
+	torp.check_price
+	torp.pay_cash
+	torp.pay_fund
+	torp.pay_pacc
+	torp.pay_nfc
+	torp.reg_opcode
+	torp.reg_time
+	torp.flow_nmb
+	torp.invoice_nmb
+	torp.prn_status
+	torp.patient_type
+	torp.mi01
+	torp.mi02
+	torp.mi03
+	torp.mi04
+	torp.mi05
+	torp.mi06
+	torp.mi07
+	torp.mi08
+	torp.mi09
+	torp.mi10
+	torp.mi11
+	------------------------------------------------------------------------------------------
     RETURN tor.pid;
 END;
 $cloveropen$;
