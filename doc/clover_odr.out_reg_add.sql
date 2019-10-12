@@ -7,9 +7,12 @@ DECLARE
     tor clover_odr.out_reg%rowtype;
     tempi clover_md.empi%rowtype;
 	torp clover_odr.out_reg_prn%rowtype;
+	tdept text := '';
+	tdoctor text := '';
 BEGIN
     select * from json_populate_record(null::clover_odr.out_reg,tin_str::json) into tor;
     select nextval('clover_odr.seq_out_reg') into tor.seq;
+	tor.reg_time := now();
     -- 如果传入了患者主索引号,则本次门诊号=患者主索引号+上次就诊次数+1,否则视为新患者,生成主索引号写入epmi
     if length(trim(coalesce(tor.ex_pid,'')))>6 then
        SELECT coalesce(num_out,0)+1 into tempi.num_out FROM clover_md.empi where patient_id=tor.ex_pid;
@@ -66,40 +69,51 @@ BEGIN
 	tor.visit_flag := '0'; --'0' 未支付 1-已支付 2-已接诊
     insert into clover_odr.out_reg values (tor.*);
 	------------------------------写入打印挂号单记录表，状态是未交费-------------------------
+	begin
+	  SELECT dept_name into tdept
+	    FROM clover_md.dict_department where dept_code = tor.dept_code;
+	  if (length(trim(coalesce(tor.doctor_code,''))))>1 then
+	    SELECT person_name into tdoctor
+	      FROM clover_md.dict_person where person_id=tor.doctor_code;
+	  else
+	    tdoctor := '';
+	  end if;
+	end;
     select nextval('clover_odr.seq_out_reg_prn') into torp.seq;
-	torp.hsp_code
-	torp.pid
-	torp.ex_pid
-	torp.patient_name
-	torp.reg_type
-	torp.wait_period
-	torp.dept
-	torp.doctor
-	torp.location
-	torp.pay_type
-	torp.reg_price
-	torp.check_price
-	torp.pay_cash
-	torp.pay_fund
-	torp.pay_pacc
-	torp.pay_nfc
-	torp.reg_opcode
-	torp.reg_time
-	torp.flow_nmb
-	torp.invoice_nmb
-	torp.prn_status
-	torp.patient_type
-	torp.mi01
-	torp.mi02
-	torp.mi03
-	torp.mi04
-	torp.mi05
-	torp.mi06
-	torp.mi07
-	torp.mi08
-	torp.mi09
-	torp.mi10
-	torp.mi11
+	torp.hsp_code := tor.hsp_code;
+	torp.pid := tor.pid;
+	torp.ex_pid := tor.ex_pid;
+	torp.patient_name := tor.patient_name;
+	torp.reg_type := tor.reg_type;
+	torp.wait_period := '全天';
+	torp.dept := tdept;
+	torp.doctor := tdoctor;
+	torp.location := '';
+	torp.pay_type := tor.pay_type;
+	torp.reg_price := tor.reg_price;
+	torp.check_price := tor.check_price;
+	torp.pay_cash := tor.pay_cash;
+	torp.pay_fund := tor.pay_fund;
+	torp.pay_pacc := tor.pay_pacc;
+	torp.pay_nfc := tor.pay_nfc;
+	torp.reg_opcode := tor.reg_opcode;
+	torp.reg_time := tor.reg_time;
+	torp.flow_nmb := tor.flow_nmb;
+	torp.invoice_nmb := tor.invoice_nmb;
+	torp.prn_status := '0';
+	torp.patient_type := tor.patient_type;
+	torp.mi01 := '';
+	torp.mi02 := '';
+	torp.mi03 := '';
+	torp.mi04 := '';
+	torp.mi05 := '';
+	torp.mi06 := '';
+	torp.mi07 := '';
+	torp.mi08 := '';
+	torp.mi09 := '';
+	torp.mi10 := '';
+	torp.mi11 := '';
+	insert into clover_odr.out_reg_prn values (torp.*);
 	------------------------------------------------------------------------------------------
     RETURN tor.pid;
 END;
