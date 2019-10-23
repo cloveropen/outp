@@ -43,6 +43,7 @@
                 required
                 :counter="6"
                 :rules="nameRules"
+                :disabled="isdisabled_patient_name"
               ></v-text-field>
             </v-flex>
             <v-flex d-flex>
@@ -532,7 +533,8 @@ export default {
       pic6: ""
     },
     display_btn_readhealth: "display:none",
-    display_btn_readmi: "display:none"
+    display_btn_readmi: "display:none",
+    isdisabled_patient_name: false
   }),
   created() {
     this.out_reg.reg_opcode = get_regopcode();
@@ -583,9 +585,11 @@ export default {
       console.log("tptype e=" + tptype);
       this.display_btn_readmi = "display:none";
       this.display_btn_readhealth = "display:none";
+      this.isdisabled_patient_name = false;
       if (tptype.slice(0, 1) == "1") {
         //医保
         this.display_btn_readmi = "";
+        this.isdisabled_patient_name= true;
       }
       if (tptype.slice(0, 1) == "2") {
         //农合
@@ -604,6 +608,7 @@ export default {
       }
       outreg_cash(this.out_reg).then(data => {
         this.out_reg.pid = data;
+        this.out_reg.ex_pid = data.substr(0,9);
         console.log(
           "outregcashClicked this.out_reg_pic.pid=" + this.out_reg_pic.pid
         );

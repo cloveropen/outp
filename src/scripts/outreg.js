@@ -213,8 +213,9 @@ export function getstreets(tcountyid) {
 }
 
 //----------------------医保读卡------------------------------------------------------------------
-export function readcard_mi() {
-  // this.$refs.form.resetValidation();
+export async function readcard_mi() {
+  // this.$refs.form.resetValidation();VUE_APP_MI_URL
+  // 如果没有做动态库初始化则先调用动态库初始化接口,做签到操作,成功后返回业务周期号
   window.alert("医保读卡");
   return "医保读卡";
 }
