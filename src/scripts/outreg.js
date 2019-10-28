@@ -1,7 +1,16 @@
 //-------------------------获取患者类别-----------------------------------------------------------
 export function getpatient_type() {
   let patient_types = Array.of(); //患者类别列表
-  let turl = process.env.VUE_APP_REG_URL + "/searchdicthealthterm/per_cate";
+  let tstr = get_regopcode(); //登录成功票据
+  let tstr_s = tstr.split("|");
+  let topcode = tstr_s[0];
+  let tgc = tstr_s[1];
+  let turl =
+    process.env.VUE_APP_REG_URL +
+    "/searchdicthealthterm/per_cate/" +
+    topcode +
+    "/" +
+    tgc;
   fetch_data_api(turl, "get").then(data => {
     for (let i = 0; i < data.length; i++) {
       patient_types.splice(i, 0, {
@@ -52,7 +61,7 @@ export function get_regopcode() {
   if (!user) {
     return this.$parent.$router.push({ path: "/login" });
   }
-  return user.opid;
+  return user.opid + "|" + user.tgc;
 }
 
 //----------------------------查询挂号类别列表------------------------------------------------------

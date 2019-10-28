@@ -2,7 +2,12 @@
   <v-container>
     <v-layout row wrap align-center>
       <v-flex xs12>
-        <v-img :src="require('../assets/logo.svg')" class="my-3" contain height="200"></v-img>
+        <v-img
+          :src="require('../assets/logo.svg')"
+          class="my-3"
+          contain
+          height="200"
+        ></v-img>
       </v-flex>
 
       <v-flex xs12>
@@ -41,9 +46,14 @@
                 </v-flex>
 
                 <v-flex xs12 md4>
-                  <v-btn color="success" large :disabled="!valid" @click="loginSubmit">
+                  <v-btn
+                    color="success"
+                    large
+                    :disabled="!valid"
+                    @click="loginSubmit"
+                  >
                     登录
-                  </v-btn>                
+                  </v-btn>
                 </v-flex>
               </v-layout>
             </v-container>
@@ -102,13 +112,39 @@ export default {
           return response.json();
         })
         .then(function(data) {
-          //window.alert("data="+JSON.stringify(data)); // this will be a string
+          // console.log("data=" + JSON.stringify(data)); // this will be a string
           let topstatus = data.opstatus;
           if (topstatus === "200") {
             localStorage.setItem("user", JSON.stringify(data));
             // this.loginmsg = "";
             //sel.$parent.$router.push({ path: "/" });
             sel.$parent.$router.push({ path: "/" });
+            // 提交保存登录凭证数据
+            data.hsp_code = process.env.VUE_APP_HSP_CODE;
+            var date = new Date();
+            data.valid_time = date.toUTCString();
+            // -----------------------------------------------------------------------------------------------
+            fetch(process.env.VUE_APP_LOGINREC_URL + "/savetgc", {
+              method: "POST", // or 'PUT'
+              body: JSON.stringify(data), // data can be `string` or {object}!
+              headers: {
+                "Content-Type": "application/json"
+              }
+            })
+              .then(function(response) {
+                if (response.ok) {
+                  //window.alert('ok');
+                } else {
+                  window.alert("登录失败error");
+                  sel.loginmsg = "登录失败" + response.err;
+                }
+                return response.json();
+              })
+              .then(function(data) {
+                console.log("保存成功=" + JSON.stringify(data));
+              });
+            // ------------------------------------------------------------------------------------------------
+    
           } else {
             //登录失败
             window.alert("登录失败!\n");

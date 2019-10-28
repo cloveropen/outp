@@ -537,7 +537,8 @@ export default {
     isdisabled_patient_name: false
   }),
   created() {
-    this.out_reg.reg_opcode = get_regopcode();
+    this.out_reg.reg_opcode = get_regopcode().split("|")[0];
+    window.alert("this.out_reg.reg_opcode="+this.out_reg.reg_opcode)
     this.patient_types = getpatient_type();
     this.genders = getgender();
     this.idcard_types = getid_type();
