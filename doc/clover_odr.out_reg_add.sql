@@ -19,6 +19,11 @@ BEGIN
 	tor.reg_cancel := '0';
 	tor.review_flag := '0';
 	tor.reg_source := '门诊挂号窗口';
+	-- 获取挂号员个人流水号
+	SELECT to_char(to_number(coalesce(invoice_nmb1,'00000000'),'99999999')+1,'00000000') into tor.flow_nmb
+	  FROM clover_md.kd99  where opcode=tor.reg_opcode;
+	-- 获取打印发票流水号
+	
     -- 如果传入了患者主索引号,则本次门诊号=患者主索引号+上次就诊次数+1,否则视为新患者,生成主索引号写入epmi
     if length(trim(coalesce(tor.ex_pid,'')))>6 then
        SELECT coalesce(num_out,0)+1 into tempi.num_out FROM clover_md.empi where patient_id=tor.ex_pid;
@@ -121,6 +126,10 @@ BEGIN
 	torp.mi11 := '';
 	insert into clover_odr.out_reg_prn values (torp.*);
 	------------------------------------------------------------------------------------------
+	-- 更新操作员表的流水号
+	
+	-- 更新票据表的票据号
+	
     RETURN tor.pid;
 END;
 $cloveropen$;
