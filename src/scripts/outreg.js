@@ -1,3 +1,4 @@
+import context from "../main.js";
 //-------------------------获取患者类别-----------------------------------------------------------
 export function getpatient_type(topcode, tgc) {
   let patient_types = Array.of(); //患者类别列表
@@ -437,13 +438,16 @@ async function fetch_data_api(turl, tmethod) {
       } else {
         //返回失败数据
         console.log("查询失败:" + data.errorMsg);
-        window.alert("查询失败:" + data.errorMsg);
+        // window.alert("查询失败:" + data.errorMsg);
+        context.$router.push({ path: "/login" });
+        return "";
       }
       return ret_data;
     })
     .catch(function(err) {
       console.log("查询error=" + err);
       window.alert("查询error=" + err);
+      context.$router.push({ path: "/login" });
       return err;
     });
   //console.log("ret_data="+JSON.stringify(ret_data));

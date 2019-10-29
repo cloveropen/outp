@@ -17,9 +17,10 @@ const options = {
 
 Vue.use(VueHtmlToPaper, options);
 
-new Vue({
+var vue = new Vue({
   router,
   store,
   vuetify,
   render: h => h(App)
 }).$mount("#app");
+export default vue;

@@ -11,7 +11,7 @@ DECLARE
 	tdoctor text := '';
 	tin_str1 text := '';
 BEGIN
-    select jsonb tin_str - 'tgc,topcode' into tin_str1;
+    select  tin_str::jsonb - 'tgc,topcode' into tin_str1;
     select * from json_populate_record(null::clover_odr.out_reg,tin_str1::json) into tor;
     select nextval('clover_odr.seq_out_reg') into tor.seq;
 	tor.reg_time := now();
@@ -22,8 +22,9 @@ BEGIN
 	-- 获取挂号员个人流水号
 	SELECT to_char(to_number(coalesce(invoice_nmb1,'00000000'),'99999999')+1,'00000000') into tor.flow_nmb
 	  FROM clover_md.kd99  where opcode=tor.reg_opcode;
-	-- 获取打印发票流水号
-	
+	-- 获取打印挂号单发票流水号(invoice_nmb1)
+	tin_str1 := clover_odr.sch_invoice_nmb(tor.reg_opcode);
+	select split_part(tin_str1,'|', 1) into tor.invoice_nmb;
     -- 如果传入了患者主索引号,则本次门诊号=患者主索引号+上次就诊次数+1,否则视为新患者,生成主索引号写入epmi
     if length(trim(coalesce(tor.ex_pid,'')))>6 then
        SELECT coalesce(num_out,0)+1 into tempi.num_out FROM clover_md.empi where patient_id=tor.ex_pid;
@@ -127,9 +128,12 @@ BEGIN
 	insert into clover_odr.out_reg_prn values (torp.*);
 	------------------------------------------------------------------------------------------
 	-- 更新操作员表的流水号
-	
+	UPDATE clover_md.kd99 SET  invoice_nmb1=tor.flow_nmb where opcode = tor.reg_opcode;
 	-- 更新票据表的票据号
-	
+	UPDATE clover_odr.invoice_op
+	SET optime=now(), invoice_nmb1=tor.invoice_nmb
+	WHERE opcode=tor.reg_opcode;
+	---------------------------------
     RETURN tor.pid;
 END;
 $cloveropen$;
