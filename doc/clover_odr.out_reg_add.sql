@@ -1,4 +1,4 @@
-CREATE OR REPLACE FUNCTION clover_odr.out_reg_add(tin_str text)
+CREATE OR REPLACE FUNCTION clover_odr.out_reg_add(tin_str text,tip text)
     RETURNS text
     LANGUAGE 'plpgsql'
 AS $cloveropen$
@@ -9,10 +9,16 @@ DECLARE
 	torp clover_odr.out_reg_prn%rowtype;
 	tdept text := '';
 	tdoctor text := '';
+	tin_str1 text := '';
 BEGIN
-    select * from json_populate_record(null::clover_odr.out_reg,tin_str::json) into tor;
+    select jsonb tin_str - 'tgc,topcode' into tin_str1;
+    select * from json_populate_record(null::clover_odr.out_reg,tin_str1::json) into tor;
     select nextval('clover_odr.seq_out_reg') into tor.seq;
 	tor.reg_time := now();
+	tor.mch_ip := tip;
+	tor.reg_cancel := '0';
+	tor.review_flag := '0';
+	tor.reg_source := '门诊挂号窗口';
     -- 如果传入了患者主索引号,则本次门诊号=患者主索引号+上次就诊次数+1,否则视为新患者,生成主索引号写入epmi
     if length(trim(coalesce(tor.ex_pid,'')))>6 then
        SELECT coalesce(num_out,0)+1 into tempi.num_out FROM clover_md.empi where patient_id=tor.ex_pid;

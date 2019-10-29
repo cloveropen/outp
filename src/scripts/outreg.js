@@ -1,10 +1,6 @@
 //-------------------------获取患者类别-----------------------------------------------------------
-export function getpatient_type() {
+export function getpatient_type(topcode, tgc) {
   let patient_types = Array.of(); //患者类别列表
-  let tstr = get_regopcode(); //登录成功票据
-  let tstr_s = tstr.split("|");
-  let topcode = tstr_s[0];
-  let tgc = tstr_s[1];
   let turl =
     process.env.VUE_APP_REG_URL +
     "/searchdicthealthterm/per_cate/" +
@@ -24,9 +20,14 @@ export function getpatient_type() {
 }
 
 //---------------------------------------获取性别列表----------------------------------------------
-export function getgender() {
+export function getgender(topcode, tgc) {
   let genders = Array.of(); //性别列表
-  let turl = process.env.VUE_APP_REG_URL + "/searchdicthealthterm/gender_type";
+  let turl =
+    process.env.VUE_APP_REG_URL +
+    "/searchdicthealthterm/gender_type/" +
+    topcode +
+    "/" +
+    tgc;
   fetch_data_api(turl, "get").then(data => {
     for (let i = 0; i < data.length; i++) {
       genders.splice(i, 0, {
@@ -40,9 +41,14 @@ export function getgender() {
 }
 
 //---------------------------查询身份证件类型列表--------------------------------------------------
-export function getid_type() {
+export function getid_type(topcode, tgc) {
   let idcard_types = Array.of(); //身份证件类型
-  let turl = process.env.VUE_APP_REG_URL + "/searchdicthealthterm/id_type";
+  let turl =
+    process.env.VUE_APP_REG_URL +
+    "/searchdicthealthterm/id_type/" +
+    topcode +
+    "/" +
+    tgc;
   fetch_data_api(turl, "get").then(data => {
     for (let i = 0; i < data.length; i++) {
       idcard_types.splice(i, 0, {
@@ -65,9 +71,10 @@ export function get_regopcode() {
 }
 
 //----------------------------查询挂号类别列表------------------------------------------------------
-export function getreg_type() {
+export function getreg_type(topcode, tgc) {
   let reg_types = Array.of(); //挂号类别
-  let turl = process.env.VUE_APP_REG_URL + "/searchdictregitem/0";
+  let turl =
+    process.env.VUE_APP_REG_URL + "/searchdictregitem/0/" + topcode + "/" + tgc;
   fetch_data_api(turl, "get").then(data => {
     for (let i = 0; i < data.length; i++) {
       reg_types.splice(i, 0, {
@@ -81,10 +88,16 @@ export function getreg_type() {
 }
 
 //----------------------------查询指定挂号类别的挂号费------------------------------------------------------
-export async function getregprice(treg_type) {
+export async function getregprice(treg_type, topcode, tgc) {
   let treg_price = Array.of();
   await fetch(
-    process.env.VUE_APP_REG_URL + "/searchdictregitemprice/" + treg_type,
+    process.env.VUE_APP_REG_URL +
+      "/searchdictregitemprice/" +
+      treg_type +
+      "/" +
+      topcode +
+      "/" +
+      tgc,
     {
       method: "get",
       headers: {
@@ -121,9 +134,14 @@ export async function getregprice(treg_type) {
 }
 
 //-------------------------------------查询科室列表------------------------------------------------------
-export function getdept_codes() {
+export function getdept_codes(topcode, tgc) {
   let dept_codes = Array.of(); //科室列表
-  let turl = process.env.VUE_APP_REG_URL + "/searchdictdepartment/clinical";
+  let turl =
+    process.env.VUE_APP_REG_URL +
+    "/searchdictdepartment/clinical/" +
+    topcode +
+    "/" +
+    tgc;
   fetch_data_api(turl, "get").then(data => {
     for (let i = 0; i < data.length; i++) {
       dept_codes.splice(i, 0, {
@@ -137,14 +155,18 @@ export function getdept_codes() {
 }
 
 //----------------------------------------查询本科室可以挂号的专家列表---------------------------------------------------
-export function getdoctor_codes(tdept_code, tpost_tech) {
+export function getdoctor_codes(tdept_code, tpost_tech, topcode, tgc) {
   let doctor_codes = Array.of(); //专家列表
   let turl =
     process.env.VUE_APP_REG_URL +
     "/searchdictpersonreg/" +
     tdept_code +
     "/" +
-    tpost_tech;
+    tpost_tech +
+    "/" +
+    topcode +
+    "/" +
+    tgc;
   fetch_data_api(turl, "get").then(data => {
     for (let i = 0; i < data.length; i++) {
       doctor_codes.splice(i, 0, {
@@ -158,9 +180,10 @@ export function getdoctor_codes(tdept_code, tpost_tech) {
 }
 
 //------------------获取省份列表---------------------------
-export function getprovs() {
+export function getprovs(topcode, tgc) {
   let addr_provs = Array.of(); //患者类别列表
-  let turl = process.env.VUE_APP_REG_URL + "/searchdictprov";
+  let turl =
+    process.env.VUE_APP_REG_URL + "/searchdictprov/" + topcode + "/" + tgc;
   fetch_data_api(turl, "get").then(data => {
     for (let i = 0; i < data.length; i++) {
       addr_provs.splice(i, 0, {
@@ -174,9 +197,16 @@ export function getprovs() {
 }
 
 //------------------获取指定省份的市列表---------------------------
-export function getcitys(tprovid) {
+export function getcitys(tprovid, topcode, tgc) {
   let addr_citys = Array.of(); //市列表
-  let turl = process.env.VUE_APP_REG_URL + "/searchdictcity/" + tprovid;
+  let turl =
+    process.env.VUE_APP_REG_URL +
+    "/searchdictcity/" +
+    tprovid +
+    "/" +
+    topcode +
+    "/" +
+    tgc;
   fetch_data_api(turl, "get").then(data => {
     for (let i = 0; i < data.length; i++) {
       addr_citys.splice(i, 0, {
@@ -190,9 +220,16 @@ export function getcitys(tprovid) {
 }
 
 //------------------获取指定市的区县列表---------------------------
-export function getcountys(tcityid) {
+export function getcountys(tcityid, topcode, tgc) {
   let addr_countys = Array.of(); //指定市的区县列表
-  let turl = process.env.VUE_APP_REG_URL + "/searchdictcounty/" + tcityid;
+  let turl =
+    process.env.VUE_APP_REG_URL +
+    "/searchdictcounty/" +
+    tcityid +
+    "/" +
+    topcode +
+    "/" +
+    tgc;
   fetch_data_api(turl, "get").then(data => {
     for (let i = 0; i < data.length; i++) {
       addr_countys.splice(i, 0, {
@@ -206,9 +243,16 @@ export function getcountys(tcityid) {
 }
 
 //------------------获取指定区县的街道列表---------------------------
-export function getstreets(tcountyid) {
+export function getstreets(tcountyid, topcode, tgc) {
   let addr_townships = Array.of(); //指定区县的街道列表
-  let turl = process.env.VUE_APP_REG_URL + "/searchdictstreet/" + tcountyid;
+  let turl =
+    process.env.VUE_APP_REG_URL +
+    "/searchdictstreet/" +
+    tcountyid +
+    "/" +
+    topcode +
+    "/" +
+    tgc;
   fetch_data_api(turl, "get").then(data => {
     for (let i = 0; i < data.length; i++) {
       addr_townships.splice(i, 0, {
@@ -230,15 +274,24 @@ export async function readcard_mi() {
 }
 
 //----------------------------查询患者主索引信息------------------------------------------------------
-export async function getpatient(texpid) {
+export async function getpatient(texpid, topcode, tgc) {
   let toutreg = {};
-  await fetch(process.env.VUE_APP_REG_URL + "/searchoutregexpid/" + texpid, {
-    method: "get",
-    headers: {
-      Accept: "text/html",
-      "Content-Type": "application/json"
+  await fetch(
+    process.env.VUE_APP_REG_URL +
+      "/searchoutregexpid/" +
+      texpid +
+      "/" +
+      topcode +
+      "/" +
+      tgc,
+    {
+      method: "get",
+      headers: {
+        Accept: "text/html",
+        "Content-Type": "application/json"
+      }
     }
-  })
+  )
     .then(function(response) {
       if (response.ok) {
         // window.alert("---ok=");
@@ -266,8 +319,10 @@ export async function getpatient(texpid) {
 }
 
 //------------------------确认现金挂号------------------------------------------------------------
-export async function outreg_cash(tout_reg) {
+export async function outreg_cash(tout_reg, topcode, tgc) {
   let tpid = "";
+  tout_reg.topcode = topcode;
+  tout_reg.tgc = tgc;
   console.log("JSON.stringify(tout_reg)=" + JSON.stringify(tout_reg));
   await fetch(process.env.VUE_APP_REG_URL + "/saveoutreg", {
     method: "post",
@@ -306,8 +361,10 @@ export async function outreg_cash(tout_reg) {
 }
 
 //------------------------上传挂号照片------------------------------------------------------------
-export function outreg_pic(tout_reg_pic) {
+export function outreg_pic(tout_reg_pic, topcode, tgc) {
   //console.log("JSON.stringify(tout_reg_pic)=" + JSON.stringify(tout_reg_pic));
+  tout_reg_pic.topcode = topcode;
+  tout_reg_pic.tgc = tgc;
   fetch(process.env.VUE_APP_REG_URL + "/saveoutregpic", {
     method: "post",
     body: JSON.stringify(tout_reg_pic),

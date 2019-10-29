@@ -295,7 +295,9 @@
                   <v-list-item>
                     <v-list-item-content>
                       <v-list-item-title class="subtitle-1"
-                        >医保卡余额:{{ out_reg.mi_pacc_left }}</v-list-item-title
+                        >医保卡余额:{{
+                          out_reg.mi_pacc_left
+                        }}</v-list-item-title
                       >
                     </v-list-item-content>
                   </v-list-item>
@@ -534,20 +536,33 @@ export default {
     },
     display_btn_readhealth: "display:none",
     display_btn_readmi: "display:none",
-    isdisabled_patient_name: false
+    isdisabled_patient_name: false,
+    tgc: ""
   }),
   created() {
     this.out_reg.reg_opcode = get_regopcode().split("|")[0];
-    window.alert("this.out_reg.reg_opcode="+this.out_reg.reg_opcode)
-    this.patient_types = getpatient_type();
-    this.genders = getgender();
-    this.idcard_types = getid_type();
-    this.reg_types = getreg_type();
-    this.dept_codes = getdept_codes();
-    this.addr_provs = getprovs();
-    this.addr_citys = getcitys(process.env.VUE_APP_HSP_PROV);
-    this.addr_countys = getcountys(process.env.VUE_APP_HSP_CITY);
-    this.addr_townships = getstreets(process.env.VUE_APP_HSP_COUNTY);
+    this.tgc = get_regopcode().split("|")[1];
+    this.patient_types = getpatient_type(this.out_reg.reg_opcode, this.tgc);
+    this.genders = getgender(this.out_reg.reg_opcode, this.tgc);
+    this.idcard_types = getid_type(this.out_reg.reg_opcode, this.tgc);
+    this.reg_types = getreg_type(this.out_reg.reg_opcode, this.tgc);
+    this.dept_codes = getdept_codes(this.out_reg.reg_opcode, this.tgc);
+    this.addr_provs = getprovs(this.out_reg.reg_opcode, this.tgc);
+    this.addr_citys = getcitys(
+      process.env.VUE_APP_HSP_PROV,
+      this.out_reg.reg_opcode,
+      this.tgc
+    );
+    this.addr_countys = getcountys(
+      process.env.VUE_APP_HSP_CITY,
+      this.out_reg.reg_opcode,
+      this.tgc
+    );
+    this.addr_townships = getstreets(
+      process.env.VUE_APP_HSP_COUNTY,
+      this.out_reg.reg_opcode,
+      this.tgc
+    );
   },
   mounted() {
     this.video = this.$refs.video;
@@ -576,7 +591,7 @@ export default {
       if (texpid.length < 10) {
         return;
       }
-      getpatient(texpid).then(data => {
+      getpatient(texpid, this.out_reg.reg_opcode, this.tgc).then(data => {
         this.out_reg = data;
       });
     },
@@ -590,7 +605,7 @@ export default {
       if (tptype.slice(0, 1) == "1") {
         //医保
         this.display_btn_readmi = "";
-        this.isdisabled_patient_name= true;
+        this.isdisabled_patient_name = true;
       }
       if (tptype.slice(0, 1) == "2") {
         //农合
@@ -602,26 +617,28 @@ export default {
       readcard_mi();
     },
     outregcashClicked(e) {
-      console.log("确认挂号e=" + e);      
-      if(!this.$refs.form_reg.validate()) {
+      console.log("确认挂号e=" + e);
+      if (!this.$refs.form_reg.validate()) {
         window.alert("请选择必须填写的字段");
         return;
       }
-      outreg_cash(this.out_reg).then(data => {
-        this.out_reg.pid = data;
-        this.out_reg.ex_pid = data.substr(0,9);
-        console.log(
-          "outregcashClicked this.out_reg_pic.pid=" + this.out_reg_pic.pid
-        );
-        this.out_reg_pic.pid = this.out_reg.pid;
-        this.out_reg_pic.ex_pid = this.out_reg.ex_pid;
-        this.out_reg_pic.patient_name = this.out_reg.patient_name;
-        this.out_reg_pic.idcard = this.out_reg.idcard;
-        this.out_reg_pic.health_id = this.out_reg.health_id;
-        this.out_reg_pic.micard = this.out_reg.micard;
-        this.out_reg_pic.capture_opid = this.out_reg.reg_opcode;
-        outreg_pic(this.out_reg_pic);
-      });
+      outreg_cash(this.out_reg, this.out_reg.reg_opcode, this.tgc).then(
+        data => {
+          this.out_reg.pid = data;
+          this.out_reg.ex_pid = data.substr(0, 9);
+          console.log(
+            "outregcashClicked this.out_reg_pic.pid=" + this.out_reg_pic.pid
+          );
+          this.out_reg_pic.pid = this.out_reg.pid;
+          this.out_reg_pic.ex_pid = this.out_reg.ex_pid;
+          this.out_reg_pic.patient_name = this.out_reg.patient_name;
+          this.out_reg_pic.idcard = this.out_reg.idcard;
+          this.out_reg_pic.health_id = this.out_reg.health_id;
+          this.out_reg_pic.micard = this.out_reg.micard;
+          this.out_reg_pic.capture_opid = this.out_reg.reg_opcode;
+          outreg_pic(this.out_reg_pic, this.out_reg.reg_opcode, this.tgc);
+        }
+      );
     },
     schweixinClicked(e) {
       console.log("e=" + e.target.innerText);
@@ -631,12 +648,19 @@ export default {
       let tdept_code = this.out_reg.dept_code;
       console.log("dept_codeChanged e=" + e);
       let tpost_tech = "1";
-      this.doctor_codes = getdoctor_codes(tdept_code, tpost_tech);
+      this.doctor_codes = getdoctor_codes(
+        tdept_code,
+        tpost_tech,
+        this.out_reg.reg_opcode,
+        this.tgc
+      );
     },
     reg_typeChanged(e) {
-      console.log("reg_typeChanged e=" + e);
+      console.log(
+        "reg_typeChanged e=" + e + " |treg_type=" + this.out_reg.reg_type
+      );
       let treg_type = this.out_reg.reg_type;
-      getregprice(treg_type).then(data => {
+      getregprice(treg_type, this.out_reg.reg_opcode, this.tgc).then(data => {
         this.out_reg.reg_price = data[0];
         this.out_reg.check_price = data[1];
       });
@@ -644,17 +668,25 @@ export default {
     //------------------获取指定省份的市列表---------------------------
     prov_Changed() {
       let tprovid = this.out_reg.addr_prov;
-      this.addr_citys = getcitys(tprovid);
+      this.addr_citys = getcitys(tprovid, this.out_reg.reg_opcode, this.tgc);
     },
     //------------------获取指定市的区县列表---------------------------
     city_Changed() {
       let tcityid = this.out_reg.addr_city;
-      this.addr_countys = getcountys(tcityid);
+      this.addr_countys = getcountys(
+        tcityid,
+        this.out_reg.reg_opcode,
+        this.tgc
+      );
     },
     //------------------获取指定区县的街道列表---------------------------
     county_Changed() {
       let tcountyid = this.out_reg.addr_county;
-      this.addr_townships = getstreets(tcountyid);
+      this.addr_townships = getstreets(
+        tcountyid,
+        this.out_reg.reg_opcode,
+        this.tgc
+      );
     },
     //-------------------打印挂号单--------------------------------------------------
     prnClicked(e) {
