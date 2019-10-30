@@ -697,7 +697,7 @@ export default {
       this.canvas = this.$refs.canvas;
       var ctx = this.canvas.getContext("2d");
       //console.log(this.$refs.canvas.toDataURL("image/png"));
-      ctx.drawImage(this.video, 0, 0, 640, 480);
+      ctx.drawImage(this.video, 0, 0, 320, 240);
       //this.captures.push(this.$refs.canvas.toDataURL("image/png"));
       switch (this.capture_num) {
         case 0:

@@ -6,13 +6,9 @@ AS $cloveropen$
 DECLARE
     top clover_odr.invoice_op%rowtype;
     tseq bigint :=0;
-	torp clover_odr.out_reg_prn%rowtype;
-	tdept text := '';
-	tdoctor text := '';
-	tin_str1 text := '';
 BEGIN
     --  查询返回当前操作员的发票号,如果没有记录增加一条初始化数据
-	select coalesce(max(seq),0) tseq from clover_odr.invoice_op where opcode = topcode;
+	select coalesce(max(seq),0) into tseq from clover_odr.invoice_op where opcode = topcode;
 	if tseq>0 then
 	  SELECT to_char(to_number(coalesce(invoice_nmb1,'00000000'),'99999999')+1,'00000000'),
         to_char(to_number(coalesce(invoice_nmb2,'00000000'),'99999999')+1,'00000000'),
@@ -38,6 +34,7 @@ BEGIN
 	    WHERE seq = tseq;
 	else
 	    SELECT hsp_code, opname into top.hsp_code,top.opname FROM clover_md.kd99 where opcode = topcode;
+		top.opcode := topcode;
 		select nextval('clover_odr.seq_invoice_op') into top.seq;
 		top.invoice_nmb1 := '00000001';
 		top.invoice_nmb2 := '00000001';
