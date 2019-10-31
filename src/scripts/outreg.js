@@ -446,7 +446,7 @@ async function fetch_data_api(turl, tmethod) {
     })
     .catch(function(err) {
       console.log("查询error=" + err);
-      window.alert("查询error=" + err);
+      //window.alert("查询error=" + err);
       context.$router.push({ path: "/login" });
       return err;
     });

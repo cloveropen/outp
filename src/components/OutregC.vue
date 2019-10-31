@@ -573,6 +573,18 @@ export default {
       });
     }
   },
+  beforeDestroy() {
+    // navigator.getUserMedia({video: true},
+    // function(stream) {
+    //      // can also use getAudioTracks() or getVideoTracks()
+    //     var track = stream.getTracks()[0];  // if only one media track
+    //     track.stop();
+    //     console.log("关闭完成");
+    // },
+    // function(error){
+    //     console.log('getUserMedia() error', error);
+    // });
+  },
   methods: {
     validate() {
       if (this.$refs.form.validate()) {
@@ -588,12 +600,12 @@ export default {
     expidChanged(e) {
       let texpid = e;
       console.log("texpid e=" + e);
-      if (texpid.length < 10) {
-        return;
+      if (texpid.length == 9) {
+        //输入的是患者主索引号
+        getpatient(texpid, this.out_reg.reg_opcode, this.tgc).then(data => {
+          this.out_reg = data;
+        });
       }
-      getpatient(texpid, this.out_reg.reg_opcode, this.tgc).then(data => {
-        this.out_reg = data;
-      });
     },
     //------------------医保类别医保1*读卡显示,农合2*显示读健康卡--------------
     patientTypeChanged(e) {
