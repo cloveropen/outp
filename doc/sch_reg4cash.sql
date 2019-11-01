@@ -2,7 +2,7 @@ CREATE OR REPLACE FUNCTION clover_odr.sch_reg4cash(tpid text,thsp_code text)
     RETURNS text
     LANGUAGE 'plpgsql'
 AS $cloveropen$
-
+    -- 查询待交款的患者基本信息
 DECLARE
     tseq bigint :=0;
 	tpatient_name clover_odr.out_reg.patient_name%type;

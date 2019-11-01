@@ -40,6 +40,27 @@ export async function get_feedetail4cash(tpid, topcode, tgc) {
   });
   return tfees;
 }
+
+//-------------查询待交款患者列表----------------------------------------------------------
+export async function get_feedreglist(topcode, tgc) {
+  let tfee_list = Array.of(); //挂号患者信息串
+  let thsp_code = process.env.VUE_APP_HSP_CODE;
+  let turl =
+    process.env.VUE_APP_REG_URL +
+    "/searchfeedetail_pid_list/" +
+    "/9/" +
+    thsp_code +
+    "/" +
+    topcode +
+    "/" +
+    tgc;
+  await fetch_cash_async(turl, "get").then(data => {
+    tfee_list = JSON.stringify(data);
+    return tfee_list;
+  });
+  return tfee_list;
+}
+
 //--------------------------查询操作员编号--------------------------------------------------------
 export function get_regopcode() {
   let user = JSON.parse(localStorage.getItem("user"));

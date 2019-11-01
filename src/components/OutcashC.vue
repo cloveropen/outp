@@ -172,6 +172,7 @@
 import {
   get_reg4cash,
   get_feedetail4cash,
+  get_feedreglist,
   get_regopcode
 } from "../scripts/outcash.js";
 
@@ -256,7 +257,13 @@ if (tpid.length == 12) {
        this.fee_details = JSON.parse(obj.outdata)
       
       });
-   
+      console.log("tfee_list begin ")
+       get_feedreglist(this.topcode, this.tgc).then(data => {
+       console.log("tfees_list="+data)
+       let obj = JSON.parse(data)
+      // this.fee_details = JSON.parse(obj.outdata)
+      
+      });
 }
       
     },
