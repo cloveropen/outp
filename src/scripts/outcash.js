@@ -41,6 +41,27 @@ export async function get_feedetail4cash(tpid, topcode, tgc) {
   return tfees;
 }
 
+// ----------门诊收款结算----------------------------------------------------------
+export async function cashout(tpid, topcode, tgc) {
+  let tout_Str = "";  //返回支付金额字符串
+  let thsp_code = process.env.VUE_APP_HSP_CODE;
+  let turl =
+    process.env.VUE_APP_REG_URL +
+    "/cashout/" +
+    tpid +
+    "/" +
+    thsp_code +
+    "/" +
+    topcode +
+    "/" +
+    tgc;
+  await fetch_cash_async(turl, "get").then(data => {
+    tout_Str = JSON.stringify(data);
+    return tout_Str;
+  });
+  return tout_Str;
+}
+
 //-------------查询待交款患者列表----------------------------------------------------------
 export async function get_feedreglist(topcode, tgc) {
   let tfee_list = Array.of(); //挂号患者信息串

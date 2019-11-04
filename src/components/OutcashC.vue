@@ -138,7 +138,7 @@
               @click="validate"
               >生成支付码</v-btn
             >
-            <v-btn :disabled="!valid" color="success" @click="validate"
+            <v-btn :disabled="!valid" color="success" @click="cash(out_reg.pid)"
               >确认收款</v-btn
             >
             <v-btn :disabled="!valid" color="success" @click="validate"
@@ -165,6 +165,37 @@
       :items-per-page="10"
       class="elevation-1"
     ></v-data-table>
+    <!-- -----------------------------待交款患者列表-------------------------------------------- -->
+    <v-item-group active-class="primary">
+      <v-container>
+        <v-row>
+          <v-col v-for="treg in fee_bfpays" :key="treg.seq" cols="12" md="4">
+            <v-item v-slot:default="{ active, toggle }">
+              <v-card class="mx-auto" max-width="400">
+                <v-img
+                  :src="treg.pic1"
+                  class="white--text align-end"
+                  height="200px"
+                >
+                </v-img>
+                <v-card-text class="text--primary">
+                  <div class="pb-0">
+                    &emsp;姓&emsp;名:&emsp;{{ treg.patient_name }}
+                  </div>
+                  <div>&emsp;门诊号:&emsp;{{ treg.pid }}</div>
+                  <div>&emsp;应收款:&emsp;{{ treg.pay_should }}</div>
+                </v-card-text>
+                <v-card-actions>
+                  <v-btn color="orange" text @click="sch_pidlist(treg.pid)">
+                    查询
+                  </v-btn>
+                </v-card-actions>
+              </v-card>
+            </v-item>
+          </v-col>
+        </v-row>
+      </v-container>
+    </v-item-group>
   </v-container>
 </template>
 
@@ -173,16 +204,13 @@ import {
   get_reg4cash,
   get_feedetail4cash,
   get_feedreglist,
-  get_regopcode
+  get_regopcode,
+  cashout
 } from "../scripts/outcash.js";
 
 export default {
   data: () => ({
     valid: true,
-    nameRules: [
-      v => !!v || "姓名不能为空",
-      v => (v && v.length >= 2) || "姓名长度不能少于2个汉字"
-    ],
     out_reg: {
       seq: 0,
       hsp_code: process.env.VUE_APP_HSP_CODE,
@@ -199,7 +227,7 @@ export default {
       pay_cash: 0.0, //实收现金
       pay_nfc: 0.0, //移动支付
       pay_pacc: 0.0, //医保帐户
-      pay_fund: 0.0 //医保统筹      
+      pay_fund: 0.0 //医保统筹
     },
     payType: "cash", //支付方式选择
     headers: [
@@ -216,6 +244,7 @@ export default {
       { text: "医师", value: "cal_opcode" }
     ],
     fee_details: [],
+    fee_bfpays: [],
     topcode: "",
     tgc: ""
   }),
@@ -243,79 +272,53 @@ export default {
     pidChanged(e) {
       console.log("pid=" + e);
       let tpid = e.trim();
-if (tpid.length == 12) {
-      get_reg4cash(tpid, this.topcode, this.tgc).then(data => {
-       console.log("t9s="+data)
-       let obj = JSON.parse(data)
-       this.out_reg = JSON.parse(obj.outdata)
- 
-      });
-      console.log("tfees begin ")
-      get_feedetail4cash(tpid, this.topcode, this.tgc).then(data => {
-       console.log("tfees="+data)
-       let obj = JSON.parse(data)
-       this.fee_details = JSON.parse(obj.outdata)
-      
-      });
-      console.log("tfee_list begin ")
-       get_feedreglist(this.topcode, this.tgc).then(data => {
-       console.log("tfees_list="+data)
-       let obj = JSON.parse(data)
-      // this.fee_details = JSON.parse(obj.outdata)
-      
-      });
-}
-      
-    },
-    getfeedetail(e){
-      console.log("getfeedetail pid=" + e);
-      //门诊号规则:患者主索引8位，门诊号为11位，门诊号=主索引编号+3位数字，后3位数字为挂号的序号
-      let tpid = e.trim();
-      let _this = this;
-      if (tpid.length == 8 || tpid.length == 11) {
-        let thsp_code = process.env.VUE_APP_HSP_CODE;
-        fetch(
-          process.env.VUE_APP_REG_URL +
-            "/searchfeedetail/" +
-            tpid +
-            "/9/" +
-            thsp_code,
-          {
-            method: "get",
-            headers: {
-              Accept: "text/html",
-              "Content-Type": "application/json"
-            }
-          }
-        )
-          .then(function(response) {
-            if (response.ok) {
-              //window.alert("---ok=");
-            } else {
-              window.alert("查询患者信息失败error" + response.text);
-            }
-            return response.json();
-          })
-          .then(function(data) {
-            console.log("data="+JSON.stringify(data))
-            let tresultCode = data.resultCode;
-            //window.alert("tresultCode="+tresultCode)
-            if (tresultCode === "0") {
-              _this.fee_details = JSON.parse(data.outdata);
-              console.log(" this.out_reg=" + JSON.stringify(_this.fee_details));          
-            } else {
-              window.alert("查询患者主索引信息失败1" + data.errorMsg);
-            }
-          })
-          .catch(function(err) {
-            window.alert("查询患者主索引信息查询error=" + err);
-          });
-      } else {
-        //window.alert("请输入正确的门诊号或患者主索引号");
-        return;
+      if (tpid.length == 12) {
+        get_reg4cash(tpid, this.topcode, this.tgc).then(data => {
+          console.log("t9s=" + data);
+          let obj = JSON.parse(data);
+          this.out_reg = JSON.parse(obj.outdata);
+        });
+        console.log("tfees begin ");
+        get_feedetail4cash(tpid, this.topcode, this.tgc).then(data => {
+          console.log("tfees=" + data);
+          let obj = JSON.parse(data);
+          this.fee_details = JSON.parse(obj.outdata);
+        });
+        console.log("tfee_list begin ");
+        get_feedreglist(this.topcode, this.tgc).then(data => {
+          console.log("tfees_list=" + data);
+          let obj = JSON.parse(data);
+          this.fee_bfpays = JSON.parse(obj.outdata);
+          // this.fee_details = JSON.parse(obj.outdata)
+        });
       }
-      console.log(" this.out_reg=" + JSON.stringify(_this.out_reg));
-      return _this.out_reg;
+    },
+    sch_pidlist(tpid) {
+      //console.log("from list pid=" + tpid);
+
+      if (tpid.length == 12) {
+        get_reg4cash(tpid, this.topcode, this.tgc).then(data => {
+          console.log("t9s=" + data);
+          let obj = JSON.parse(data);
+          this.out_reg = JSON.parse(obj.outdata);
+        });
+        //console.log("tfees begin ");
+        get_feedetail4cash(tpid, this.topcode, this.tgc).then(data => {
+          console.log("tfees=" + data);
+          let obj = JSON.parse(data);
+          this.fee_details = JSON.parse(obj.outdata);
+        });
+        //console.log("tfee_list begin ");
+        get_feedreglist(this.topcode, this.tgc).then(data => {
+          console.log("tfees_list=" + data);
+          let obj = JSON.parse(data);
+          this.fee_bfpays = JSON.parse(obj.outdata);
+        });
+      }
+    },
+    cash(tpid) { //确认收款
+      console.log("cahs tpid=" + tpid);
+      cashout(this.our_reg.pid,this.topcode,)
     }
     // ---------------------end methods----------------
   }

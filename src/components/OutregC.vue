@@ -709,36 +709,36 @@ export default {
       this.canvas = this.$refs.canvas;
       var ctx = this.canvas.getContext("2d");
       //console.log(this.$refs.canvas.toDataURL("image/png"));
-      ctx.drawImage(this.video, 0, 0, 320, 240);
+      ctx.drawImage(this.video, 0, 0, 640, 480);
       //this.captures.push(this.$refs.canvas.toDataURL("image/png"));
       switch (this.capture_num) {
         case 0:
-          this.out_reg_pic.pic1 = this.$refs.canvas.toDataURL("image/png");
+          this.out_reg_pic.pic1 = this.$refs.canvas.toDataURL("image/png", 0.3);
           this.capture_num++;
           break;
         case 1:
-          this.out_reg_pic.pic2 = this.$refs.canvas.toDataURL("image/png");
+          this.out_reg_pic.pic2 = this.$refs.canvas.toDataURL("image/png", 0.3);
           this.capture_num++;
           break;
         case 2:
-          this.out_reg_pic.pic3 = this.$refs.canvas.toDataURL("image/png");
+          this.out_reg_pic.pic3 = this.$refs.canvas.toDataURL("image/png", 0.3);
           this.capture_num++;
           break;
         case 3:
-          this.out_reg_pic.pic4 = this.$refs.canvas.toDataURL("image/png");
+          this.out_reg_pic.pic4 = this.$refs.canvas.toDataURL("image/png", 0.3);
           this.capture_num++;
           break;
         case 4:
-          this.out_reg_pic.pic5 = this.$refs.canvas.toDataURL("image/png");
+          this.out_reg_pic.pic5 = this.$refs.canvas.toDataURL("image/png", 0.3);
           this.capture_num++;
           break;
         case 5:
-          this.out_reg_pic.pic6 = this.$refs.canvas.toDataURL("image/png");
+          this.out_reg_pic.pic6 = this.$refs.canvas.toDataURL("image/png", 0.3);
           this.capture_num++;
           break;
         default:
           this.capture_num = 0;
-          this.out_reg_pic.pic1 = this.$refs.canvas.toDataURL("image/png");
+          this.out_reg_pic.pic1 = this.$refs.canvas.toDataURL("image/png", 0.3);
       }
       //--
     }
