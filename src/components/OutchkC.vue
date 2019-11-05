@@ -9,6 +9,7 @@
               v-model="topcode"
               label="操作员号"
               required
+              :disabled="valid"
             ></v-text-field
             >&emsp;&emsp;
           </v-flex>
@@ -20,12 +21,13 @@
               label="密码"
               required
               type="password"
+              :disabled="valid"
             ></v-text-field
             >&emsp;&emsp;
           </v-flex>
 
           <v-flex d-flex>
-            <v-btn color="success" @click="loginChk">验证</v-btn>
+            <v-btn color="success" :disabled="valid" @click="loginChk">验证</v-btn>
             &emsp;&emsp;
           </v-flex>
           <v-row>
@@ -221,7 +223,10 @@ export default {
           data.valid_time = date.toUTCString();
           // -----------------------------------------------------------------------------------------------
           post_cash_async(process.env.VUE_APP_LOGINREC_URL + "/savetgc",JSON.stringify(data)).then(data => {
-            console.log("保存成功=" + JSON.stringify(data));          
+            console.log("用户信息保存成功=" + JSON.stringify(data));
+            // --查询操作员姓名和交班的开始时间,截止时间默认是当前时间
+            
+            sel.valid = true;
           });
           // ------------------------------------------------------------------------------------------------
         }
