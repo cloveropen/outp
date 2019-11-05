@@ -141,16 +141,16 @@
             <v-btn :disabled="!valid_cashout" color="success" @click="cash(out_reg.pid)"
               >确认收款</v-btn
             >
-            <v-btn :disabled="!valid" color="success" @click="validate"
+            <v-btn :disabled="!valid" color="success" @click="prnClicked($event)"
               >打印收据</v-btn
             >
-            <v-btn :disabled="!valid" color="success" @click="validate"
+            <!-- <v-btn :disabled="!valid" color="success" @click="validate"
               >新增处方</v-btn
             >
             <v-btn :disabled="!valid" color="success" @click="validate"
               >查询历史</v-btn
-            >
-            <v-btn :disabled="!valid" color="warning" @click="validate"
+            > -->
+            <v-btn :disabled="!valid" color="warning" @click="reset"
               >下一患者</v-btn
             >
             <v-spacer></v-spacer
@@ -194,6 +194,27 @@
             </v-item>
           </v-col>
         </v-row>
+        <!--     打印发票---------------------------------------- -->
+        <v-row no-gutters>
+      <v-col cols="12" sm="12">
+        <v-parallax
+          height="700"
+          dark
+          :src="require('../assets/img/blank_cash.jpg')"
+        >
+          <div id="print_cash">
+            <v-card
+              class="pa-2"
+              outlined
+              style="background-color: lightgrey;"
+              tile
+            >
+              门诊收款收据打印样式
+            </v-card>
+          </div>
+        </v-parallax>
+      </v-col>
+    </v-row>
       </v-container>
     </v-item-group>
   </v-container>
@@ -294,9 +315,7 @@ export default {
         });
       }
     },
-    sch_pidlist(tpid) {
-      //console.log("from list pid=" + tpid);
-
+    sch_pidlist(tpid) {     
       if (tpid.length == 12) {
         get_reg4cash(tpid, this.topcode, this.tgc).then(data => {
           //console.log("t9s=" + data);
@@ -315,10 +334,17 @@ export default {
       //确认收款
       console.log("cahs tpid=" + tpid);
       let toutstr = "";
-      toutstr = cashout(tpid, this.topcode, this.tgc);
-      this.valid_cashout = false;
-      window.alert("收款完成" + toutstr);
-    }
+      cashout(tpid, this.topcode, this.tgc).then(data => {
+        toutstr = data;
+        this.valid_cashout = false;
+        window.alert("收款完成" + toutstr);
+      });      
+    },
+    //-------------------打印门诊收款收据--------------------------------------------------
+    prnClicked(e) {
+      console.log("e=" + e.target.innerText);
+      this.$htmlToPaper("print_cash");
+    },
     // ---------------------end methods----------------
   }
 };

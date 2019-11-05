@@ -63,6 +63,7 @@ BEGIN
 	tfs.voucher_sum := 0.00;
 	tfs.spec_sum := 0.00;
 	tfs.mch_ip := tip;
+	tfs.opcode := topcode;
 	insert into clover_odr.fee_settle values (tfs.*);
 	-- 写入门诊收据打印表
 	--mi_feetype=11	收费类别	西药

@@ -85,7 +85,7 @@ export function get_regopcode() {
 }
 
 //---公用后台获取数据接口--------------------------------------
-async function fetch_cash_async(turl, tmethod) {
+export async function fetch_cash_async(turl, tmethod) {
   try {
     let response = await fetch(turl, {
       method: tmethod,
@@ -101,7 +101,7 @@ async function fetch_cash_async(turl, tmethod) {
   }
 }
 
-async function post_cash_async(turl, tbody) {
+export async function post_cash_async(turl, tbody) {
   try {
     let response = await fetch(turl, {
       method: "post",

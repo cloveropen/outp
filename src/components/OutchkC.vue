@@ -2,7 +2,7 @@
   <v-container class="grey lighten-5">
     <v-card class="mx-auto" max-width="99%" min-width="100%" justify-center>
       <v-card-text>
-        <v-layout row wrap >
+        <v-layout row wrap>
           <v-flex d-flex>
             &emsp;&emsp;
             <v-text-field
@@ -15,7 +15,7 @@
           <v-flex d-flex>
             &emsp;&emsp;
             <v-text-field
-              v-model="passwd"
+              v-model="tpasswd"
               :rules="passRules"
               label="密码"
               required
@@ -25,37 +25,37 @@
           </v-flex>
 
           <v-flex d-flex>
-            <v-btn color="success" @click="loginSubmit">验证</v-btn>
+            <v-btn color="success" @click="loginChk">验证</v-btn>
             &emsp;&emsp;
           </v-flex>
           <v-row>
-          <v-flex d-flex flex-wrap>
-            &emsp;&emsp;
-            <v-text-field
-              v-model="topname"
-              label="操作员姓名"
-              disabled
-            ></v-text-field
-            >&emsp;&emsp;
-          </v-flex>
-          <br/>
-          <v-flex d-flex>
-            &emsp;&emsp;
-            <v-text-field
-              v-model="tbeg"
-              label="开始时间"
-              disabled
-            ></v-text-field
-            >&emsp;&emsp;
-          </v-flex>
-          <v-flex d-flex>
-            <v-text-field
-              v-model="tend"
-              label="结束时间"
-              disabled
-            ></v-text-field
-            >&emsp;&emsp;
-          </v-flex>
+            <v-flex d-flex flex-wrap>
+              &emsp;&emsp;
+              <v-text-field
+                v-model="topname"
+                label="操作员姓名"
+                disabled
+              ></v-text-field
+              >&emsp;&emsp;
+            </v-flex>
+            <br />
+            <v-flex d-flex>
+              &emsp;&emsp;
+              <v-text-field
+                v-model="tbeg"
+                label="开始时间"
+                disabled
+              ></v-text-field
+              >&emsp;&emsp;
+            </v-flex>
+            <v-flex d-flex>
+              <v-text-field
+                v-model="tend"
+                label="结束时间"
+                disabled
+              ></v-text-field
+              >&emsp;&emsp;
+            </v-flex>
           </v-row>
         </v-layout>
       </v-card-text>
@@ -85,7 +85,9 @@
     </v-card>
     <v-expansion-panels inset focusable>
       <v-expansion-panel>
-        <v-expansion-panel-header ripple><b>交班结算表</b></v-expansion-panel-header>
+        <v-expansion-panel-header ripple
+          ><b>交班结算表</b></v-expansion-panel-header
+        >
         <v-expansion-panel-content>
           <!-- -------------------------交班结算栏 --------------------------------------------- -->
           <v-data-table
@@ -148,6 +150,11 @@
 </template>
 
 <script>
+import {
+  etch_cash_async,
+  post_cash_async,
+  get_regopcode
+} from "../scripts/outcash.js";
 export default {
   data: () => ({
     topcode: "",
@@ -172,7 +179,8 @@ export default {
       { text: "开具时间", value: "cal_time" },
       { text: "医师", value: "cal_opcode" }
     ],
-    fee_details: []
+    fee_details: [],
+    valid: false
   }),
 
   created() {
@@ -193,110 +201,32 @@ export default {
     resetValidation() {
       this.$refs.form.resetValidation();
     },
-    pidChanged(e) {
-      console.log("pid=" + e);
-      //门诊号规则:患者主索引8位，门诊号为11位，门诊号=主索引编号+3位数字，后3位数字为挂号的序号
-      let tpid = e.trim();
-      let _this = this;
-      if (tpid.length == 8 || tpid.length == 11) {
-        let thsp_code = process.env.VUE_APP_HSP_CODE;
-        fetch(
-          process.env.VUE_APP_REG_URL +
-            "/searchoutregcash/" +
-            tpid +
-            "/" +
-            thsp_code,
-          {
-            method: "get",
-            headers: {
-              Accept: "text/html",
-              "Content-Type": "application/json"
-            }
-          }
-        )
-          .then(function(response) {
-            if (response.ok) {
-              //window.alert("---ok=");
-            } else {
-              window.alert("查询患者信息失败error" + response.text);
-            }
-            return response.json();
-          })
-          .then(function(data) {
-            console.log("data=" + JSON.stringify(data));
-            let tresultCode = data.resultCode;
-            //window.alert("tresultCode="+tresultCode)
-            if (tresultCode === "0") {
-              _this.out_reg = JSON.parse(data.outdata);
-              console.log(" this.out_reg=" + JSON.stringify(_this.out_reg));
-              console.log(
-                " this.out_reg.patientName=" + _this.out_reg.patientName
-              );
-              //return toutreg;
-            } else {
-              window.alert("查询患者主索引信息失败1" + data.errorMsg);
-            }
-          })
-          .catch(function(err) {
-            window.alert("查询患者主索引信息查询error=" + err);
+    loginChk() {
+      let sel = this;
+      let tinstr =
+        '{"opid":"' +
+        this.topcode +
+        '","opname":"","oppass":"' +
+        this.tpasswd +
+        '","opstatus":""}';
+      
+      post_cash_async(process.env.VUE_APP_LOGIN_URL,tinstr).then(data => {
+        let topstatus = data.opstatus;
+        if (topstatus === "200") {
+          localStorage.setItem("user", JSON.stringify(data));
+          //sel.$parent.$router.push({ path: "/" });
+          // 提交保存登录凭证数据
+          data.hsp_code = process.env.VUE_APP_HSP_CODE;
+          var date = new Date();
+          data.valid_time = date.toUTCString();
+          // -----------------------------------------------------------------------------------------------
+          post_cash_async(process.env.VUE_APP_LOGINREC_URL + "/savetgc",JSON.stringify(data)).then(data => {
+            console.log("保存成功=" + JSON.stringify(data));          
           });
-      } else {
-        //window.alert("请输入正确的门诊号或患者主索引号");
-        return;
+          // ------------------------------------------------------------------------------------------------
+        }
+       });
       }
-      console.log(" this.out_reg=" + JSON.stringify(_this.out_reg));
-      return _this.out_reg;
-    },
-    getfeedetail(e) {
-      console.log("getfeedetail pid=" + e);
-      //门诊号规则:患者主索引8位，门诊号为11位，门诊号=主索引编号+3位数字，后3位数字为挂号的序号
-      let tpid = e.trim();
-      let _this = this;
-      if (tpid.length == 8 || tpid.length == 11) {
-        let thsp_code = process.env.VUE_APP_HSP_CODE;
-        fetch(
-          process.env.VUE_APP_REG_URL +
-            "/searchfeedetail/" +
-            tpid +
-            "/9/" +
-            thsp_code,
-          {
-            method: "get",
-            headers: {
-              Accept: "text/html",
-              "Content-Type": "application/json"
-            }
-          }
-        )
-          .then(function(response) {
-            if (response.ok) {
-              //window.alert("---ok=");
-            } else {
-              window.alert("查询患者信息失败error" + response.text);
-            }
-            return response.json();
-          })
-          .then(function(data) {
-            console.log("data=" + JSON.stringify(data));
-            let tresultCode = data.resultCode;
-            //window.alert("tresultCode="+tresultCode)
-            if (tresultCode === "0") {
-              _this.fee_details = JSON.parse(data.outdata);
-              console.log(" this.out_reg=" + JSON.stringify(_this.fee_details));
-            } else {
-              window.alert("查询患者主索引信息失败1" + data.errorMsg);
-            }
-          })
-          .catch(function(err) {
-            window.alert("查询患者主索引信息查询error=" + err);
-          });
-      } else {
-        //window.alert("请输入正确的门诊号或患者主索引号");
-        return;
-      }
-      console.log(" this.out_reg=" + JSON.stringify(_this.out_reg));
-      return _this.out_reg;
-    }
     // ---------------------end methods----------------
   }
 };
