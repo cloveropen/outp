@@ -138,7 +138,7 @@
               @click="validate"
               >生成支付码</v-btn
             >
-            <v-btn :disabled="!valid" color="success" @click="cash(out_reg.pid)"
+            <v-btn :disabled="!valid_cashout" color="success" @click="cash(out_reg.pid)"
               >确认收款</v-btn
             >
             <v-btn :disabled="!valid" color="success" @click="validate"
@@ -211,6 +211,7 @@ import {
 export default {
   data: () => ({
     valid: true,
+    valid_cashout: true,
     out_reg: {
       seq: 0,
       hsp_code: process.env.VUE_APP_HSP_CODE,
@@ -256,6 +257,13 @@ export default {
   },
   mounted() {
     console.log("mounted");
+    //console.log("tfee_list begin ");
+    get_feedreglist(this.topcode, this.tgc).then(data => {
+      //console.log("tfees_list=" + data);
+      let obj = JSON.parse(data);
+      this.fee_bfpays = JSON.parse(obj.outdata);
+      // this.fee_details = JSON.parse(obj.outdata)
+    });
   },
   methods: {
     validate() {
@@ -274,22 +282,15 @@ export default {
       let tpid = e.trim();
       if (tpid.length == 12) {
         get_reg4cash(tpid, this.topcode, this.tgc).then(data => {
-          console.log("t9s=" + data);
+          //console.log("t9s=" + data);
           let obj = JSON.parse(data);
           this.out_reg = JSON.parse(obj.outdata);
         });
         console.log("tfees begin ");
         get_feedetail4cash(tpid, this.topcode, this.tgc).then(data => {
-          console.log("tfees=" + data);
+          //console.log("tfees=" + data);
           let obj = JSON.parse(data);
           this.fee_details = JSON.parse(obj.outdata);
-        });
-        console.log("tfee_list begin ");
-        get_feedreglist(this.topcode, this.tgc).then(data => {
-          console.log("tfees_list=" + data);
-          let obj = JSON.parse(data);
-          this.fee_bfpays = JSON.parse(obj.outdata);
-          // this.fee_details = JSON.parse(obj.outdata)
         });
       }
     },
@@ -298,27 +299,25 @@ export default {
 
       if (tpid.length == 12) {
         get_reg4cash(tpid, this.topcode, this.tgc).then(data => {
-          console.log("t9s=" + data);
+          //console.log("t9s=" + data);
           let obj = JSON.parse(data);
           this.out_reg = JSON.parse(obj.outdata);
         });
         //console.log("tfees begin ");
         get_feedetail4cash(tpid, this.topcode, this.tgc).then(data => {
-          console.log("tfees=" + data);
+          //console.log("tfees=" + data);
           let obj = JSON.parse(data);
           this.fee_details = JSON.parse(obj.outdata);
         });
-        //console.log("tfee_list begin ");
-        get_feedreglist(this.topcode, this.tgc).then(data => {
-          console.log("tfees_list=" + data);
-          let obj = JSON.parse(data);
-          this.fee_bfpays = JSON.parse(obj.outdata);
-        });
       }
     },
-    cash(tpid) { //确认收款
+    cash(tpid) {
+      //确认收款
       console.log("cahs tpid=" + tpid);
-      cashout(this.our_reg.pid,this.topcode,)
+      let toutstr = "";
+      toutstr = cashout(tpid, this.topcode, this.tgc);
+      this.valid_cashout = false;
+      window.alert("收款完成" + toutstr);
     }
     // ---------------------end methods----------------
   }

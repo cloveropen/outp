@@ -43,19 +43,12 @@ export async function get_feedetail4cash(tpid, topcode, tgc) {
 
 // ----------门诊收款结算----------------------------------------------------------
 export async function cashout(tpid, topcode, tgc) {
-  let tout_Str = "";  //返回支付金额字符串
+  let tout_Str = ""; //返回支付金额字符串
   let thsp_code = process.env.VUE_APP_HSP_CODE;
-  let turl =
-    process.env.VUE_APP_REG_URL +
-    "/cashout/" +
-    tpid +
-    "/" +
-    thsp_code +
-    "/" +
-    topcode +
-    "/" +
-    tgc;
-  await fetch_cash_async(turl, "get").then(data => {
+  let turl = process.env.VUE_APP_REG_URL + "/cashout";
+  let tin_str = tpid + "|" + thsp_code + "|" + topcode + "|" + tgc;
+  console.log("tinstr=" + tin_str);
+  await post_cash_async(turl, tin_str).then(data => {
     tout_Str = JSON.stringify(data);
     return tout_Str;
   });
@@ -96,6 +89,23 @@ async function fetch_cash_async(turl, tmethod) {
   try {
     let response = await fetch(turl, {
       method: tmethod,
+      headers: {
+        Accept: "text/html",
+        "Content-Type": "application/json"
+      }
+    });
+    return await response.json();
+  } catch (err) {
+    console.error(err);
+    // Handle errors here
+  }
+}
+
+async function post_cash_async(turl, tbody) {
+  try {
+    let response = await fetch(turl, {
+      method: "post",
+      body: tbody,
       headers: {
         Accept: "text/html",
         "Content-Type": "application/json"
