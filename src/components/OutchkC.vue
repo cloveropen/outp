@@ -101,6 +101,7 @@
         </v-expansion-panel-content>
       </v-expansion-panel>
       <v-expansion-panel>
+        <v-expansion-panel-header>退挂号明细</v-expansion-panel-header>
         <v-expansion-panel-content>
           <!-- -------------------------退挂号明细栏 --------------------------------------------- -->
           <v-data-table
@@ -153,7 +154,7 @@
 
 <script>
 import {
-  etch_cash_async,
+  fetch_cash_async,
   post_cash_async,
   get_regopcode
 } from "../scripts/outcash.js";
@@ -162,6 +163,7 @@ export default {
     topcode: "",
     topname: "",
     tpasswd: "",
+    tgc: "",
     passRules: [
       v => !!v || "用户密码不能为空",
       v => v.length >= 6 || "用户密码长度必须超过6个字符"
@@ -225,8 +227,24 @@ export default {
           post_cash_async(process.env.VUE_APP_LOGINREC_URL + "/savetgc",JSON.stringify(data)).then(data => {
             console.log("用户信息保存成功=" + JSON.stringify(data));
             // --查询操作员姓名和交班的开始时间,截止时间默认是当前时间
+             sel.tgc = get_regopcode().split("|")[1];
+             let thsp_code = process.env.VUE_APP_HSP_CODE;
+             let turl = process.env.VUE_APP_REG_URL + "/searchchksumlast/"+thsp_code+"/"+sel.topcode+"/"+sel.tgc;
+             fetch_cash_async(turl,"get").then(data => {
+               console.log("data=" + JSON.stringify(data));
+               if (data.resultCode==="0"){
+                 let toutdata = JSON.parse(data.outdata);
+
+                 sel.valid = true;
+                 sel.topname = toutdata.opname;
+                 sel.tbeg = toutdata.bd;
+                 sel.tend = toutdata.ed;
+                 console.log("sel.topname="+sel.topname+" this.topname="+this.topname+"|"+toutdata.opname);
+               }else{
+                 window.alert("查询失败"+data.errorMsg);
+               }
+             });
             
-            sel.valid = true;
           });
           // ------------------------------------------------------------------------------------------------
         }
