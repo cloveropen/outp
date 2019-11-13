@@ -27,7 +27,9 @@
           </v-flex>
 
           <v-flex d-flex>
-            <v-btn color="success" :disabled="valid" @click="loginChk">验证</v-btn>
+            <v-btn color="success" :disabled="valid" @click="loginChk"
+              >验证</v-btn
+            >
             &emsp;&emsp;
           </v-flex>
           <v-row>
@@ -66,18 +68,27 @@
         <v-layout row wrap no-gutters>
           <v-flex d-flex><v-spacer></v-spacer></v-flex>
           <v-flex d-flex
-            ><v-btn id="snap" :disabled="!valid" color="success">计算</v-btn>
+            ><v-btn
+              id="snap"
+              :disabled="!valid"
+              color="success"
+              @click="outchk_calc($event)"
+              >计算</v-btn
+            >
             <v-btn
               depressed
               :disabled="!valid"
               color="success"
-              @click="validate"
+              @click="outchk_commit($event)"
               >确认交班</v-btn
             >
-            <v-btn :disabled="!valid" color="success" @click="validate"
+            <v-btn :disabled="!valid" color="success" @click="prnoutchk($event)"
               >打印结算表</v-btn
             >
-            <v-btn :disabled="!valid" color="success" @click="validate"
+            <v-btn
+              :disabled="!valid"
+              color="success"
+              @click="prncancel3($event)"
               >打印退款明细</v-btn
             >
             <v-spacer></v-spacer
@@ -88,10 +99,24 @@
     <v-expansion-panels inset focusable>
       <v-expansion-panel>
         <v-expansion-panel-header ripple
-          ><b>交班结算表</b></v-expansion-panel-header
+          ><b>交班结算汇总表</b></v-expansion-panel-header
         >
         <v-expansion-panel-content>
           <!-- -------------------------交班结算栏 --------------------------------------------- -->
+          <v-data-table
+            :headers="headers"
+            :items="fee_details"
+            :items-per-page="10"
+            class="elevation-1"
+          ></v-data-table>
+        </v-expansion-panel-content>
+      </v-expansion-panel>
+      <v-expansion-panel>
+        <v-expansion-panel-header ripple
+          ><b>交班结算分项明细表</b></v-expansion-panel-header
+        >
+        <v-expansion-panel-content>
+          <!-- -------------------------交班结算分项明细栏 --------------------------------------------- -->
           <v-data-table
             :headers="headers"
             :items="fee_details"
@@ -149,6 +174,48 @@
         </v-expansion-panel-content>
       </v-expansion-panel>
     </v-expansion-panels>
+    <!--     打印门诊收款结算交接班表---------------------------------------- -->
+    <v-row no-gutters>
+      <v-col cols="12" sm="12">
+        <v-parallax
+          height="300"
+          dark
+          src="https://cdn.vuetifyjs.com/images/parallax/material2.jpg"
+        >
+          <div id="print_outchk">
+            <v-card
+              class="pa-2"
+              outlined
+              style="background-color: lightgrey;"
+              tile
+            >
+              门诊收款结算交接班表打印样式
+            </v-card>
+          </div>
+        </v-parallax>
+      </v-col>
+    </v-row>
+    <!--     打印退号 款 预交金表---------------------------------------- -->
+    <v-row no-gutters>
+      <v-col cols="12" sm="12">
+        <v-parallax
+          height="700"
+          dark
+          :src="require('../assets/img/blank_cash.jpg')"
+        >
+          <div id="print_cancel3">
+            <v-card
+              class="pa-2"
+              outlined
+              style="background-color: lightgrey;"
+              tile
+            >
+              退号(款)(预交金)表打印样式
+            </v-card>
+          </div>
+        </v-parallax>
+      </v-col>
+    </v-row>
   </v-container>
 </template>
 
@@ -213,8 +280,8 @@ export default {
         '","opname":"","oppass":"' +
         this.tpasswd +
         '","opstatus":""}';
-      
-      post_cash_async(process.env.VUE_APP_LOGIN_URL,tinstr).then(data => {
+
+      post_cash_async(process.env.VUE_APP_LOGIN_URL, tinstr).then(data => {
         let topstatus = data.opstatus;
         if (topstatus === "200") {
           localStorage.setItem("user", JSON.stringify(data));
@@ -224,32 +291,116 @@ export default {
           var date = new Date();
           data.valid_time = date.toUTCString();
           // -----------------------------------------------------------------------------------------------
-          post_cash_async(process.env.VUE_APP_LOGINREC_URL + "/savetgc",JSON.stringify(data)).then(data => {
+          post_cash_async(
+            process.env.VUE_APP_LOGINREC_URL + "/savetgc",
+            JSON.stringify(data)
+          ).then(data => {
             console.log("用户信息保存成功=" + JSON.stringify(data));
             // --查询操作员姓名和交班的开始时间,截止时间默认是当前时间
-             sel.tgc = get_regopcode().split("|")[1];
-             let thsp_code = process.env.VUE_APP_HSP_CODE;
-             let turl = process.env.VUE_APP_REG_URL + "/searchchksumlast/"+thsp_code+"/"+sel.topcode+"/"+sel.tgc;
-             fetch_cash_async(turl,"get").then(data => {
-               console.log("data=" + JSON.stringify(data));
-               if (data.resultCode==="0"){
-                 let toutdata = JSON.parse(data.outdata);
+            sel.tgc = get_regopcode().split("|")[1];
+            let thsp_code = process.env.VUE_APP_HSP_CODE;
+            let turl =
+              process.env.VUE_APP_REG_URL +
+              "/searchchksumlast/" +
+              thsp_code +
+              "/" +
+              sel.topcode +
+              "/" +
+              sel.tgc;
+            fetch_cash_async(turl, "get").then(data => {
+              console.log("data=" + JSON.stringify(data));
+              if (data.resultCode === "0") {
+                let toutdata = JSON.parse(data.outdata);
 
-                 sel.valid = true;
-                 sel.topname = toutdata.opname;
-                 sel.tbeg = toutdata.bd;
-                 sel.tend = toutdata.ed;
-                 console.log("sel.topname="+sel.topname+" this.topname="+this.topname+"|"+toutdata.opname);
-               }else{
-                 window.alert("查询失败"+data.errorMsg);
-               }
-             });
-            
+                sel.valid = true;
+                sel.topname = toutdata.opname;
+                sel.tbeg = toutdata.bd;
+                sel.tend = toutdata.ed;
+                console.log(
+                  "sel.topname=" +
+                    sel.topname +
+                    " this.topname=" +
+                    this.topname +
+                    "|" +
+                    toutdata.opname
+                );
+              } else {
+                window.alert("查询失败" + data.errorMsg);
+              }
+            });
           });
           // ------------------------------------------------------------------------------------------------
         }
-       });
-      }
+      });
+    },
+    // --------------------------计算交班结算(预结算)------------------------------------------------------
+    outchk_calc(e) {
+      // 入参:thsp_code + "|" + ted + "|" + topcode + "|" + tgc; 截止时间入参格式yyyy-mm-dd hh24:mi:ss
+      console.log("e=" + e.target.innerText);
+      let tinstr =
+        process.env.VUE_APP_HSP_CODE +
+        "|" +
+        this.tend +
+        "|" +
+        this.topcode +
+        "|" +
+        this.tgc;
+      console.log("tinstr=" + tinstr);
+      post_cash_async(
+        process.env.VUE_APP_REG_URL + "/outchkcalc",
+        JSON.stringify(tinstr)
+      ).then(data => {
+        console.log("计算交班结算(预结算):" + JSON.stringify(data));
+        if (data.resultCode === "0") {
+          let tchk_list = Array.of();
+          tchk_list = data.outdata.split("|");
+          console.log(
+            "tchk_list[0]=" + tchk_list[0] + " tchk_list[1]=" + tchk_list[1]
+          );
+        } else {
+          window.alert("查询失败" + data.errorMsg);
+        }
+      });
+    },
+    // -------------------------交班结算确认---------------------------------------------------------------
+    outchk_commit(e) {
+      // 入参:thsp_code + "|" + ted + "|" + topcode + "|" + tgc; 截止时间入参格式yyyy-mm-dd hh24:mi:ss
+      console.log("e=" + e.target.innerText);
+      let tinstr =
+        process.env.VUE_APP_HSP_CODE +
+        "|" +
+        this.tend +
+        "|" +
+        this.topcode +
+        "|" +
+        this.tgc;
+      console.log("tinstr=" + tinstr);
+      post_cash_async(
+        process.env.VUE_APP_REG_URL + "/outchkcommit",
+        JSON.stringify(tinstr)
+      ).then(data => {
+        console.log("计算交班结算:" + JSON.stringify(data));
+        if (data.resultCode === "0") {
+          let tchk_list = Array.of();
+          tchk_list = data.outdata.split("|");
+          console.log(
+            "tchk_list[0]=" + tchk_list[0] + " tchk_list[1]=" + tchk_list[1]
+          );
+        } else {
+          window.alert("查询失败" + data.errorMsg);
+        }
+      });
+    },
+    // --------------------------打印交班结算表-------------------------------------------------------------
+    prnoutchk(e) {
+      console.log("e=" + e.target.innerText);
+      this.$htmlToPaper("print_outchk");
+    },
+    // --------------------------打印退款明细--------------------------------------------------------------
+    prncancel3(e) {
+      console.log("e=" + e.target.innerText);
+      this.$htmlToPaper("print_cancel3");
+    }
     // ---------------------end methods----------------
   }
 };

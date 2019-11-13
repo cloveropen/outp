@@ -509,6 +509,42 @@ BEGIN
 	    +tcd1b.sum01 + tcd2b.sum01 + tcd3b.sum01 + tcd4b.sum01;
 	tchksum.sum02 := tcd1.sum02 + tcd2.sum02 + tcd3.sum02 + tcd4.sum02
 	    +tcd1b.sum02 + tcd2b.sum02 + tcd3b.sum02 + tcd4b.sum02;
+	tchksum.sum03 := tcd1.sum03 + tcd2.sum03 + tcd3.sum03 + tcd4.sum03
+	    +tcd1b.sum03 + tcd2b.sum03 + tcd3b.sum03 + tcd4b.sum03;
+	tchksum.sum04 := tcd1.sum04 + tcd2.sum04 + tcd3.sum04 + tcd4.sum04
+	    +tcd1b.sum04 + tcd2b.sum04 + tcd3b.sum04 + tcd4b.sum04;
+	tchksum.sum05 := tcd1.sum05 + tcd2.sum05 + tcd3.sum05 + tcd4.sum05
+	    +tcd1b.sum05 + tcd2b.sum05 + tcd3b.sum05 + tcd4b.sum05;
+	tchksum.sum06 := tcd1.sum06 + tcd2.sum06 + tcd3.sum06 + tcd4.sum06
+	    +tcd1b.sum06 + tcd2b.sum06 + tcd3b.sum06 + tcd4b.sum06;
+	tchksum.sum07 := tcd1.sum07 + tcd2.sum07 + tcd3.sum07 + tcd4.sum07
+	    +tcd1b.sum07 + tcd2b.sum07 + tcd3b.sum07 + tcd4b.sum07;
+	tchksum.sum08 := tcd1.sum08 + tcd2.sum08 + tcd3.sum08 + tcd4.sum08
+	    +tcd1b.sum08 + tcd2b.sum08 + tcd3b.sum08 + tcd4b.sum08;
+	tchksum.sum09 := tcd1.sum09 + tcd2.sum09 + tcd3.sum09 + tcd4.sum09
+	    +tcd1b.sum09 + tcd2b.sum09 + tcd3b.sum09 + tcd4b.sum09;	
+	tchksum.sum10 := tcd1.sum10 + tcd2.sum10 + tcd3.sum10 + tcd4.sum10
+	    +tcd1b.sum10 + tcd2b.sum10 + tcd3b.sum10 + tcd4b.sum10;	
+	tchksum.sum11 := tcd1.sum11 + tcd2.sum11 + tcd3.sum11 + tcd4.sum11
+	    +tcd1b.sum11 + tcd2b.sum11 + tcd3b.sum11 + tcd4b.sum11;	
+	tchksum.sum12 := tcd1.sum12 + tcd2.sum12 + tcd3.sum12 + tcd4.sum12
+	    +tcd1b.sum12 + tcd2b.sum12 + tcd3b.sum12 + tcd4b.sum12;	
+	tchksum.sum13 := tcd1.sum13 + tcd2.sum13 + tcd3.sum13 + tcd4.sum13
+	    +tcd1b.sum13 + tcd2b.sum13 + tcd3b.sum13 + tcd4b.sum13;	
+	tchksum.sum14 := tcd1.sum14 + tcd2.sum14 + tcd3.sum14 + tcd4.sum14
+	    +tcd1b.sum14 + tcd2b.sum14 + tcd3b.sum14 + tcd4b.sum14;	
+	tchksum.sum15 := tcd1.sum15 + tcd2.sum15 + tcd3.sum15 + tcd4.sum15
+	    +tcd1b.sum15 + tcd2b.sum15 + tcd3b.sum15 + tcd4b.sum15;	
+	tchksum.sum16 := tcd1.sum16 + tcd2.sum16 + tcd3.sum16 + tcd4.sum16
+	    +tcd1b.sum16 + tcd2b.sum16 + tcd3b.sum16 + tcd4b.sum16;	
+	tchksum.sum17 := tcd1.sum17 + tcd2.sum17 + tcd3.sum17 + tcd4.sum17
+	    +tcd1b.sum17 + tcd2b.sum17 + tcd3b.sum17 + tcd4b.sum17;	
+	tchksum.sum18 := tcd1.sum18 + tcd2.sum18 + tcd3.sum18 + tcd4.sum18
+	    +tcd1b.sum18 + tcd2b.sum18 + tcd3b.sum18 + tcd4b.sum18;	
+	tchksum.sum19 := tcd1.sum19 + tcd2.sum19 + tcd3.sum19 + tcd4.sum19
+	    +tcd1b.sum19 + tcd2b.sum19 + tcd3b.sum19 + tcd4b.sum19;	
+	tchksum.sum20 := tcd1.sum20 + tcd2.sum20 + tcd3.sum20 + tcd4.sum20
+	    +tcd1b.sum20 + tcd2b.sum20 + tcd3b.sum20 + tcd4b.sum20;	
 
 		
 	insert into t_chk_sum values (tchksum.*);
