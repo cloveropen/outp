@@ -1,29 +1,8 @@
-CREATE OR REPLACE FUNCTION clover_odr.out_chk_calc(tin_str text,tip text)
+CREATE OR REPLACE FUNCTION clover_odr.out_chk_init(tin_str text,tip text)
     RETURNS text
     LANGUAGE 'plpgsql'
 AS $cloveropen$
--- 收款交接班计算 入参:thsp_code + "|" + ted + "|" + topcode + "|" + tgc; 截止时间入参格式yyyy-mm-dd hh24:mi:ss
--- 11	收费类别	西药(01)
--- 12	收费类别	中成药(02)
--- 13	收费类别	中草药(03)
--- 21	收费类别	检查费(04)
--- 22	收费类别	特殊检查费(05)
--- 23	收费类别	输氧费(06)
--- 24	收费类别	手术费(07)
--- 25	收费类别	化验费(08)
--- 26	收费类别	输血费(09)
--- 27	收费类别	诊察费(10)
--- 28	收费类别	材料费(11)
--- 29	收费类别	特殊材料费(12)
--- 31	收费类别	治疗费(13)
--- 32	收费类别	特殊治疗费(14)
--- 33	收费类别	护理费(15)
--- 34	收费类别	床位费(16)
--- 35	收费类别	取暖费(17)
--- 36	收费类别	一次性医用材料(18)
--- 91	收费类别	其他费用(19)
--- 92	收费类别	挂号费(20)
-
+-- 收款交接班初始化,第一次操作没有数据写入 入参:thsp_code + "|" + topcode ; 
 DECLARE
     tin_arrays text ARRAY;	
 	thsp_code clover_odr.chk_sum.hsp_code%type;  --医院编码
@@ -43,53 +22,24 @@ DECLARE
 	tcd4 clover_odr.chk_detail%rowtype;   --出院结算返款
 	tcd4b clover_odr.chk_detail%rowtype;   --出院结算召回
 	
-	tout_str_sum text := '';
-	tout_str_detail text := '';
+	tout_str text := '';
 BEGIN	
-    execute 'DROP TABLE IF EXISTS t_chk_sum,t_chk_detail';
-    execute 'CREATE TEMP TABLE t_chk_sum(seq bigint NOT NULL primary key,hsp_code text,opcode text,opname text,'||
-	'chk_flow text,bd timestamp,ed timestamp,chk_time timestamp,chk_opcode text,all_sum_upper text,all_sum numeric(12,4),'||
-    'sum01 numeric(12,4),sum02 numeric(12,4),sum03 numeric(12,4),sum04 numeric(12,4),sum05 numeric(12,4),'||
-    'sum06 numeric(12,4),sum07 numeric(12,4),sum08 numeric(12,4),sum09 numeric(12,4),sum10 numeric(12,4),'||
-    'sum11 numeric(12,4),sum12 numeric(12,4),sum13 numeric(12,4),sum14 numeric(12,4),sum15 numeric(12,4),'||
-    'sum16 numeric(12,4),sum17 numeric(12,4),sum18 numeric(12,4),sum19 numeric(12,4),sum20 numeric(12,4),'||
-    'cash_sum numeric(12,4),pacc_sum numeric(12,4),fund_sum numeric(12,4),fund_nh_sum numeric(12,4),'||
-    'fund_commeric numeric(12,4),weixin_sum numeric(12,4),alipay_sum numeric(12,4),unionpay_sum numeric(12,4),'||
-    'check_sum numeric(12,4),voucher_sum numeric(12,4),spec_sum numeric(12,4),remark text)';
-    execute 'CREATE TEMP TABLE t_chk_detail(seq bigint NOT NULL primary key,'||
-    'seq_chk_sum bigint,hsp_code text,opcode text,opname text,chk_type text,bd timestamp,ed timestamp,chk_time timestamp,'||
-    'chk_opcode text,chk_flow_detail text,bflow text,eflow text,binvoice_nmb text,einvoice_nmb text,trade_type text,paper_num integer,'||
-    'all_sum_upper text,all_sum numeric(12,4),sum01 numeric(12,4),sum02 numeric(12,4),sum03 numeric(12,4),sum04 numeric(12,4),sum05 numeric(12,4),'||
-    'sum06 numeric(12,4),sum07 numeric(12,4),sum08 numeric(12,4),sum09 numeric(12,4),sum10 numeric(12,4),'||
-    'sum11 numeric(12,4),sum12 numeric(12,4),sum13 numeric(12,4),sum14 numeric(12,4),sum15 numeric(12,4),'||
-    'sum16 numeric(12,4),sum17 numeric(12,4),sum18 numeric(12,4),sum19 numeric(12,4),sum20 numeric(12,4),'||
-    'cash_sum numeric(12,4),pacc_sum numeric(12,4),fund_sum numeric(12,4),fund_nh_sum numeric(12,4),fund_commeric numeric(12,4),'||
-    'weixin_sum numeric(12,4),alipay_sum numeric(12,4),unionpay_sum numeric(12,4),check_sum numeric(12,4),'||
-    'voucher_sum numeric(12,4),spec_sum numeric(12,4))';
-	
-	select  string_to_array(tin_str,'|') into tin_arrays;
+    select  string_to_array(tin_str,'|') into tin_arrays;
 	thsp_code := tin_arrays[1];
-	tedstr := tin_arrays[2];
-	topcode := tin_arrays[3];
+	topcode := tin_arrays[2];
 	SELECT opname into tchksum.opname FROM clover_md.kd99 where hsp_code=thsp_code and opcode=topcode;
-	tendtime := to_timestamp(tedstr,'YYYY-MM-DD HH24:MI:SS');
+	tendtime := now();
 	tstime := now();
-	if tendtime>tstime then
-	  tendtime := tstime;
-	elsif tendtime< tstime - interval '2h' then
-	  tendtime := tstime;
-	end if;
-	raise notice 'thsp_code=%,ted_str=%,topcode=%',thsp_code,tedstr,topcode;
+	
 	--查询最新的交班记录
-	SELECT seq into tseq FROM clover_odr.chk_sum where hsp_code=thsp_code and opcode=topcode order by seq desc limit 1;
-	raise notice 'tseq=%',tseq;
+	SELECT seq into tseq FROM clover_odr.chk_sum where hsp_code=thsp_code and opcode=topcode order by seq desc limit 1;	
 	if (tseq is null) or (tseq <=0) then  --写入初始数据,先计算明细，后计算汇总，起始时间为当前时间-365days,截止时间为传入的时间，截止时间大于当前时间按当前时间，小于当前时间2h按当前时间
 	  tchksum.bd := now() - interval '365 days' ;
 	  tchksum.remark := '初始化';
 	  tseq := 0;
 	else
-	  SELECT ed into tchksum.bd FROM clover_odr.chk_sum where seq = tseq ;
-	  tchksum.remark := tseq;
+	  tout_str := '0|已经存在数据';
+	  return tout_str;
 	end if;
 	tchksum.seq := nextval('clover_odr.seq_chk_sum');
 	tchksum.hsp_code := thsp_code;
@@ -97,6 +47,8 @@ BEGIN
 	tchksum.ed := tendtime;
 	tchksum.chk_time := tstime;
 	tchksum.chk_opcode := topcode;
+	SELECT to_char(to_number(coalesce(max(chk_flow),'00000000'),'99999999')+1,'00000000') into tchksum.chk_flow
+	  FROM clover_odr.chk_sum where opcode=topcode and hsp_code=thsp_code;
 	-- 计算挂号费用---reg--------------------------------------------------------------------1111111111111111111111111111-----------------------
 	tcd1.seq := nextval('clover_odr.seq_chk_detail');
 	tcd1.seq_chk_sum := tchksum.seq;
@@ -109,6 +61,8 @@ BEGIN
 	tcd1.chk_time := tstime;
 	tcd1.chk_opcode := topcode;
 	tcd1.trade_type := '0';
+	SELECT to_char(to_number(coalesce(max(chk_flow_detail),'00000000'),'99999999')+1,'00000000') into tcd1.chk_flow_detail
+	  FROM clover_odr.chk_detail where hsp_code=thsp_code and opcode=topcode;
 	SELECT coalesce(count(seq),0) into tcd1.paper_num FROM clover_odr.out_reg_prn 
 	WHERE prn_status<>'-1' and reg_opcode=topcode and hsp_code=thsp_code
 	  and reg_time>=tchksum.bd and reg_time<tchksum.ed;
@@ -149,9 +103,9 @@ BEGIN
 	tcd1.sum17 := 0.00;
 	tcd1.sum18 := 0.00; 
 	tcd1.sum19 := 0.00;
-	tcd1.sum20 := tcd1.all_sum;	
-	insert into t_chk_detail values (tcd1.*);
-	
+	tcd1.sum20 := tcd1.all_sum;	  
+	insert into clover_odr.chk_detail values (tcd1.*);
+	  
 	tcd1b.seq := nextval('clover_odr.seq_chk_detail');
 	tcd1b.seq_chk_sum := tchksum.seq;
 	tcd1b.hsp_code := thsp_code;
@@ -163,8 +117,10 @@ BEGIN
 	tcd1b.chk_time := tstime;
 	tcd1b.chk_opcode := topcode;
 	tcd1b.trade_type := '-1';
+	SELECT to_char(to_number(coalesce(max(chk_flow_detail),'00000000'),'99999999')+1,'00000000') into tcd1b.chk_flow_detail
+	  FROM clover_odr.chk_detail where hsp_code=thsp_code and opcode=topcode;
 	SELECT coalesce(count(seq),0) into tcd1.paper_num FROM clover_odr.out_reg_prn 
-	WHERE prn_status<>'-1' and reg_opcode=topcode and hsp_code=thsp_code
+	WHERE prn_status='-1' and reg_opcode=topcode and hsp_code=thsp_code
 	  and reg_time>=tchksum.bd and reg_time<tchksum.ed;
 	SELECT coalesce(max(invoice_nmb),'0000000000'), coalesce(min(invoice_nmb),'0000000000'),
 	    coalesce(max(flow_nmb),'0000000000'),coalesce(min(flow_nmb),'0000000000'),
@@ -204,7 +160,7 @@ BEGIN
 	tcd1b.sum18 := 0.00; 
 	tcd1b.sum19 := 0.00;
 	tcd1b.sum20 := tcd1b.all_sum;
-	insert into t_chk_detail values (tcd1b.*);
+	insert into clover_odr.chk_detail values (tcd1b.*);
 	
 	--计算门诊收款-----cash------------------------------------------------------------------22222222222222222222222222222-----------------------
 	tcd2.seq := nextval('clover_odr.seq_chk_detail');
@@ -218,6 +174,12 @@ BEGIN
 	tcd2.chk_time := tstime;
 	tcd2.chk_opcode := topcode;
 	tcd2.trade_type := '0';
+	SELECT to_char(to_number(coalesce(max(chk_flow_detail),'00000000'),'99999999')+1,'00000000') into tcd2.chk_flow_detail
+	  FROM clover_odr.chk_detail where hsp_code=thsp_code and opcode=topcode;
+	SELECT coalesce(count(seq),0) into tcd2.paper_num
+	  FROM clover_odr.out_cash_prn 
+	where prn_status<>'-1' and hsp_code=thsp_code and cash_opcode=topcode
+	  and cash_time>=tchksum.bd and cash_time<tchksum.ed;
 	SELECT coalesce(max(invoice_nmb),'0000000000'), coalesce(min(invoice_nmb),'0000000000'),
 	    coalesce(max(flow_nmb),'0000000000'),coalesce(min(flow_nmb),'0000000000'),
 		coalesce(sum(all_sum),0.00), coalesce(sum(cash_sum),0.00), coalesce(sum(pacc_sum),0.00), 
@@ -233,7 +195,10 @@ BEGIN
 	FROM clover_odr.cash_set
 	where pay_cate='cash' and hsp_code=thsp_code and trade_type='0' 
 	  and pay_time>=tchksum.bd and pay_time<tchksum.ed and opcode=topcode ;
-    tcd2.sum01 := clover_odr.calc_fee_itemsum(thsp_code,topcode,tchksum.bd,tchksum.ed,'11','0');
+	tcd2.all_sum_upper := clover_md.udf_digits2hanzi(trunc(tcd2.all_sum):: bigint)||'元'||
+	  clover_md.udf_digits2hanzi(((trunc(tcd2.all_sum,1) - trunc(tcd2.all_sum))*10 ):: bigint)||'角'||
+	  clover_md.udf_digits2hanzi(((trunc(tcd2.all_sum,2) - trunc(tcd2.all_sum,1))*100 ):: bigint)||'分';
+	tcd2.sum01 := clover_odr.calc_fee_itemsum(thsp_code,topcode,tchksum.bd,tchksum.ed,'11','0');
 	tcd2.sum02 := clover_odr.calc_fee_itemsum(thsp_code,topcode,tchksum.bd,tchksum.ed,'12','0');
 	tcd2.sum03 := clover_odr.calc_fee_itemsum(thsp_code,topcode,tchksum.bd,tchksum.ed,'13','0');
 	tcd2.sum04 := clover_odr.calc_fee_itemsum(thsp_code,topcode,tchksum.bd,tchksum.ed,'21','0');
@@ -253,7 +218,8 @@ BEGIN
 	tcd2.sum18 := clover_odr.calc_fee_itemsum(thsp_code,topcode,tchksum.bd,tchksum.ed,'36','0');
 	tcd2.sum19 := clover_odr.calc_fee_itemsum(thsp_code,topcode,tchksum.bd,tchksum.ed,'91','0');
 	tcd2.sum20 := clover_odr.calc_fee_itemsum(thsp_code,topcode,tchksum.bd,tchksum.ed,'92','0');	
-	insert into t_chk_detail values (tcd2.*);  
+	insert into clover_odr.chk_detail values (tcd2.*);  
+	
 	------  
 	tcd2b.seq := nextval('clover_odr.seq_chk_detail');
 	tcd2b.seq_chk_sum := tchksum.seq;
@@ -266,6 +232,12 @@ BEGIN
 	tcd2b.chk_time := tstime;
 	tcd2b.chk_opcode := topcode;
 	tcd2b.trade_type := '-1';
+	SELECT to_char(to_number(coalesce(max(chk_flow_detail),'00000000'),'99999999')+1,'00000000') into tcd2b.chk_flow_detail
+	  FROM clover_odr.chk_detail where hsp_code=thsp_code and opcode=topcode;
+	SELECT coalesce(count(seq),0) into tcd2b.paper_num
+	  FROM clover_odr.out_cash_prn 
+	where prn_status='-1' and hsp_code=thsp_code and cash_opcode=topcode
+	  and cash_time>=tchksum.bd and cash_time<tchksum.ed;
 	SELECT coalesce(max(invoice_nmb),'0000000000'), coalesce(min(invoice_nmb),'0000000000'),
 	    coalesce(max(flow_nmb),'0000000000'),coalesce(min(flow_nmb),'0000000000'),
 		coalesce(sum(all_sum),0.00), coalesce(sum(cash_sum),0.00), coalesce(sum(pacc_sum),0.00), 
@@ -281,6 +253,9 @@ BEGIN
 	FROM clover_odr.cash_set
 	where pay_cate='cash' and hsp_code=thsp_code and trade_type='-1' 
 	  and pay_time>=tchksum.bd and pay_time<tchksum.ed and opcode=topcode ;
+    tcd2b.all_sum_upper := '负'||clover_md.udf_digits2hanzi(trunc(abs(tcd2b.all_sum)):: bigint)||'元'||
+	  clover_md.udf_digits2hanzi(((trunc(abs(tcd2b.all_sum),1) - trunc(abs(tcd2b.all_sum)))*10 ):: bigint)||'角'||
+	  clover_md.udf_digits2hanzi(((trunc(abs(tcd2b.all_sum),2) - trunc(abs(tcd2b.all_sum),1))*100 ):: bigint)||'分';	  
     tcd2b.sum01 := clover_odr.calc_fee_itemsum(thsp_code,topcode,tchksum.bd,tchksum.ed,'11','-1');
 	tcd2b.sum02 := clover_odr.calc_fee_itemsum(thsp_code,topcode,tchksum.bd,tchksum.ed,'12','-1');
 	tcd2b.sum03 := clover_odr.calc_fee_itemsum(thsp_code,topcode,tchksum.bd,tchksum.ed,'13','-1');
@@ -302,8 +277,8 @@ BEGIN
 	tcd2b.sum19 := clover_odr.calc_fee_itemsum(thsp_code,topcode,tchksum.bd,tchksum.ed,'91','-1');
 	tcd2b.sum20 := clover_odr.calc_fee_itemsum(thsp_code,topcode,tchksum.bd,tchksum.ed,'92','-1');
 	
-	insert into t_chk_detail values (tcd2b.*);   
-	  
+	insert into clover_odr.chk_detail values (tcd2b.*); 
+	
 	--计算住院预交金----deposit--------------------------------------------------------------3333333333333333333333333333-------------------------
 	tcd3.seq := nextval('clover_odr.seq_chk_detail');
 	tcd3.seq_chk_sum := tchksum.seq;
@@ -316,6 +291,10 @@ BEGIN
 	tcd3.chk_time := tstime;
 	tcd3.chk_opcode := topcode;
 	tcd3.trade_type := '0';
+	SELECT to_char(to_number(coalesce(max(chk_flow_detail),'00000000'),'99999999')+1,'00000000') into tcd3.chk_flow_detail
+	  FROM clover_odr.chk_detail where hsp_code=thsp_code and opcode=topcode;
+	--暂时把预交金张数设置为0
+	tcd3.paper_num := 0;
 	SELECT coalesce(max(invoice_nmb),'0000000000'), coalesce(min(invoice_nmb),'0000000000'),
 	    coalesce(max(flow_nmb),'0000000000'),coalesce(min(flow_nmb),'0000000000'),
 		coalesce(sum(all_sum),0.00), coalesce(sum(cash_sum),0.00), coalesce(sum(pacc_sum),0.00), 
@@ -329,8 +308,11 @@ BEGIN
 		tcd3.weixin_sum, tcd3.alipay_sum, tcd3.unionpay_sum,
 		tcd3.check_sum, tcd3.voucher_sum, tcd3.spec_sum
 	FROM clover_odr.cash_set
-	where pay_cate='deposit' and hsp_code=thsp_code  and trade_type='0' 
+	where pay_cate='deposit' and hsp_code=thsp_code and trade_type='0'  
 	  and pay_time>=tchksum.bd and pay_time<tchksum.ed and opcode=topcode ;
+	tcd3.all_sum_upper := clover_md.udf_digits2hanzi(trunc(tcd3.all_sum):: bigint)||'元'||
+	  clover_md.udf_digits2hanzi(((trunc(tcd3.all_sum,1) - trunc(tcd3.all_sum))*10 ):: bigint)||'角'||
+	  clover_md.udf_digits2hanzi(((trunc(tcd3.all_sum,2) - trunc(tcd3.all_sum,1))*100 ):: bigint)||'分';
 	tcd3.sum01 := 0.00;
 	tcd3.sum02 := 0.00;
 	tcd3.sum03 := 0.00;
@@ -351,7 +333,7 @@ BEGIN
 	tcd3.sum18 := 0.00; 
 	tcd3.sum19 := 0.00;
 	tcd3.sum20 := tcd1.all_sum;
-	insert into t_chk_detail values (tcd3.*);
+	insert into clover_odr.chk_detail values (tcd3.*);  
 	--- ---
 	tcd3b.seq := nextval('clover_odr.seq_chk_detail');
 	tcd3b.seq_chk_sum := tchksum.seq;
@@ -364,6 +346,9 @@ BEGIN
 	tcd3b.chk_time := tstime;
 	tcd3b.chk_opcode := topcode;
 	tcd3b.trade_type := '-1';
+	SELECT to_char(to_number(coalesce(max(chk_flow_detail),'00000000'),'99999999')+1,'00000000') into tcd3b.chk_flow_detail
+	  FROM clover_odr.chk_detail where hsp_code=thsp_code and opcode=topcode;
+	tcd3b.paper_num := 0;
 	SELECT coalesce(max(invoice_nmb),'0000000000'), coalesce(min(invoice_nmb),'0000000000'),
 	    coalesce(max(flow_nmb),'0000000000'),coalesce(min(flow_nmb),'0000000000'),
 		coalesce(sum(all_sum),0.00), coalesce(sum(cash_sum),0.00), coalesce(sum(pacc_sum),0.00), 
@@ -379,6 +364,9 @@ BEGIN
 	FROM clover_odr.cash_set
 	where pay_cate='deposit' and hsp_code=thsp_code  and trade_type='-1' 
 	  and pay_time>=tchksum.bd and pay_time<tchksum.ed and opcode=topcode ;
+	tcd3b.all_sum_upper := '负'||clover_md.udf_digits2hanzi(trunc(abs(tcd3b.all_sum)):: bigint)||'元'||
+	  clover_md.udf_digits2hanzi(((trunc(abs(tcd3b.all_sum),1) - trunc(abs(tcd3b.all_sum)))*10 ):: bigint)||'角'||
+	  clover_md.udf_digits2hanzi(((trunc(abs(tcd3b.all_sum),2) - trunc(abs(tcd3b.all_sum),1))*100 ):: bigint)||'分';	
 	tcd3b.sum01 := 0.00;
 	tcd3b.sum02 := 0.00;
 	tcd3b.sum03 := 0.00;
@@ -399,8 +387,8 @@ BEGIN
 	tcd3b.sum18 := 0.00; 
 	tcd3b.sum19 := 0.00;
 	tcd3b.sum20 := tcd1.all_sum;
-	insert into t_chk_detail values (tcd3b.*);
-	 
+	insert into clover_odr.chk_detail values (tcd3b.*);
+	
 	--计算出院结算-------discharge-------------------------------------------------------------4444444444444444444444444444--------------------------
 	tcd4.seq := nextval('clover_odr.seq_chk_detail');
 	tcd4.seq_chk_sum := tchksum.seq;
@@ -413,6 +401,12 @@ BEGIN
 	tcd4.chk_time := tstime;
 	tcd4.chk_opcode := topcode;
 	tcd4.trade_type := '0';
+	SELECT to_char(to_number(coalesce(max(chk_flow_detail),'00000000'),'99999999')+1,'00000000') into tcd4.chk_flow_detail
+	  FROM clover_odr.chk_detail where hsp_code=thsp_code and opcode=topcode;
+	SELECT coalesce(count(p.seq),0) into tcd4.paper_num
+	  FROM clover_odr.discharge_prn p,clover_odr.discharge d
+      where p.seq_discharge=d.seq and p.prn_status<>'-1' and p.hsp_code=thsp_code
+           and d.opcode=topcode and d.settle_time>=tchksum.bd and d.settle_time<tchksum.ed ;
 	SELECT coalesce(max(invoice_nmb),'0000000000'), coalesce(min(invoice_nmb),'0000000000'),
 	    coalesce(max(flow_nmb),'0000000000'),coalesce(min(flow_nmb),'0000000000'),
 		coalesce(sum(all_sum),0.00), coalesce(sum(cash_sum),0.00), coalesce(sum(pacc_sum),0.00), 
@@ -439,7 +433,10 @@ BEGIN
 	FROM clover_odr.discharge_fee	
     where hsp_code=thsp_code and opcode=topcode and trade_type='0' 
         and settle_time>=tchksum.bd and settle_time<tchksum.ed; 
-	insert into t_chk_detail values (tcd4.*);
+	tcd4.all_sum_upper := clover_md.udf_digits2hanzi(trunc(tcd4.all_sum):: bigint)||'元'||
+	  clover_md.udf_digits2hanzi(((trunc(tcd4.all_sum,1) - trunc(tcd4.all_sum))*10 ):: bigint)||'角'||
+	  clover_md.udf_digits2hanzi(((trunc(tcd4.all_sum,2) - trunc(tcd4.all_sum,1))*100 ):: bigint)||'分';
+	insert into clover_odr.chk_detail values (tcd4.*);
 	--- ---
 	tcd4b.seq := nextval('clover_odr.seq_chk_detail');
 	tcd4b.seq_chk_sum := tchksum.seq;
@@ -452,6 +449,12 @@ BEGIN
 	tcd4b.chk_time := tstime;
 	tcd4b.chk_opcode := topcode;
 	tcd4b.trade_type := '-1';
+	SELECT to_char(to_number(coalesce(max(chk_flow_detail),'00000000'),'99999999')+1,'00000000') into tcd4b.chk_flow_detail
+	  FROM clover_odr.chk_detail where hsp_code=thsp_code and opcode=topcode;
+	SELECT coalesce(count(p.seq),0) into tcd4b.paper_num
+	  FROM clover_odr.discharge_prn p,clover_odr.discharge d
+      where p.seq_discharge=d.seq and p.prn_status='-1' and p.hsp_code=thsp_code
+           and d.opcode=topcode and d.settle_time>=tchksum.bd and d.settle_time<tchksum.ed ;
 	SELECT coalesce(max(invoice_nmb),'0000000000'), coalesce(min(invoice_nmb),'0000000000'),
 	    coalesce(max(flow_nmb),'0000000000'),coalesce(min(flow_nmb),'0000000000'),
 		coalesce(sum(all_sum),0.00), coalesce(sum(cash_sum),0.00), coalesce(sum(pacc_sum),0.00), 
@@ -478,8 +481,11 @@ BEGIN
 	FROM clover_odr.discharge_fee	
     where hsp_code=thsp_code and opcode=topcode and trade_type='-1' 
         and settle_time>=tchksum.bd and settle_time<tchksum.ed; 
-	insert into t_chk_detail values (tcd4b.*);
-	 
+	tcd4b.all_sum_upper := '负'||clover_md.udf_digits2hanzi(trunc(abs(tcd4b.all_sum)):: bigint)||'元'||
+	  clover_md.udf_digits2hanzi(((trunc(abs(tcd4b.all_sum),1) - trunc(abs(tcd4b.all_sum)))*10 ):: bigint)||'角'||
+	  clover_md.udf_digits2hanzi(((trunc(abs(tcd4b.all_sum),2) - trunc(abs(tcd4b.all_sum),1))*100 ):: bigint)||'分';	
+	insert into clover_odr.chk_detail values (tcd4b.*);
+	
 	-- 计算总收费收入,写入汇总表-----------------------------------------------------------------555555555555555555555555555------------------------- 
 	tchksum.all_sum := tcd1.all_sum + tcd2.all_sum + tcd3.all_sum + tcd4.all_sum
 	    +tcd1b.all_sum + tcd2b.all_sum + tcd3b.all_sum + tcd4b.all_sum;
@@ -545,14 +551,13 @@ BEGIN
 	    +tcd1b.sum19 + tcd2b.sum19 + tcd3b.sum19 + tcd4b.sum19;	
 	tchksum.sum20 := tcd1.sum20 + tcd2.sum20 + tcd3.sum20 + tcd4.sum20
 	    +tcd1b.sum20 + tcd2b.sum20 + tcd3b.sum20 + tcd4b.sum20;	
-
 		
-	insert into t_chk_sum values (tchksum.*);
+	insert into clover_odr.chk_sum values (tchksum.*);
 	
 	---------------------------------
-	---返回json字符串数组-----汇总json|分类json array
-	SELECT json_agg(row_to_json(t_chk_sum.*)) into tout_str_sum FROM t_chk_sum;
-	SELECT json_agg(row_to_json(t_chk_detail.* )) into tout_str_detail FROM t_chk_detail;
-    RETURN tout_str_sum||'|'||tout_str_detail;
+    ---返回json字符串数组-----汇总json|分类json array
+	SELECT row_to_json(clover_odr.chk_sum.*) into tout_str FROM clover_odr.chk_sum;
+	--SELECT json_agg(row_to_json(clover_odr.chk_detail.* )) into tout_str_detail	FROM clover_odr.chk_detail;
+    RETURN tout_str;
 END;
 $cloveropen$;

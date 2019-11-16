@@ -584,7 +584,7 @@ BEGIN
 	
 	---------------------------------
     ---返回json字符串数组-----汇总json|分类json array
-	SELECT row_to_json(clover_odr.chk_sum.*) into tout_str_sum FROM clover_odr.chk_sum;
+	SELECT json_agg(row_to_json(clover_odr.chk_sum.*)) into tout_str_sum FROM clover_odr.chk_sum;
 	SELECT json_agg(row_to_json(clover_odr.chk_detail.* )) into tout_str_detail	FROM clover_odr.chk_detail;
     RETURN tout_str_sum||'|'||tout_str_detail;
 END;
