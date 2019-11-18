@@ -2,35 +2,21 @@
   <v-container class="grey lighten-5">
     <v-card class="mx-auto" max-width="99%" min-width="100%">
       <v-card-text>
-           <v-layout row wrap>
+        <v-layout row wrap>
           <v-flex d-flex><v-spacer></v-spacer></v-flex>
           <v-radio-group row v-model="tdatetype">
-            <v-flex d-flex
-              ><v-radio key="today" label="今天" value="today"></v-radio
-            ></v-flex>
-            <v-flex d-flex
-              ><v-radio key="wechat" label="本班次" value="schedule"></v-radio
-            ></v-flex>
-            <v-flex d-flex
-              ><v-radio key="alipay" label="昨天" value="yesterday"></v-radio
-            ></v-flex>
-            <v-flex d-flex
-              ><v-radio key="alipay" label="三天前" value="3daysbf"></v-radio
-            ></v-flex>
-            <v-flex d-flex
-              ><v-radio key="alipay" label="一周前" value="weekbf"></v-radio
-            ></v-flex>
+            <v-flex d-flex><v-radio key="today" label="今天" value="today"></v-radio></v-flex>
+            <v-flex d-flex><v-radio key="cycle" label="本班次" value="cycle"></v-radio></v-flex>
+            <v-flex d-flex><v-radio key="last_cycle" label="上班次" value="last_cycle"></v-radio></v-flex>
+            <v-flex d-flex><v-radio key="yesterday" label="昨天" value="yesterday"></v-radio></v-flex>
+            <v-flex d-flex><v-radio key="3daysbf" label="三天前" value="3daysbf"></v-radio></v-flex>
+            <v-flex d-flex><v-radio key="weekbf" label="一周前" value="weekbf"></v-radio></v-flex>
           </v-radio-group>
-       
+
           <v-flex d-flex>
             &emsp;&emsp;
-            <v-text-field
-              v-model="topcode"
-              label="操作员号(选填)"
-            ></v-text-field
-            >&emsp;&emsp;
+            <v-text-field v-model="topcode" label="操作员号" readonly></v-text-field>&emsp;&emsp;
           </v-flex>
-          
         </v-layout>
       </v-card-text>
 
@@ -38,39 +24,19 @@
         <v-layout row wrap no-gutters>
           <v-flex d-flex><v-spacer></v-spacer></v-flex>
           <v-flex d-flex>
-            <v-btn
-              depressed
-              :disabled="!valid"
-              color="success"
-              @click="validate"
-              >查询</v-btn
-            >
-            <v-btn :disabled="!valid" color="success" @click="validate"
-              >导出</v-btn
-            >
+            <v-btn depressed color="success" @click="sch_reg">查询</v-btn>
+            <v-btn color="success" @click="validate">导出</v-btn>
             <v-spacer></v-spacer
           ></v-flex>
         </v-layout>
       </v-card-actions>
-    </v-card>   
-<v-data-table
-            :headers="headers"
-            :items="fee_details"
-            :items-per-page="10"
-            class="elevation-1"
-          ></v-data-table>
+    </v-card>
+    <v-data-table :headers="headers" :items="reg_list" :items-per-page="10" class="elevation-1"></v-data-table>
     <v-expansion-panels inset focusable>
       <v-expansion-panel>
-        <v-expansion-panel-header ripple
-          >退号明细</v-expansion-panel-header
-        >
+        <v-expansion-panel-header ripple>退号明细</v-expansion-panel-header>
         <v-expansion-panel-content>
-          <v-data-table
-            :headers="headers"
-            :items="fee_details"
-            :items-per-page="10"
-            class="elevation-1"
-          ></v-data-table>
+          <v-data-table :headers="headers" :items="reg_cancel_list" :items-per-page="10" class="elevation-1"></v-data-table>
         </v-expansion-panel-content>
       </v-expansion-panel>
     </v-expansion-panels>
@@ -78,10 +44,12 @@
 </template>
 
 <script>
+import { fetch_cash_async, get_regopcode } from "../scripts/outcash.js";
 export default {
   data: () => ({
-    topcode: "",    
-    tdatetype: "schedule",   
+    topcode: "",
+    tgc: "",
+    tdatetype: "schedule",
     headers: [
       {
         text: "门诊号",
@@ -102,11 +70,14 @@ export default {
       { text: "流水号", value: "flow_nmb" },
       { text: "接诊", value: "visit_flag" },
       { text: "退号", value: "reg_cancel" }
-    ]
+    ],
+    reg_list: [],
+    reg_cancel_list: []
   }),
 
   created() {
-    console.log("created");
+    this.topcode = get_regopcode().split("|")[0];
+    this.tgc = get_regopcode().split("|")[1];
   },
   mounted() {
     console.log("mounted");
@@ -123,109 +94,25 @@ export default {
     resetValidation() {
       this.$refs.form.resetValidation();
     },
-    pidChanged(e) {
-      console.log("pid=" + e);
-      //门诊号规则:患者主索引8位，门诊号为11位，门诊号=主索引编号+3位数字，后3位数字为挂号的序号
-      let tpid = e.trim();
-      let _this = this;
-      if (tpid.length == 8 || tpid.length == 11) {
-        let thsp_code = process.env.VUE_APP_HSP_CODE;
-        fetch(
-          process.env.VUE_APP_REG_URL +
-            "/searchoutregcash/" +
-            tpid +
-            "/" +
-            thsp_code,
-          {
-            method: "get",
-            headers: {
-              Accept: "text/html",
-              "Content-Type": "application/json"
-            }
-          }
-        )
-          .then(function(response) {
-            if (response.ok) {
-              //window.alert("---ok=");
-            } else {
-              window.alert("查询患者信息失败error" + response.text);
-            }
-            return response.json();
-          })
-          .then(function(data) {
-            console.log("data=" + JSON.stringify(data));
-            let tresultCode = data.resultCode;
-            //window.alert("tresultCode="+tresultCode)
-            if (tresultCode === "0") {
-              _this.out_reg = JSON.parse(data.outdata);
-              console.log(" this.out_reg=" + JSON.stringify(_this.out_reg));
-              console.log(
-                " this.out_reg.patientName=" + _this.out_reg.patientName
-              );
-              //return toutreg;
-            } else {
-              window.alert("查询患者主索引信息失败1" + data.errorMsg);
-            }
-          })
-          .catch(function(err) {
-            window.alert("查询患者主索引信息查询error=" + err);
-          });
-      } else {
-        //window.alert("请输入正确的门诊号或患者主索引号");
-        return;
-      }
-      console.log(" this.out_reg=" + JSON.stringify(_this.out_reg));
-      return _this.out_reg;
-    },
-    getfeedetail(e) {
-      console.log("getfeedetail pid=" + e);
-      //门诊号规则:患者主索引8位，门诊号为11位，门诊号=主索引编号+3位数字，后3位数字为挂号的序号
-      let tpid = e.trim();
-      let _this = this;
-      if (tpid.length == 8 || tpid.length == 11) {
-        let thsp_code = process.env.VUE_APP_HSP_CODE;
-        fetch(
-          process.env.VUE_APP_REG_URL +
-            "/searchfeedetail/" +
-            tpid +
-            "/9/" +
-            thsp_code,
-          {
-            method: "get",
-            headers: {
-              Accept: "text/html",
-              "Content-Type": "application/json"
-            }
-          }
-        )
-          .then(function(response) {
-            if (response.ok) {
-              //window.alert("---ok=");
-            } else {
-              window.alert("查询患者信息失败error" + response.text);
-            }
-            return response.json();
-          })
-          .then(function(data) {
-            console.log("data=" + JSON.stringify(data));
-            let tresultCode = data.resultCode;
-            //window.alert("tresultCode="+tresultCode)
-            if (tresultCode === "0") {
-              _this.fee_details = JSON.parse(data.outdata);
-              console.log(" this.out_reg=" + JSON.stringify(_this.fee_details));
-            } else {
-              window.alert("查询患者主索引信息失败1" + data.errorMsg);
-            }
-          })
-          .catch(function(err) {
-            window.alert("查询患者主索引信息查询error=" + err);
-          });
-      } else {
-        //window.alert("请输入正确的门诊号或患者主索引号");
-        return;
-      }
-      console.log(" this.out_reg=" + JSON.stringify(_this.out_reg));
-      return _this.out_reg;
+    sch_reg() {
+      //let topcode = this.topcode;
+      // if (topcode==="") get_regopcode().split("|")[0];
+      let tinstr = this.tdatetype + "|" + process.env.VUE_APP_HSP_CODE + "|" + this.topcode;
+      let turl = process.env.VUE_APP_REG_URL + "/searchoutregmulti/regshifts/" + tinstr + "/" + this.topcode + "/" + this.tgc;
+      console.log("turl=" + turl);
+      fetch_cash_async(turl, "get").then(data => {
+        //console.log("查询退款明细data=" + JSON.stringify(data))
+        if (data.resultCode == "0") {
+          let tlist = Array.of();
+          tlist = data.outdata.split("|");
+          console.log("-----tlist[0]=" + tlist[0]);
+          this.reg_list = JSON.parse(tlist[0]);
+          console.log("-----tlist[1]=" + tlist[1]);
+          this.reg_cancel_list = JSON.parse(tlist[1]);
+
+          //console.log("查询退款明细data2");
+        }
+      });
     }
     // ---------------------end methods----------------
   }

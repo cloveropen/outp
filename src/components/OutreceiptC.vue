@@ -290,7 +290,7 @@ export default {
     },
     setNowFormatDate(tdate) {
       let date = tdate;
-      let month = (date.getMonth() + 1).toString().padStart(2,'0');
+      let month = (date.getMonth() + 1).toString().padStart(2,"0");
       let strDate = date.getDate().toString().padStart(2,'0');
       //时间格式yyyy-MM-dd HH:MM:SS
       return `${date.getFullYear()}-${month}-${strDate} ${this.getCurrentTime()}`;
@@ -300,13 +300,13 @@ export default {
       //时间格式HH:MM:SS
       return `${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
     },
-    getDateStr(addDayCount) { 
+    getDateStr(addDayCount) {
       var dd = new Date();
-      dd.setDate(dd.getDate()+addDayCount);//获取AddDayCount天后的日期
+      dd.setDate(dd.getDate() + addDayCount);//获取AddDayCount天后的日期
       var y = dd.getFullYear(); 
-      var m = (dd.getMonth()+1)<10?"0"+(dd.getMonth()+1):(dd.getMonth()+1);//获取当前月份的日期，不足10补0
-      var d = dd.getDate()<10?"0"+dd.getDate():dd.getDate();//获取当前几号，不足10补0
-      return y+"-"+m+"-"+d; 
+      var m = (dd.getMonth() + 1)<10?"0" + (dd.getMonth()+1):(dd.getMonth() + 1);//获取当前月份的日期，不足10补0
+      var d = dd.getDate()<10?"0" + dd.getDate():dd.getDate();//获取当前几号，不足10补0
+      return y + "-" + m + "-" + d; 
     }
     // ---------------------end methods----------------
   }

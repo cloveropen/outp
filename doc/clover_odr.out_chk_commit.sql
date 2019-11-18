@@ -75,7 +75,7 @@ BEGIN
 	tchksum.ed := tendtime;
 	tchksum.chk_time := tstime;
 	tchksum.chk_opcode := topcode;
-	SELECT to_char(to_number(coalesce(max(chk_flow),'00000000'),'99999999')+1,'00000000') into tchksum.chk_flow
+	SELECT trim(to_char(to_number(coalesce(max(chk_flow),'00000000'),'99999999')+1,'00000000')) into tchksum.chk_flow
 	  FROM clover_odr.chk_sum where opcode=topcode and hsp_code=thsp_code;
 	-- 计算挂号费用---reg--------------------------------------------------------------------1111111111111111111111111111-----------------------
 	tcd1.seq := nextval('clover_odr.seq_chk_detail');
@@ -89,7 +89,7 @@ BEGIN
 	tcd1.chk_time := tstime;
 	tcd1.chk_opcode := topcode;
 	tcd1.trade_type := '0';
-	SELECT to_char(to_number(coalesce(max(chk_flow_detail),'00000000'),'99999999')+1,'00000000') into tcd1.chk_flow_detail
+	SELECT trim(to_char(to_number(coalesce(max(chk_flow_detail),'00000000'),'99999999')+1,'00000000')) into tcd1.chk_flow_detail
 	  FROM clover_odr.chk_detail where hsp_code=thsp_code and opcode=topcode;
 	SELECT coalesce(count(seq),0) into tcd1.paper_num FROM clover_odr.out_reg_prn 
 	WHERE prn_status<>'-1' and reg_opcode=topcode and hsp_code=thsp_code
@@ -145,7 +145,7 @@ BEGIN
 	tcd1b.chk_time := tstime;
 	tcd1b.chk_opcode := topcode;
 	tcd1b.trade_type := '-1';
-	SELECT to_char(to_number(coalesce(max(chk_flow_detail),'00000000'),'99999999')+1,'00000000') into tcd1b.chk_flow_detail
+	SELECT trim(to_char(to_number(coalesce(max(chk_flow_detail),'00000000'),'99999999')+1,'00000000')) into tcd1b.chk_flow_detail
 	  FROM clover_odr.chk_detail where hsp_code=thsp_code and opcode=topcode;
 	SELECT coalesce(count(seq),0) into tcd1.paper_num FROM clover_odr.out_reg_prn 
 	WHERE prn_status='-1' and reg_opcode=topcode and hsp_code=thsp_code
@@ -202,7 +202,7 @@ BEGIN
 	tcd2.chk_time := tstime;
 	tcd2.chk_opcode := topcode;
 	tcd2.trade_type := '0';
-	SELECT to_char(to_number(coalesce(max(chk_flow_detail),'00000000'),'99999999')+1,'00000000') into tcd2.chk_flow_detail
+	SELECT trim(to_char(to_number(coalesce(max(chk_flow_detail),'00000000'),'99999999')+1,'00000000')) into tcd2.chk_flow_detail
 	  FROM clover_odr.chk_detail where hsp_code=thsp_code and opcode=topcode;
 	SELECT coalesce(count(seq),0) into tcd2.paper_num
 	  FROM clover_odr.out_cash_prn 
@@ -260,7 +260,7 @@ BEGIN
 	tcd2b.chk_time := tstime;
 	tcd2b.chk_opcode := topcode;
 	tcd2b.trade_type := '-1';
-	SELECT to_char(to_number(coalesce(max(chk_flow_detail),'00000000'),'99999999')+1,'00000000') into tcd2b.chk_flow_detail
+	SELECT trim(to_char(to_number(coalesce(max(chk_flow_detail),'00000000'),'99999999')+1,'00000000')) into tcd2b.chk_flow_detail
 	  FROM clover_odr.chk_detail where hsp_code=thsp_code and opcode=topcode;
 	SELECT coalesce(count(seq),0) into tcd2b.paper_num
 	  FROM clover_odr.out_cash_prn 
@@ -319,7 +319,7 @@ BEGIN
 	tcd3.chk_time := tstime;
 	tcd3.chk_opcode := topcode;
 	tcd3.trade_type := '0';
-	SELECT to_char(to_number(coalesce(max(chk_flow_detail),'00000000'),'99999999')+1,'00000000') into tcd3.chk_flow_detail
+	SELECT trim(to_char(to_number(coalesce(max(chk_flow_detail),'00000000'),'99999999')+1,'00000000')) into tcd3.chk_flow_detail
 	  FROM clover_odr.chk_detail where hsp_code=thsp_code and opcode=topcode;
 	--暂时把预交金张数设置为0
 	tcd3.paper_num := 0;
@@ -374,7 +374,7 @@ BEGIN
 	tcd3b.chk_time := tstime;
 	tcd3b.chk_opcode := topcode;
 	tcd3b.trade_type := '-1';
-	SELECT to_char(to_number(coalesce(max(chk_flow_detail),'00000000'),'99999999')+1,'00000000') into tcd3b.chk_flow_detail
+	SELECT trim(to_char(to_number(coalesce(max(chk_flow_detail),'00000000'),'99999999')+1,'00000000')) into tcd3b.chk_flow_detail
 	  FROM clover_odr.chk_detail where hsp_code=thsp_code and opcode=topcode;
 	tcd3b.paper_num := 0;
 	SELECT coalesce(max(invoice_nmb),'0000000000'), coalesce(min(invoice_nmb),'0000000000'),
@@ -429,7 +429,7 @@ BEGIN
 	tcd4.chk_time := tstime;
 	tcd4.chk_opcode := topcode;
 	tcd4.trade_type := '0';
-	SELECT to_char(to_number(coalesce(max(chk_flow_detail),'00000000'),'99999999')+1,'00000000') into tcd4.chk_flow_detail
+	SELECT trim(to_char(to_number(coalesce(max(chk_flow_detail),'00000000'),'99999999')+1,'00000000')) into tcd4.chk_flow_detail
 	  FROM clover_odr.chk_detail where hsp_code=thsp_code and opcode=topcode;
 	SELECT coalesce(count(p.seq),0) into tcd4.paper_num
 	  FROM clover_odr.discharge_prn p,clover_odr.discharge d
@@ -477,7 +477,7 @@ BEGIN
 	tcd4b.chk_time := tstime;
 	tcd4b.chk_opcode := topcode;
 	tcd4b.trade_type := '-1';
-	SELECT to_char(to_number(coalesce(max(chk_flow_detail),'00000000'),'99999999')+1,'00000000') into tcd4b.chk_flow_detail
+	SELECT trim(to_char(to_number(coalesce(max(chk_flow_detail),'00000000'),'99999999')+1,'00000000')) into tcd4b.chk_flow_detail
 	  FROM clover_odr.chk_detail where hsp_code=thsp_code and opcode=topcode;
 	SELECT coalesce(count(p.seq),0) into tcd4b.paper_num
 	  FROM clover_odr.discharge_prn p,clover_odr.discharge d
