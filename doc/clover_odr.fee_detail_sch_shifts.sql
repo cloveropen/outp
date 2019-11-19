@@ -1,8 +1,9 @@
-CREATE OR REPLACE FUNCTION clover_odr.out_reg_sch_shifts(tin_str text,tip text)
+CREATE OR REPLACE FUNCTION clover_odr.fee_detail_sch_shifts(tin_str text,tip text)
     RETURNS text
     LANGUAGE 'plpgsql'
 AS $cloveropen$
--- 查询本班次的挂号明细 入参:thsp_code|topcode|tdatetype时间段分类  今天 today 本班次 cycle 上班次 last_cycle 昨天 yesterday 三天前 3daysbf 一周前 weekbf 一个月内monthbf
+-- 查询本班次的收款明细 入参:thsp_code|topcode|tdatetype时间段分类  今天 today 本班次 cycle 上班次 last_cycle 昨天 yesterday 三天前 3daysbf 一周前 weekbf 一个月内monthbf
+-- 返回:费用明细列表|退费明细列表|单次结算明细列表
 DECLARE
     tin_arrays text ARRAY;	
 	thsp_code clover_odr.chk_sum.hsp_code%type;  --医院编码
@@ -13,8 +14,8 @@ DECLARE
 	
 	tout_str text := '';
 	tout_str_cancel text := '';
-BEGIN
-    -- 如果没有班次号,则从操作员查询出上一班的交班时间作为开始时间,截止时间为当前时间
+	tout_str_settle text := '';
+BEGIN    
 	select  string_to_array(tin_str,'|') into tin_arrays;
 	thsp_code := tin_arrays[1];	  
 	topcode := tin_arrays[2];
@@ -53,25 +54,30 @@ BEGIN
     ELSE
 	  tout_str := '[{}]';
 	  tout_str_cancel := '[{}]';
-      RETURN tout_str||'|'||tout_str_cancel;
+	  tout_str_settle := '[{}]';
+      RETURN tout_str||'|'||tout_str_cancel||'|'||tout_str_settle;
     END CASE;
 	
 		
-    execute 'DROP TABLE IF EXISTS t_out_reg,t_out_reg_cancel';
-    execute 'CREATE TEMP TABLE t_out_reg as select * from clover_odr.out_reg with no data';
-    execute 'CREATE TEMP TABLE t_out_reg_cancel as select * from clover_odr.out_reg with no data';
+    execute 'DROP TABLE IF EXISTS t_fee_detail,t_fee_detail_cancel,t_fee_settle';
+    execute 'CREATE TEMP TABLE t_fee_detail as select * from clover_odr.fee_detail with no data';
+    execute 'CREATE TEMP TABLE t_fee_detail_cancel as select * from clover_odr.fee_detail with no data';
+	execute 'CREATE TEMP TABLE t_fee_settle as select * from clover_odr.fee_settle with no data';
 	
-	insert into t_out_reg select * from clover_odr.out_reg_view
-      where hsp_code=thsp_code and reg_opcode=topcode 
-	  and reg_time>=tbegtime and reg_time<tendtime and reg_cancel='0' order by reg_time;
-	insert into t_out_reg_cancel select * from clover_odr.out_reg_view
-      where hsp_code=thsp_code and reg_opcode=topcode 
-	  and reg_time>=tbegtime and reg_time<tendtime and reg_cancel='-1' order by reg_time;  
-
+	insert into t_fee_detail select * from clover_odr.fee_detail_view
+      where hsp_code=thsp_code and cash_opcode=topcode 
+	  and cashtime>=tbegtime and cashtime<tendtime and cancel_flag='0' order by cashtime;
+	insert into t_fee_detail_cancel select * from clover_odr.fee_detail_view
+      where hsp_code=thsp_code and cash_opcode=topcode 
+	  and cashtime>=tbegtime and cashtime<tendtime and cancel_flag='-1' order by cashtime;  
+    insert into t_fee_settle select * from clover_odr.fee_settle_view
+      where hsp_code=thsp_code and opcode=topcode 
+	  and settle_time>=tbegtime and settle_time<tendtime order by settle_time;
 	---------------------------------
 	---返回json字符串数组-----汇总json|分类json array
-	SELECT coalesce(json_agg(row_to_json(t_out_reg.*)),'[{}]') into tout_str FROM t_out_reg;
-	SELECT coalesce(json_agg(row_to_json(t_out_reg_cancel.* )),'[{}]') into tout_str_cancel FROM t_out_reg_cancel;
-    RETURN tout_str||'|'||tout_str_cancel;
+	SELECT coalesce(json_agg(row_to_json(t_fee_detail.*)),'[{}]') into tout_str FROM t_fee_detail;
+	SELECT coalesce(json_agg(row_to_json(t_fee_detail_cancel.* )),'[{}]') into tout_str_cancel FROM t_fee_detail_cancel;
+	SELECT coalesce(json_agg(row_to_json(t_fee_settle.*)),'[{}]') into tout_str_settle FROM t_fee_settle;
+    RETURN tout_str||'|'||tout_str_cancel||'|'||tout_str_settle;
 END;
 $cloveropen$;

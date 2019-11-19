@@ -9,8 +9,8 @@
             <v-flex d-flex><v-radio key="cycle" label="本班次" value="cycle"></v-radio></v-flex>
             <v-flex d-flex><v-radio key="last_cycle" label="上班次" value="last_cycle"></v-radio></v-flex>
             <v-flex d-flex><v-radio key="yesterday" label="昨天" value="yesterday"></v-radio></v-flex>
-            <v-flex d-flex><v-radio key="3daysbf" label="三天前" value="3daysbf"></v-radio></v-flex>
-            <v-flex d-flex><v-radio key="weekbf" label="一周前" value="weekbf"></v-radio></v-flex>
+            <v-flex d-flex><v-radio key="3daysbf" label="三天内" value="3daysbf"></v-radio></v-flex>
+            <v-flex d-flex><v-radio key="weekbf" label="一周内" value="weekbf"></v-radio></v-flex>
           </v-radio-group>
 
           <v-flex d-flex>
@@ -49,7 +49,7 @@ export default {
   data: () => ({
     topcode: "",
     tgc: "",
-    tdatetype: "schedule",
+    tdatetype: "today",
     headers: [
       {
         text: "门诊号",
@@ -109,7 +109,6 @@ export default {
           this.reg_list = JSON.parse(tlist[0]);
           console.log("-----tlist[1]=" + tlist[1]);
           this.reg_cancel_list = JSON.parse(tlist[1]);
-
           //console.log("查询退款明细data2");
         }
       });

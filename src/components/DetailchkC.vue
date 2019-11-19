@@ -9,16 +9,19 @@
               ><v-radio key="today" label="今天" value="today"></v-radio
             ></v-flex>
             <v-flex d-flex
-              ><v-radio key="wechat" label="本班次" value="schedule"></v-radio
+              ><v-radio key="schedule_last" label="上班次" value="schedule_last"></v-radio
             ></v-flex>
             <v-flex d-flex
-              ><v-radio key="alipay" label="昨天" value="yesterday"></v-radio
+              ><v-radio key="yesterday" label="昨天" value="yesterday"></v-radio
             ></v-flex>
             <v-flex d-flex
-              ><v-radio key="alipay" label="三天前" value="3daysbf"></v-radio
+              ><v-radio key="3daysbf" label="三天内" value="3daysbf"></v-radio
             ></v-flex>
             <v-flex d-flex
-              ><v-radio key="alipay" label="一周前" value="weekbf"></v-radio
+              ><v-radio key="weekbf" label="一周内" value="weekbf"></v-radio
+            ></v-flex>
+            <v-flex d-flex
+              ><v-radio key="monthbf" label="一月内" value="monthbf"></v-radio
             ></v-flex>
           </v-radio-group>
        
@@ -26,7 +29,7 @@
             &emsp;&emsp;
             <v-text-field
               v-model="topcode"
-              label="操作员号(必填)"
+              label="操作员号" readonly
               required
             ></v-text-field
             >&emsp;&emsp;
@@ -40,33 +43,35 @@
           <v-flex d-flex>
             <v-btn
               depressed
-              :disabled="!valid"
               color="success"
-              @click="validate"
+              @click="sch_chk"
               >查询</v-btn
             >
-            <v-btn :disabled="!valid" color="success" @click="validate">导出汇总</v-btn>
-            <v-btn :disabled="!valid" color="success" @click="validate">导出明细</v-btn>
+            <v-btn color="success" @click="reset">导出汇总</v-btn>
+            <v-btn color="success" @click="reset">导出明细</v-btn>
             <v-spacer></v-spacer
           ></v-flex>
         </v-layout>
       </v-card-actions>
-    </v-card>   
-<v-data-table
-            :headers="headers"
-            :items="fee_details"
+    </v-card>
+    <v-expansion-panels popout focusable>
+      <v-expansion-panel>
+        <v-expansion-panel-header ripple>交班汇总</v-expansion-panel-header>
+        <v-expansion-panel-content>
+          <v-data-table
+            :headers="headers_sum"
+            :items="chk_sums"
             :items-per-page="10"
             class="elevation-1"
           ></v-data-table>
-    <v-expansion-panels popout focusable>
+        </v-expansion-panel-content>
+      </v-expansion-panel>
       <v-expansion-panel>
-        <v-expansion-panel-header ripple
-          >本班次交班明细</v-expansion-panel-header
-        >
+        <v-expansion-panel-header ripple>交班明细</v-expansion-panel-header>
         <v-expansion-panel-content>
           <v-data-table
-            :headers="headers"
-            :items="fee_details"
+            :headers="headers_detail"
+            :items="chk_details"
             :items-per-page="10"
             class="elevation-1"
           ></v-data-table>
@@ -77,36 +82,82 @@
 </template>
 
 <script>
+import { fetch_cash_async, get_regopcode } from "../scripts/outcash.js";
 export default {
   data: () => ({
-    topcode: "",    
-    tdatetype: "schedule",   
-    tpid: "",
-    headers: [
+    topcode: "",
+    tgc: "",
+    tdatetype: "schedule_last",    
+    headers_sum: [
       {
-        text: "门诊号",
+        text: "操作员编码",
         align: "left",
         sortable: true,
-        value: "pid"
+        value: "opcode"
       },
-      { text: "姓名", value: "patient_name" },
-      { text: "挂号时间", value: "reg_time" },
-      { text: "操作员", value: "reg_opcode" },
-      { text: "挂号费", value: "reg_price" },
-      { text: "诊察费", value: "check_price" },
-      { text: "现金支付", value: "pay_cash" },
-      { text: "个人帐户", value: "pay_pacc" },
-      { text: "统筹支付", value: "pay_fund" },
-      { text: "移动支付", value: "pay_nfc" },
-      { text: "收据号", value: "invoice_nmb" },
-      { text: "流水号", value: "flow_nmb" },
-      { text: "接诊", value: "visit_flag" },
-      { text: "退号", value: "reg_cancel" }
-    ]
+      { text: "姓名", value: "opname" },
+      { text: "开始时间", value: "bd" },
+      { text: "截止时间", value: "ed" },
+      { text: "结算时间", value: "chk_time" },
+      { text: "结算员号", value: "chk_opcode" },
+      { text: "交班流水号", value: "chk_flow" },
+      { text: "总费用", value: "all_sum" },
+      { text: "现金", value: "cash_sum" },
+      { text: "个人帐户", value: "pacc_sum" },
+      { text: "医保统筹", value: "fund_sum" },
+      { text: "农合统筹", value: "fund_nh_sum" },
+      { text: "商业保险", value: "fund_commeric" },
+      { text: "微信支付", value: "weixin_sum" },
+      { text: "支付宝", value: "alipay_sum" },
+      { text: "银行卡", value: "unionpay_sum" },
+      { text: "支票", value: "check_sum" },
+      { text: "抵用券", value: "voucher_sum" },
+      { text: "特批欠款", value: "spec_sum" },
+      { text: "顺序号", value: "seq" },
+      { text: "备注", value: " remark" }
+    ],
+    headers_detail: [
+      {
+        text: "操作员编码",
+        align: "left",
+        sortable: true,
+        value: "opcode"
+      },
+      { text: "姓名", value: "opname" },
+      { text: "交班类别", value: "chk_type" },
+      { text: "开始时间", value: "bd" },
+      { text: "截止时间", value: "ed" },
+      { text: "结算时间", value: "chk_time" },
+      { text: "结算员号", value: "chk_opcode" },
+      { text: "交班明细流水号", value: "chk_flow_detail" },
+      { text: "开始流水号", value: "bflow" },
+      { text: "截止流水号", value: "eflow" },
+      { text: "开始收据号", value: "binvoice_nmb" },
+      { text: "截止收据号", value: "einvoice_nmb" },
+      { text: "收据张数", value: "paper_num" },
+      { text: "总费用", value: "all_sum" },
+      { text: "现金", value: "cash_sum" },
+      { text: "个人帐户", value: "pacc_sum" },
+      { text: "医保统筹", value: "fund_sum" },
+      { text: "农合统筹", value: "fund_nh_sum" },
+      { text: "商业保险", value: "fund_commeric" },
+      { text: "微信支付", value: "weixin_sum" },
+      { text: "支付宝", value: "alipay_sum" },
+      { text: "银行卡", value: "unionpay_sum" },
+      { text: "支票", value: "check_sum" },
+      { text: "抵用券", value: "voucher_sum" },
+      { text: "特批欠款", value: "spec_sum" },
+      { text: "出院结算返回现金", value: "return_cash" },
+      { text: "出院结算返回其他", value: "return_other" },
+      { text: "交易类型", value: "trade_type" }
+    ],    
+    chk_sums: [],
+    chk_details: []
   }),
 
   created() {
-    console.log("created");
+    this.topcode = get_regopcode().split("|")[0];
+    this.tgc = get_regopcode().split("|")[1];
   },
   mounted() {
     console.log("mounted");
@@ -123,109 +174,22 @@ export default {
     resetValidation() {
       this.$refs.form.resetValidation();
     },
-    pidChanged(e) {
-      console.log("pid=" + e);
-      //门诊号规则:患者主索引8位，门诊号为11位，门诊号=主索引编号+3位数字，后3位数字为挂号的序号
-      let tpid = e.trim();
-      let _this = this;
-      if (tpid.length == 8 || tpid.length == 11) {
-        let thsp_code = process.env.VUE_APP_HSP_CODE;
-        fetch(
-          process.env.VUE_APP_REG_URL +
-            "/searchoutregcash/" +
-            tpid +
-            "/" +
-            thsp_code,
-          {
-            method: "get",
-            headers: {
-              Accept: "text/html",
-              "Content-Type": "application/json"
-            }
-          }
-        )
-          .then(function(response) {
-            if (response.ok) {
-              //window.alert("---ok=");
-            } else {
-              window.alert("查询患者信息失败error" + response.text);
-            }
-            return response.json();
-          })
-          .then(function(data) {
-            console.log("data=" + JSON.stringify(data));
-            let tresultCode = data.resultCode;
-            //window.alert("tresultCode="+tresultCode)
-            if (tresultCode === "0") {
-              _this.out_reg = JSON.parse(data.outdata);
-              console.log(" this.out_reg=" + JSON.stringify(_this.out_reg));
-              console.log(
-                " this.out_reg.patientName=" + _this.out_reg.patientName
-              );
-              //return toutreg;
-            } else {
-              window.alert("查询患者主索引信息失败1" + data.errorMsg);
-            }
-          })
-          .catch(function(err) {
-            window.alert("查询患者主索引信息查询error=" + err);
-          });
-      } else {
-        //window.alert("请输入正确的门诊号或患者主索引号");
-        return;
-      }
-      console.log(" this.out_reg=" + JSON.stringify(_this.out_reg));
-      return _this.out_reg;
-    },
-    getfeedetail(e) {
-      console.log("getfeedetail pid=" + e);
-      //门诊号规则:患者主索引8位，门诊号为11位，门诊号=主索引编号+3位数字，后3位数字为挂号的序号
-      let tpid = e.trim();
-      let _this = this;
-      if (tpid.length == 8 || tpid.length == 11) {
-        let thsp_code = process.env.VUE_APP_HSP_CODE;
-        fetch(
-          process.env.VUE_APP_REG_URL +
-            "/searchfeedetail/" +
-            tpid +
-            "/9/" +
-            thsp_code,
-          {
-            method: "get",
-            headers: {
-              Accept: "text/html",
-              "Content-Type": "application/json"
-            }
-          }
-        )
-          .then(function(response) {
-            if (response.ok) {
-              //window.alert("---ok=");
-            } else {
-              window.alert("查询患者信息失败error" + response.text);
-            }
-            return response.json();
-          })
-          .then(function(data) {
-            console.log("data=" + JSON.stringify(data));
-            let tresultCode = data.resultCode;
-            //window.alert("tresultCode="+tresultCode)
-            if (tresultCode === "0") {
-              _this.fee_details = JSON.parse(data.outdata);
-              console.log(" this.out_reg=" + JSON.stringify(_this.fee_details));
-            } else {
-              window.alert("查询患者主索引信息失败1" + data.errorMsg);
-            }
-          })
-          .catch(function(err) {
-            window.alert("查询患者主索引信息查询error=" + err);
-          });
-      } else {
-        //window.alert("请输入正确的门诊号或患者主索引号");
-        return;
-      }
-      console.log(" this.out_reg=" + JSON.stringify(_this.out_reg));
-      return _this.out_reg;
+    sch_chk() {
+      console.log("开始查询门诊结算信息");
+      let tinstr = this.tdatetype + "|" + process.env.VUE_APP_HSP_CODE + "|" + this.topcode;
+      let turl = process.env.VUE_APP_REG_URL + "/searchchksummulti/chkshifts/" + tinstr + "/" + this.topcode + "/" + this.tgc;
+      console.log("turl=" + turl);
+      fetch_cash_async(turl, "get").then(data => {
+        //console.log("查询退款明细data=" + JSON.stringify(data))
+        if (data.resultCode == "0") {
+          let tlist = Array.of();
+          tlist = data.outdata.split("|");
+          console.log("-----tlist[0]=" + tlist[0]);
+          this.chk_sums = JSON.parse(tlist[0]);
+          console.log("-----tlist[1]=" + tlist[1]);
+          this.chk_details = JSON.parse(tlist[1]);         
+        }
+      });
     }
     // ---------------------end methods----------------
   }
