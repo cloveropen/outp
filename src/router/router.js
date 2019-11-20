@@ -71,6 +71,14 @@ export const router = new Router({
         import(/* webpackChunkName: "detailundo" */ "../views/Detailundo.vue")
     },
     {
+      path: "/detailinvoice",
+      name: "detailinvoice",
+      component: () =>
+        import(
+          /* webpackChunkName: "detailundo" */ 
+          "../views/Detailinvoice.vue")
+    },
+    {
       path: "/detailop",
       name: "detailop",
       component: () =>
@@ -81,6 +89,12 @@ export const router = new Router({
       name: "mgdict",
       component: () =>
         import(/* webpackChunkName: "mgdict" */ "../views/Mgdict.vue")
+    },
+    {
+      path: "/mgopcode",
+      name: "mgopcode",
+      component: () =>
+        import(/* webpackChunkName: "mgdict" */ "../views/Mgopcode.vue")
     },
     {
       path: "/mganalyse",

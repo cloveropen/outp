@@ -5,7 +5,7 @@
       <v-layout justify-start row wrap>
         <v-flex d-flex>
           <div class="ih-item square colored effect9 bottom_to_top">
-            <router-link :to="{name:'outreg'}">
+            <router-link :to="{ name: 'outreg' }">
               <div class="img">
                 <img :src="require('../assets/img/reg.jpg')" alt="img" />
               </div>
@@ -20,7 +20,7 @@
         </v-flex>
         <v-flex d-flex>
           <div class="ih-item square colored effect9 bottom_to_top">
-            <router-link :to="{name:'outcash'}">
+            <router-link :to="{ name: 'outcash' }">
               <div class="img">
                 <img :src="require('../assets/img/cash.jpg')" alt="img" />
               </div>
@@ -35,7 +35,7 @@
         </v-flex>
         <v-flex d-flex>
           <div class="ih-item square colored effect9 bottom_to_top">
-            <router-link :to="{name:'outchk'}">
+            <router-link :to="{ name: 'outchk' }">
               <div class="img">
                 <img :src="require('../assets/img/chk.jpg')" alt="img" />
               </div>
@@ -50,7 +50,7 @@
         </v-flex>
         <v-flex d-flex>
           <div class="ih-item square colored effect9 left_to_right">
-            <router-link :to="{name:'outreceipt'}">
+            <router-link :to="{ name: 'outreceipt' }">
               <div class="img">
                 <img :src="require('../assets/img/receipt.jpg')" alt="img" />
               </div>
@@ -65,7 +65,7 @@
         </v-flex>
         <v-flex d-flex>
           <div class="ih-item square effect9 left_to_right">
-            <router-link :to="{name:'detailreg'}">
+            <router-link :to="{ name: 'detailreg' }">
               <div class="img">
                 <img :src="require('../assets/img/reg_detail.jpg')" alt="img" />
               </div>
@@ -80,7 +80,7 @@
         </v-flex>
         <v-flex d-flex>
           <div class="ih-item square colored effect9 left_to_right">
-            <router-link :to="{name:'detailcash'}">
+            <router-link :to="{ name: 'detailcash' }">
               <div class="img">
                 <img :src="require('../assets/img/cash_detail.jpg')" alt="img" />
               </div>
@@ -95,22 +95,22 @@
         </v-flex>
         <v-flex d-flex>
           <div class="ih-item square effect9 top_to_bottom">
-            <a href="#">
+            <router-link :to="{ name: 'detailinvoice' }">
               <div class="img">
                 <img :src="require('../assets/img/invoice_prn.jpg')" alt="img" />
               </div>
               <div class="info">
                 <div class="info-back">
-                  <h3>收据明细表</h3>
+                  <h3>打印收据明细</h3>
                   <p>操作员打印收据明细记录</p>
                 </div>
-              </div></a
+              </div></router-link
             >
           </div>
         </v-flex>
         <v-flex d-flex>
           <div class="ih-item square colored effect9 top_to_bottom">
-            <a href="#">
+            <router-link :to="{ name: 'detailchk' }">
               <div class="img">
                 <img :src="require('../assets/img/set_detail.jpg')" alt="img" />
               </div>
@@ -119,13 +119,13 @@
                   <h3>交班结算明细</h3>
                   <p>交班结算历史记录</p>
                 </div>
-              </div></a
+              </div></router-link
             >
           </div>
         </v-flex>
         <v-flex d-flex>
           <div class="ih-item square colored effect9 top_to_bottom">
-            <router-link :to="{name:'detailundo'}">
+            <router-link :to="{ name: 'detailundo' }">
               <div class="img">
                 <img :src="require('../assets/img/undo.jpg')" alt="img" />
               </div>

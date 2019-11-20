@@ -9,16 +9,22 @@
               ><v-radio key="today" label="今天" value="today"></v-radio
             ></v-flex>
             <v-flex d-flex
-              ><v-radio key="wechat" label="本班次" value="schedule"></v-radio
+              ><v-radio key="schedule" label="本班次" value="schedule"></v-radio
             ></v-flex>
             <v-flex d-flex
-              ><v-radio key="alipay" label="昨天" value="yesterday"></v-radio
+              ><v-radio key="schedule_last" label="上班次" value="schedule_last"></v-radio
             ></v-flex>
             <v-flex d-flex
-              ><v-radio key="alipay" label="三天前" value="3daysbf"></v-radio
+              ><v-radio key="yesterday" label="昨天" value="yesterday"></v-radio
             ></v-flex>
             <v-flex d-flex
-              ><v-radio key="alipay" label="一周前" value="weekbf"></v-radio
+              ><v-radio key="3daysbf" label="三天内" value="3daysbf"></v-radio
+            ></v-flex>
+            <v-flex d-flex
+              ><v-radio key="weekbf" label="一周内" value="weekbf"></v-radio
+            ></v-flex>
+            <v-flex d-flex
+              ><v-radio key="monthbf" label="一月内" value="monthbf"></v-radio
             ></v-flex>
           </v-radio-group>
        
