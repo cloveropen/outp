@@ -75,8 +75,9 @@ export const router = new Router({
       name: "detailinvoice",
       component: () =>
         import(
-          /* webpackChunkName: "detailundo" */ 
-          "../views/Detailinvoice.vue")
+          /* webpackChunkName: "detailundo" */
+          "../views/Detailinvoice.vue"
+          )
     },
     {
       path: "/detailop",
