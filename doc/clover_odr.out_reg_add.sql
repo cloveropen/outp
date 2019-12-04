@@ -23,7 +23,7 @@ BEGIN
 	SELECT to_char(to_number(coalesce(invoice_nmb1,'00000000'),'99999999')+1,'00000000') into tor.flow_nmb
 	  FROM clover_md.kd99  where opcode=tor.reg_opcode;
 	-- 获取打印挂号单发票流水号(invoice_nmb1)
-	select clover_odr.sch_invoice_nmb(tor.reg_opcode) into tin_str1;
+	select clover_odr.sch_invoice_nmb(tor.reg_opcode,1) into tin_str1;
 	select split_part(tin_str1,'|', 1) into tor.invoice_nmb;
     -- 如果传入了患者主索引号,则本次门诊号=患者主索引号+上次就诊次数+1,否则视为新患者,生成主索引号写入epmi
     if length(trim(coalesce(tor.ex_pid,'')))>6 then

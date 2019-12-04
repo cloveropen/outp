@@ -31,7 +31,7 @@ BEGIN
 	SELECT to_char(to_number(coalesce(invoice_nmb2,'00000000'),'99999999')+1,'00000000') into tflow_nmb
 	  FROM clover_md.kd99  where opcode=topcode;
 	-- 获取打印门诊发票流水号(invoice_nmb2)
-	select clover_odr.sch_invoice_nmb(topcode) into tin_str1;
+	select clover_odr.sch_invoice_nmb(topcode,2) into tin_str1;
 	select split_part(tin_str1,'|', 2) into tinvoice_nmb;
 	-- 计算本次应交费用，当前时间前7天
 	select coalesce(sum(item_sum),0.00) into tall_sum

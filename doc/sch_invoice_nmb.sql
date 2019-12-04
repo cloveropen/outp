@@ -1,4 +1,4 @@
-CREATE OR REPLACE FUNCTION clover_odr.sch_invoice_nmb(topcode text)
+CREATE OR REPLACE FUNCTION clover_odr.sch_invoice_nmb(topcode text,tnums integer)
     RETURNS text
     LANGUAGE 'plpgsql'
 AS $cloveropen$
@@ -8,21 +8,30 @@ DECLARE
     tseq bigint :=0;
 BEGIN
     --  查询返回当前操作员的发票号,如果没有记录增加一条初始化数据
+	if tnums<=0 then
+	  return '';
+	end if;
 	select coalesce(max(seq),0) into tseq from clover_odr.invoice_op where opcode = topcode;
 	if tseq>0 then
-	  SELECT to_char(to_number(coalesce(invoice_nmb1,'00000000'),'99999999')+1,'00000000'),
-        to_char(to_number(coalesce(invoice_nmb2,'00000000'),'99999999')+1,'00000000'),
-		to_char(to_number(coalesce(invoice_nmb3,'00000000'),'99999999')+1,'00000000'),
-		to_char(to_number(coalesce(invoice_nmb4,'00000000'),'99999999')+1,'00000000'),
-		to_char(to_number(coalesce(invoice_nmb5,'00000000'),'99999999')+1,'00000000'),
-		to_char(to_number(coalesce(invoice_nmb6,'00000000'),'99999999')+1,'00000000')
-	  into top.invoice_nmb1,
-		   top.invoice_nmb2,
-		   top.invoice_nmb3,
-		   top.invoice_nmb4,
-		   top.invoice_nmb5,
-		   top.invoice_nmb6
+	  SELECT invoice_nmb1,invoice_nmb2,invoice_nmb3,
+			 invoice_nmb4,invoice_nmb5,invoice_nmb6
+	  into top.invoice_nmb1,top.invoice_nmb2,top.invoice_nmb3,
+		   top.invoice_nmb4,top.invoice_nmb5,top.invoice_nmb6
 	    FROM clover_odr.invoice_op where seq = tseq;
+	  CASE
+      WHEN tnums=1 THEN 
+	    top.invoice_nmb1 := trim(to_char(to_number(coalesce(top.invoice_nmb1,'00000000'),'99999999')+1,'00000000'));
+      WHEN tnums=2 THEN
+	    top.invoice_nmb2 := trim(to_char(to_number(coalesce(top.invoice_nmb2,'00000000'),'99999999')+1,'00000000'));
+      WHEN tnums=3 THEN
+	    top.invoice_nmb3 := trim(to_char(to_number(coalesce(top.invoice_nmb3,'00000000'),'99999999')+1,'00000000'));
+	  WHEN tnums=4 THEN
+	    top.invoice_nmb4 := trim(to_char(to_number(coalesce(top.invoice_nmb4,'00000000'),'99999999')+1,'00000000'));
+	  WHEN tnums=5 THEN
+	    top.invoice_nmb5 := trim(to_char(to_number(coalesce(top.invoice_nmb5,'00000000'),'99999999')+1,'00000000'));
+	  WHEN tnums=6 THEN
+	    top.invoice_nmb6 := trim(to_char(to_number(coalesce(top.invoice_nmb6,'00000000'),'99999999')+1,'00000000'));
+	  END CASE;
 	  UPDATE clover_odr.invoice_op
 	    SET optime=now(), 
 	    invoice_nmb1=top.invoice_nmb1, 
