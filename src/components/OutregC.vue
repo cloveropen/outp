@@ -585,6 +585,9 @@ export default {
     //     console.log('getUserMedia() error', error);
     // });
   },
+   destroyed: function () {
+    this.video.srcObject.getTracks()[0].stop(); //关闭摄像头
+  },
   methods: {
     validate() {
       if (this.$refs.form.validate()) {
